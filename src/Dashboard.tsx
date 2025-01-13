@@ -1,88 +1,40 @@
 import {
     usePermissions,
-    useGetList,
-    Button,
     useRedirect,
     useDataProvider,
     useNotify,
     Loading,
 } from 'react-admin';
-import { Grid, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
-import Box from '@mui/material/Box';
+import { Grid, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-
+import { Card } from '@mui/material';
+import { Title } from 'react-admin';
+import CardContent from '@mui/material/CardContent';
 
 const Dashboard = () => {
     const { isPending, permissions } = usePermissions();
-    // const {
-    //     data,
-    //     total,
-    //     isPending,
-    //     error
-    // } = useGetList('layers');
-
-    // const {
-    //     data: enabledLayers,
-    //     total: totalEnabledLayers,
-    //     isPending: enabledLayersIsPending,
-    //     error: enabledLayersError
-    // } = useGetList('layers', {
-    //     filter: { enabled: true }
-    // });
-
-    // const {
-    //     data: styles,
-    //     total: totalStyles,
-    //     isPending: stylesIsPending,
-    //     error: stylesError
-    // } = useGetList('layers', {
-    //     filter: { style: null }
-    // });
-
-    // const totalLayersWithoutStyles = total - totalStyles;
-    const navigate = useNavigate();
-    const redirect = useRedirect();
-    const notify = useNotify();
-    const dataProvider = useDataProvider();
-
-    const handleRedirectDisabledLayers = () => {
-        // Navigate to list with filter
-        navigate({
-            pathname: '/layers',
-            search: '?filter={"enabled":false}',
-        });
-    }
-
-    const handleRedirectAllLayers = () => {
-        redirect('list', '/layers');
-    }
-
-    // if (isPending || enabledLayersIsPending) return <Loading />;
-    // if (!data) return null;
-    // if (error) return <p>Error: {error}</p>;
     if (isPending) return <Loading />;
-    console.log('permissions', permissions);
     return (
-        <>{
+        <><Card>
+            <Title title="Welcome to CryoBioBank" />
+            {
             (permissions === 'admin') ?
                 (
-                    <>
-                        <Grid container spacing={3}>
-                            Welcome
-                        </Grid>
+                    <>    
+                        <CardContent>Welcome to CryoBioBank</CardContent>
                     </>
                 )
                 : (
                     <>
-                        <Typography
-                            variant="body"
-                            color="error"
-                            align='center'
-                            gutterBottom>
-                            This portal is only available to administrators.<br /><br /> Permissions: {permissions.toString()}
-                        </Typography>
+                        <CardContent>Welcome to CryoBioBank
+                        
+                            This portal is only available to administrators.
+                            <br /><br /> 
+                            Permissions: {permissions.toString()}
+                        </CardContent>
                     </>
                 )}
+        </Card>
         </>
     );
 }

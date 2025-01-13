@@ -7,6 +7,8 @@ import { httpClient } from 'ra-keycloak';
 import { keycloakAuthProvider } from './authProvider';
 import sites from './sites';
 import isolates from './isolates';
+import samples from './samples';
+import dna from './dna';
 import axios from 'axios';
 import Dashboard from './Dashboard';
 import MyLayout from './Layout';
@@ -75,7 +77,7 @@ const App = () => {
             authProvider={authProvider.current}
             dataProvider={dataProvider.current}
             title="CryoBioBank"
-            // dashboard={Dashboard}
+            dashboard={Dashboard}
             layout={(props) => <MyLayout {...props} deployment={deployment} />}
         >
             {permissions => (
@@ -86,6 +88,8 @@ const App = () => {
                                 <>
                                     <Resource name="sites" {...sites} />
                                     <Resource name="isolates" {...isolates} />
+                                    <Resource name="samples" {...samples} />
+                                    <Resource name="dna" {...dna} />
                                 </>
                             ) : null}
                         </>
