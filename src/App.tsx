@@ -5,8 +5,8 @@ import simpleRestProvider from './dataProvider/index'
 import Keycloak, { KeycloakTokenParsed, KeycloakInitOptions, } from 'keycloak-js';
 import { httpClient } from 'ra-keycloak';
 import { keycloakAuthProvider } from './authProvider';
-import submissions from './submissions';
-import uploads from './uploads';
+import sites from './sites';
+import isolates from './isolates';
 import axios from 'axios';
 import Dashboard from './Dashboard';
 import MyLayout from './Layout';
@@ -84,8 +84,8 @@ const App = () => {
                         <>
                             {permissions === 'admin' ? (
                                 <>
-                                    <Resource name="submissions" {...submissions} />
-                                    <Resource name="uploads" {...uploads} />
+                                    <Resource name="sites" {...sites} />
+                                    <Resource name="isolates" {...isolates} />
                                 </>
                             ) : null}
                         </>

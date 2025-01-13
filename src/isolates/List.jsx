@@ -2,11 +2,10 @@ import {
     List,
     Datagrid,
     TextField,
-    BooleanField,
     DateField,
 } from "react-admin";
 
-const SubmissionList = () => {
+const ListComponent = () => {
 
     return (
         <List disableSyncWithLocation
@@ -34,4 +33,4 @@ const SubmissionList = () => {
     )
 };
 
-export default SubmissionList;
+export default ListComponent;

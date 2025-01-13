@@ -1,9 +1,9 @@
 import { Edit as ReactAdminEdit } from "react-admin";
 
-const Edit = ReactAdminEdit;
+const CustomEdit = ReactAdminEdit;
 
-Edit.defaultProps = {
+CustomEdit.defaultProps = {
     undoable: false,
 };
 
-export default Edit;
+export default CustomEdit;
