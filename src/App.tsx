@@ -8,6 +8,7 @@ import { keycloakAuthProvider } from './authProvider';
 import sites from './sites';
 import isolates from './isolates';
 import samples from './samples';
+import site_replicates from './sites/replicates';
 import dna from './dna';
 import axios from 'axios';
 import Dashboard from './Dashboard';
@@ -87,6 +88,7 @@ const App = () => {
                             {permissions === 'admin' ? (
                                 <>
                                     <Resource name="sites" {...sites} />
+                                    <Resource name="site_replicates" {...site_replicates} />
                                     <Resource name="isolates" {...isolates} />
                                     <Resource name="samples" {...samples} />
                                     <Resource name="dna" {...dna} />
