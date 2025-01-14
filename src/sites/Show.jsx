@@ -28,7 +28,6 @@ const ShowComponent = () => {
                                     <TextField source="name" />
                                 </Labeled>
                             </Grid>
-
                         </Grid>
                     </Grid>
                 </Grid>
