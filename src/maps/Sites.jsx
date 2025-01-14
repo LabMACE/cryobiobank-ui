@@ -45,7 +45,7 @@ export const LocationFieldAreas = () => {
         <MapContainer
             style={{ width: '100%', height: '500px' }}
             bounds={
-                [[51.505, -0.09], [51.51, -0.1]]
+                [[46.5, 6.0], [47.5, 9.0]]  // Tighter bounds for Switzerland
             }
             scrollWheelZoom={true}
         >
