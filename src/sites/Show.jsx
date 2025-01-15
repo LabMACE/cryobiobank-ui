@@ -3,6 +3,7 @@ import {
     SimpleShowLayout,
     TextField,
     BooleanField,
+    useCreatePath,
     DateField,
     Labeled,
     ArrayField,
@@ -12,6 +13,11 @@ import { Grid } from '@mui/material';
 
 
 const ShowComponent = () => {
+    const createPath = useCreatePath();
+    const objectClick = (id, resource, record) => (
+        createPath({ resource: 'site_replicates', type: 'show', id: record.id })
+    );
+
     return (
         <Show >
             <SimpleShowLayout>
@@ -32,7 +38,9 @@ const ShowComponent = () => {
                     </Grid>
                 </Grid>
                 <ArrayField source="replicates">
-                    <Datagrid bulkActionButtons={false}>
+                    <Datagrid bulkActionButtons={false}
+                                                rowClick={objectClick}
+>
                         <DateField source="sampling_date" />
                         <TextField source="id" />
                         <TextField source="sample_type" />
