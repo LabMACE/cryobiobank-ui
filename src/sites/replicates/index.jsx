@@ -7,7 +7,7 @@ import LandscapeIcon from '@mui/icons-material/Landscape';
 export default {
     create: CreateComponent,
     edit: EditComponent,
-    list: ListComponent,
+    // list: ListComponent,
     show: ShowComponent,
     icon: LandscapeIcon,
     options: {

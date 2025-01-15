@@ -8,8 +8,11 @@ import {
     Labeled,
     ArrayField,
     Datagrid,
+    useRecordContext,
+    Loading,
 } from 'react-admin';
 import { Grid } from '@mui/material';
+import { SitesMap } from '../maps/Sites';
 
 
 const ShowComponent = () => {
@@ -25,24 +28,27 @@ const ShowComponent = () => {
                     <Grid item xs={6}>
                         <Grid container spacing={0}>
                             <Grid item xs={12}>
-                                <Labeled label="ID">
-                                    <TextField source="id" />
-                                </Labeled>
-                            </Grid>
-                            <Grid item xs={12}>
                                 <Labeled label="Name">
                                     <TextField source="name" />
                                 </Labeled>
                             </Grid>
+                            <Grid item xs={12}>
+                                <Labeled label="Elevation (m)">
+                                    <TextField source="z" />
+                                </Labeled>
+                            </Grid>
                         </Grid>
                     </Grid>
+                    <Grid item xs={6}>
+                        <SitesMap height="200px" labels={false} />
+                        </Grid>
                 </Grid>
                 <ArrayField source="replicates">
-                    <Datagrid bulkActionButtons={false}
-                                                rowClick={objectClick}
->
+                    <Datagrid 
+                        bulkActionButtons={false}
+                        rowClick={objectClick}
+                    >
                         <DateField source="sampling_date" />
-                        <TextField source="id" />
                         <TextField source="sample_type" />
                         <TextField source="sample_depth_cm" />
                         <TextField source="snow_depth_cm" />

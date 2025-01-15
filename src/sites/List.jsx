@@ -2,31 +2,61 @@ import {
     List,
     Datagrid,
     TextField,
-    DateField,
+    useRecordContext,
+    useCreatePath,
+    
 } from "react-admin";
+
+import { Link } from 'react-router-dom';
+
+const PostPanel = () => {
+    const record = useRecordContext();
+    const createPath = useCreatePath();
+    const objectClick = (id, resource, record) => (
+        createPath({ resource: 'site_replicates', type: 'show', id: record.id })
+    );
+    // Get sorted replicate list
+    const replicates = record.replicates.sort((a, b) => {
+        return new Date(a.sampling_date) - new Date(b.sampling_date);
+    });
+    
+    return (
+        <table>
+            <thead>
+                <tr>
+                    <th style={{ paddingRight: '20px' }}>Date</th>
+                    <th style={{ paddingRight: '20px' }}>Sample Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                {replicates.map((replicate, index) => (
+                    <tr key={index}>
+                        <td style={{ paddingRight: '20px' }}>
+                            <Link to={objectClick(replicate.id, 'site_replicates', replicate)}>{replicate.sampling_date}</Link>
+                        </td>
+                        <td style={{ paddingRight: '20px' }}>
+                            {replicate.sample_type}
+                        </td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    );
+};
 
 const ListComponent = () => {
 
     return (
         <List disableSyncWithLocation
             perPage={25}
-            sort={{ field: 'created_on', order: 'DESC' }}
+            sort={{ field: 'name', order: 'ASC' }}
         >
-            <Datagrid rowClick="show" >
+            <Datagrid rowClick="show"
+            expand={<PostPanel/>} >
                 <TextField source="name" />
-                <TextField source="comment" />
-                <DateField
-                    label="Created on (UTC)"
-                    source="created_on"
-                    transform={value => new Date(value + 'Z')}
-                    showTime={true}
-                />
-                <DateField
-                    label="Last updated (UTC)"
-                    source="last_updated"
-                    transform={value => new Date(value + 'Z')}
-                    showTime={true}
-                />
+                <TextField source="y" label="Latitude (°)" />
+                <TextField source="x" label="Longitude (°)" />
+                <TextField source="z" label="Elevation (m)" />
             </Datagrid>
         </List >
 
