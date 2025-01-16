@@ -48,10 +48,10 @@ const ShowComponent = () => {
                         bulkActionButtons={false}
                         rowClick={objectClick}
                     >
-                        <DateField source="sampling_date" />
-                        <TextField source="sample_type" />
-                        <TextField source="sample_depth_cm" />
-                        <TextField source="snow_depth_cm" />
+                        <DateField source="sampling_date" label="Date" />
+                        <TextField source="sample_type" label="Type" />
+                        <TextField source="sample_depth_cm" label="Sample depth (cm)"/>
+                        <TextField source="snow_depth_cm" label="Snow depth (cm)"/>
                     </Datagrid>
                 </ArrayField>
             </SimpleShowLayout>
