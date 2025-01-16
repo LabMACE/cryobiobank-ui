@@ -3,6 +3,7 @@ import {
     Datagrid,
     TextField,
     DateField,
+    ReferenceField,
 } from "react-admin";
 
 const ListComponent = () => {
@@ -10,23 +11,14 @@ const ListComponent = () => {
     return (
         <List disableSyncWithLocation
             perPage={25}
-            sort={{ field: 'created_on', order: 'DESC' }}
+            sort={{ field: 'name', order: 'ASC' }}
         >
             <Datagrid rowClick="show" >
                 <TextField source="name" />
-                <TextField source="comment" />
-                <DateField
-                    label="Created on (UTC)"
-                    source="created_on"
-                    transform={value => new Date(value + 'Z')}
-                    showTime={true}
-                />
-                <DateField
-                    label="Last updated (UTC)"
-                    source="last_updated"
-                    transform={value => new Date(value + 'Z')}
-                    showTime={true}
-                />
+                <ReferenceField source="site_replicate_id" reference="site_replicates" />
+                <ReferenceField source="dna_id" reference="dna" />
+                <TextField source="type_of_sample" />
+                <TextField source="storage_location" />
             </Datagrid>
         </List >
 

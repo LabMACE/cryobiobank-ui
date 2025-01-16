@@ -6,6 +6,8 @@ import {
     DateField,
     NumberField,
     Labeled,
+    ReferenceOneField,
+    ReferenceField,
 } from 'react-admin';
 import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -15,10 +17,14 @@ const SiteReplicateShow = (props) => {
         <Show {...props}>
             <SimpleShowLayout>
                 <Grid container spacing={2}>
-                    {/* Top Level Fields */}
                     <Grid item xs={12} sm={6}>
                         <Labeled label="ID">
                             <TextField source="id" />
+                        </Labeled>
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <Labeled label="Site">
+                            <ReferenceField source="site_id" reference="sites" label="Site" />
                         </Labeled>
                     </Grid>
                     <Grid item xs={12} sm={6}>

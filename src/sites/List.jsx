@@ -4,7 +4,8 @@ import {
     TextField,
     useRecordContext,
     useCreatePath,
-    
+    ReferenceManyCount,
+
 } from "react-admin";
 
 import { Link } from 'react-router-dom';
@@ -19,7 +20,7 @@ const PostPanel = () => {
     const replicates = record.replicates.sort((a, b) => {
         return new Date(a.sampling_date) - new Date(b.sampling_date);
     });
-    
+
     return (
         <table>
             <thead>
@@ -52,11 +53,12 @@ const ListComponent = () => {
             sort={{ field: 'name', order: 'ASC' }}
         >
             <Datagrid rowClick="show"
-            expand={<PostPanel/>} >
+                expand={<PostPanel />} >
                 <TextField source="name" />
                 <TextField source="y" label="Latitude (°)" />
                 <TextField source="x" label="Longitude (°)" />
                 <TextField source="z" label="Elevation (m)" />
+                <ReferenceManyCount reference="site_replicates" target="site_id" label="Replicates" />
             </Datagrid>
         </List >
 

@@ -3,6 +3,7 @@ import {
     Datagrid,
     TextField,
     DateField,
+    ReferenceManyCount,
 } from "react-admin";
 
 const ListComponent = () => {
@@ -14,19 +15,9 @@ const ListComponent = () => {
         >
             <Datagrid rowClick="show" >
                 <TextField source="name" />
-                <TextField source="comment" />
-                <DateField
-                    label="Created on (UTC)"
-                    source="created_on"
-                    transform={value => new Date(value + 'Z')}
-                    showTime={true}
-                />
-                <DateField
-                    label="Last updated (UTC)"
-                    source="last_updated"
-                    transform={value => new Date(value + 'Z')}
-                    showTime={true}
-                />
+                <TextField source="extraction_method" />
+                <ReferenceManyCount reference="isolates" target="dna_id" label="Isolates" />
+                <ReferenceManyCount reference="samples" target="dna_id" label="Samples" />
             </Datagrid>
         </List >
 

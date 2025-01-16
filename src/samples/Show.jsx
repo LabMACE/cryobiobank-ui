@@ -5,8 +5,9 @@ import {
     BooleanField,
     DateField,
     Labeled,
+    ReferenceField,
 } from 'react-admin';
-import { Grid} from '@mui/material';
+import { Grid } from '@mui/material';
 
 
 const ShowComponent = () => {
@@ -27,41 +28,32 @@ const ShowComponent = () => {
                                 </Labeled>
                             </Grid>
                             <Grid item xs={12}>
-                                <Labeled label="Comment">
-                                    <TextField source="comment" />
+                                <Labeled label="Site Replicate">
+                                    <ReferenceField source="site_replicate_id" reference="site_replicates" />
                                 </Labeled>
                             </Grid>
                             <Grid item xs={12}>
-                                <Labeled label="Processing Has Started">
-                                    <BooleanField source="processing_has_started" />
+                                <Labeled label="DNA">
+                                    <ReferenceField source="dna_id" reference="dna" />
                                 </Labeled>
                             </Grid>
                             <Grid item xs={12}>
-                                <Labeled label="Processing Success">
-                                    <BooleanField source="processing_success" />
+                                <Labeled label="Type of sample">
+                                    <TextField source="type_of_sample" />
                                 </Labeled>
                             </Grid>
-                            <Grid item xs={12}>
-                                <Labeled label="Created on">
-                                    <DateField
-                                        source="created_on"
-                                        sortable={false}
-                                        showTime={true}
-                                        transform={value => new Date(value + 'Z')}  // Fix UTC time
-                                    />
-                                </Labeled>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Labeled label="Last updated">
-                                    <DateField
-                                        source="last_updated"
-                                        sortable={false}
-                                        showTime={true}
-                                        transform={value => new Date(value + 'Z')}  // Fix UTC time
 
-                                    />
+                            <Grid item xs={12}>
+                                <Labeled label="Description">
+                                    <TextField source="description" />
                                 </Labeled>
                             </Grid>
+                            <Grid item xs={12}>
+                                <Labeled label="Storage location">
+                                    <TextField source="storage_location" />
+                                </Labeled>
+                            </Grid>
+
                         </Grid>
                     </Grid>
                 </Grid>
