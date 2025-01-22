@@ -6,7 +6,7 @@ import {
     TextInput,
     required,
 } from 'react-admin';
-
+import CoordinateInput from '../maps/CoordinateEntry';
 
 const CreateComponent = () => {
 
@@ -14,8 +14,8 @@ const CreateComponent = () => {
         <Create redirect="show">
             <SimpleForm >
                 <TextField source="id" />
-                <TextInput source="name" helperText="Name your submission" validate={[required()]} />
-                <TextInput source="comment" />
+                <TextInput source="name" validate={[required()]}/>
+                <CoordinateInput />
             </SimpleForm>
         </Create >
     )

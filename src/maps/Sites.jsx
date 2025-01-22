@@ -17,6 +17,8 @@ import 'leaflet.awesome-markers/dist/leaflet.awesome-markers.css';
 import 'leaflet.awesome-markers/dist/leaflet.awesome-markers.js';
 import * as L from 'leaflet';
 import { useEffect, useState } from 'react';
+import MarkerClusterGroup from 'react-leaflet-cluster'
+
 
 export const SitesMap = (
     {
@@ -84,7 +86,9 @@ export const SitesMap = (
             scrollWheelZoom={true}
         >
             <BaseLayers />
-            {markers}
+            <MarkerClusterGroup maxClusterRadius={50} chunkedLoading >
+                {markers}
+            </MarkerClusterGroup>
         </MapContainer>
     );
 };

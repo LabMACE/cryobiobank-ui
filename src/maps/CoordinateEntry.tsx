@@ -39,7 +39,7 @@ const ElevationInput = () => {
                 } else {
                     setErrorMessage(null);
                     setSuccessResponse(true);
-                    formContext.setValue('elevation_metres', data.height);
+                    formContext.setValue('elevation_metres', parseFloat(data.height));
                 }
             });
     };
