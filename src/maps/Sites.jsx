@@ -34,16 +34,16 @@ export const SitesMap = (
         if (sites) {
             if (sites.length > 0) {
                 if (record) {
-                    setBounds(L.latLngBounds([[record.y, record.x], [record.y, record.x]]).pad(5000));
+                    setBounds(L.latLngBounds([[record.latitude_4326, record.longitude_4326], [record.latitude_4326, record.longitude_4326]]).pad(5000));
                 } else {
-                    setBounds(L.latLngBounds(sites.map(site => [site.y, site.x])).pad(0.6));
+                    setBounds(L.latLngBounds(sites.map(site => [site.latitude_4326, site.longitude_4326])).pad(0.6));
                 }
                 setMarkers(sites.map(site => {
                     const opacity = !record ? 1 : (site.id === record.id ? 1.0 : 0.6);
                     return (
                         <Marker
                             key={site.id}
-                            position={[site.y, site.x]}
+                            position={[site.latitude_4326, site.longitude_4326]}
                             icon={L.AwesomeMarkers.icon({
                                 icon: 'trowel',
                                 iconColor: 'black',
@@ -56,7 +56,7 @@ export const SitesMap = (
                             <Popup>
                                 <b>{site.name}</b>
                                 <br />
-                                Elevation: {site.z}
+                                Elevation: {site.elevation_metres}
                                 <br />
                                 Replicates: {site.replicates.length}
                                 <br /><br />

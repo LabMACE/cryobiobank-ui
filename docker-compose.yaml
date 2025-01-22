@@ -69,6 +69,50 @@ services:
     volumes:
       - cryobiobank-db-data:/var/lib/postgresql/data
 
+
+  cryobiobank-test-db:
+    image: postgis/postgis:17-3.5
+    container_name: cryobiobank-test-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=psql
+      - POSTGRES_DB=postgres
+    ports:
+      - "5444:5432"
+    # We do *not* persist test data in a volume so that each test run starts fresh.
+    # But if you want to persist for debugging, you can create a volume here.
+    # volumes:
+    #   - cryobiobank-test-db-data:/var/lib/postgresql/data
+
+  cryobiobank-test-api:
+    build:
+      context: ../cryobiobank-api
+      dockerfile: Dockerfile.test
+    container_name: cryobiobank-test-api
+    depends_on:
+      - cryobiobank-test-db
+    environment:
+      - DB_HOST=cryobiobank-test-db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=psql
+      - DB_NAME=postgres
+      - DB_PREFIX=postgresql
+      - KEYCLOAK_URL=http://fake-url-for-tests
+      - KEYCLOAK_REALM=test
+      - KEYCLOAK_UI_ID=test
+      - KEYCLOAK_API_ID=test
+      - KEYCLOAK_API_SECRET=test
+      - APP_NAME=cryobiobank-api-tests
+      - DEPLOYMENT=test
+    volumes:
+      # Mount your code into the container so changes can be reflected immediately
+      - ../cryobiobank-api:/app
+    # The critical part: run cargo tests within the container.
+    # We’ll also run migrations inside the test code (or you can do so in a script).
+    # command: >
+      # cargo test -- --nocapture
+      
 volumes:
   cryobiobank-db-data:
   cryobiobank-api-build-data:

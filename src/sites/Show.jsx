@@ -34,7 +34,7 @@ const ShowComponent = () => {
                             </Grid>
                             <Grid item xs={12}>
                                 <Labeled label="Elevation (m)">
-                                    <TextField source="z" />
+                                    <TextField source="elevation_metres" />
                                 </Labeled>
                             </Grid>
                         </Grid>

@@ -55,9 +55,9 @@ const ListComponent = () => {
             <Datagrid rowClick="show"
                 expand={<PostPanel />} >
                 <TextField source="name" />
-                <TextField source="y" label="Latitude (°)" />
-                <TextField source="x" label="Longitude (°)" />
-                <TextField source="z" label="Elevation (m)" />
+                <TextField source="latitude_4326" label="Latitude (°)" />
+                <TextField source="longitude_4326" label="Longitude (°)" />
+                <TextField source="elevation_metres" label="Elevation (m)" />
                 <ReferenceManyCount reference="site_replicates" target="site_id" label="Replicates" />
             </Datagrid>
         </List >
