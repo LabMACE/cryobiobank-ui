@@ -16,9 +16,8 @@ const IsolateCreate = (props) => {
                     source="site_replicate_id"
                     reference="site_replicates"
                     label="Site Replicate"
-                    validate={[required()]}
                 >
-                    <SelectInput optionText="name" />
+                    <SelectInput optionText="name" validate={[required()]} resettable/>
                 </ReferenceInput>
                 <TextInput source="name" label="Name" validate={[required()]} />
                 <TextInput source="taxonomy" label="Taxonomy" />
@@ -29,7 +28,7 @@ const IsolateCreate = (props) => {
                 />
                 <TextInput source="media_used_for_isolation" label="Media Used for Isolation" />
                 <ReferenceInput source="dna_id" reference="dna" label="DNA">
-                    <SelectInput optionText="name" />
+                    <SelectInput optionText="name" resettable />
                 </ReferenceInput>
             </SimpleForm>
         </Create>

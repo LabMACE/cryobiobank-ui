@@ -4,6 +4,7 @@ import {
     TextInput,
     ReferenceInput,
     SelectInput,
+    required,
 } from 'react-admin';
 import { MyActionsByPermission } from '../custom/Toolbars';
 
@@ -17,14 +18,14 @@ const SampleEdit = (props) => {
                     reference="site_replicates"
                     label="Site Replicate"
                 >
-                    <SelectInput optionText="name" />
+                    <SelectInput optionText="name" validate={[required()]} resettable/>
                 </ReferenceInput>
                 <ReferenceInput
                     source="dna_id"
                     reference="dna"
                     label="DNA"
                 >
-                    <SelectInput optionText="name" />
+                    <SelectInput optionText="name" resettable />
                 </ReferenceInput>
                 <TextInput source="name" label="Name" />
                 <TextInput source="type_of_sample" label="Type of Sample" />
