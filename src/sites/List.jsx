@@ -5,10 +5,10 @@ import {
     useRecordContext,
     useCreatePath,
     ReferenceManyCount,
-
 } from "react-admin";
-
 import { Link } from 'react-router-dom';
+import { ListActionsByPermission } from '../custom/Toolbars';
+
 
 const PostPanel = () => {
     const record = useRecordContext();
@@ -51,7 +51,7 @@ const ListComponent = () => {
         <List disableSyncWithLocation
             perPage={25}
             sort={{ field: 'name', order: 'ASC' }}
-            disableAuthentication
+            actions={<ListActionsByPermission />}
         >
             <Datagrid rowClick="show"
                 expand={<PostPanel />} >

@@ -2,18 +2,14 @@ import {
     Show,
     SimpleShowLayout,
     TextField,
-    BooleanField,
-    DateField,
-    Labeled,
     ReferenceField,
     NumberField,
 } from 'react-admin';
-import { Grid } from '@mui/material';
-
+import { MyActionsByPermission } from '../custom/Toolbars';
 
 const ShowComponent = () => {
     return (
-        <Show >
+        <Show actions={<MyActionsByPermission />}>
             <SimpleShowLayout>
                 <ReferenceField source="site_replicate_id" reference="site_replicates" />
                 <TextField source="name" />

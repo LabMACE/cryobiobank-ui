@@ -2,18 +2,14 @@ import {
     Show,
     SimpleShowLayout,
     TextField,
-    BooleanField,
-    DateField,
-    Labeled,
     ReferenceManyField,
     Datagrid,
 } from 'react-admin';
-import { Grid } from '@mui/material';
-
+import { MyActionsByPermission } from '../custom/Toolbars';
 
 const ShowComponent = () => {
     return (
-        <Show >
+        <Show actions={<MyActionsByPermission />}>
             <SimpleShowLayout>
                 <TextField source="name" />
                 <TextField source="extraction_method" />

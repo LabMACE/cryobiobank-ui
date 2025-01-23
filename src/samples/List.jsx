@@ -2,9 +2,9 @@ import {
     List,
     Datagrid,
     TextField,
-    DateField,
     ReferenceField,
 } from "react-admin";
+import { ListActionsByPermission } from '../custom/Toolbars';
 
 const ListComponent = () => {
 
@@ -12,6 +12,7 @@ const ListComponent = () => {
         <List disableSyncWithLocation
             perPage={25}
             sort={{ field: 'name', order: 'ASC' }}
+            actions={<ListActionsByPermission />}
         >
             <Datagrid rowClick="show" >
                 <TextField source="name" />

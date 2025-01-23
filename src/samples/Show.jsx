@@ -2,17 +2,16 @@ import {
     Show,
     SimpleShowLayout,
     TextField,
-    BooleanField,
-    DateField,
     Labeled,
     ReferenceField,
 } from 'react-admin';
 import { Grid } from '@mui/material';
+import { MyActionsByPermission } from '../custom/Toolbars';
 
 
 const ShowComponent = () => {
     return (
-        <Show >
+        <Show actions={<MyActionsByPermission />}>
             <SimpleShowLayout>
                 <Grid container spacing={2}>
                     <Grid item xs={6}>

@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {
     Show,
     SimpleShowLayout,
@@ -6,15 +5,16 @@ import {
     DateField,
     NumberField,
     Labeled,
-    ReferenceOneField,
     ReferenceField,
 } from 'react-admin';
 import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { MyActionsByPermission } from '../../custom/Toolbars';
+
 
 const SiteReplicateShow = (props) => {
     return (
-        <Show {...props}>
+        <Show {...props} actions={<MyActionsByPermission />}>
             <SimpleShowLayout>
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={6}>

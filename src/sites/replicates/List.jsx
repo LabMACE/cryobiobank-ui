@@ -4,6 +4,8 @@ import {
     TextField,
     DateField,
 } from "react-admin";
+import { ListActionsByPermission } from '../../custom/Toolbars';
+
 
 const ListComponent = () => {
 
@@ -11,6 +13,7 @@ const ListComponent = () => {
         <List disableSyncWithLocation
             perPage={25}
             sort={{ field: 'created_on', order: 'DESC' }}
+            actions={<ListActionsByPermission />}
         >
             <Datagrid rowClick="show" >
                 <TextField source="name" />
