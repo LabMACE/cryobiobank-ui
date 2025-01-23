@@ -1,19 +1,22 @@
 import {
+    Edit,
     SimpleForm,
     TextInput,
 } from 'react-admin';
-import CustomEdit from '../custom/Edit';
 
-const EditComponent = () => {
+import { MyActionsByPermission } from '../custom/Toolbars';
+
+const DNAEdit = (props) => {
     return (
-        <CustomEdit redirect="show">
+        <Edit {...props} redirect="show" actions={<MyActionsByPermission />} mutationMode="pessimistic">
             <SimpleForm>
-                <TextInput source="id" disabled />
-                <TextInput source="name" />
-                <TextInput source="comment" />
+                <TextInput source="id" disabled label="ID" />
+                <TextInput source="name" label="Name" />
+                <TextInput source="extraction_method" label="Extraction Method" />
+                <TextInput source="description" label="Description" />
             </SimpleForm>
-        </CustomEdit>
-    )
+        </Edit>
+    );
 };
 
-export default EditComponent;
+export default DNAEdit;

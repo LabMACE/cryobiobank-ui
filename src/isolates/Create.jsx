@@ -1,24 +1,39 @@
-/* eslint react/jsx-key: off */
 import {
     Create,
     SimpleForm,
-    TextField,
     TextInput,
+    NumberInput,
+    ReferenceInput,
+    SelectInput,
     required,
 } from 'react-admin';
 
-
-const CreateComponent = () => {
-
+const IsolateCreate = (props) => {
     return (
-        <Create redirect="show">
-            <SimpleForm >
-                <TextField source="id" />
-                <TextInput source="name" helperText="Name your submission" validate={[required()]} />
-                <TextInput source="comment" />
+        <Create {...props} redirect="show">
+            <SimpleForm>
+                <ReferenceInput
+                    source="site_replicate_id"
+                    reference="site_replicates"
+                    label="Site Replicate"
+                    validate={[required()]}
+                >
+                    <SelectInput optionText="name" />
+                </ReferenceInput>
+                <TextInput source="name" label="Name" validate={[required()]} />
+                <TextInput source="taxonomy" label="Taxonomy" />
+                <TextInput source="storage_location" label="Storage Location" />
+                <NumberInput
+                    source="temperature_of_isolation"
+                    label="Temperature of Isolation (°C)"
+                />
+                <TextInput source="media_used_for_isolation" label="Media Used for Isolation" />
+                <ReferenceInput source="dna_id" reference="dna" label="DNA">
+                    <SelectInput optionText="name" />
+                </ReferenceInput>
             </SimpleForm>
-        </Create >
-    )
+        </Create>
+    );
 };
 
-export default CreateComponent;
+export default IsolateCreate;

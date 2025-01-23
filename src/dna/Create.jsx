@@ -1,24 +1,20 @@
-/* eslint react/jsx-key: off */
 import {
     Create,
     SimpleForm,
-    TextField,
     TextInput,
     required,
 } from 'react-admin';
 
-
-const CreateComponent = () => {
-
+const DNACreate = (props) => {
     return (
-        <Create redirect="show">
-            <SimpleForm >
-                <TextField source="id" />
-                <TextInput source="name" helperText="Name your submission" validate={[required()]} />
-                <TextInput source="comment" />
+        <Create {...props} redirect="show">
+            <SimpleForm>
+                <TextInput source="name" label="Name" validate={[required()]} />
+                <TextInput source="extraction_method" label="Extraction Method" />
+                <TextInput source="description" label="Description" />
             </SimpleForm>
-        </Create >
-    )
+        </Create>
+    );
 };
 
-export default CreateComponent;
+export default DNACreate;

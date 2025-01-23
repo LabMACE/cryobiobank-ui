@@ -13,6 +13,7 @@ const ShowComponent = () => {
             <SimpleShowLayout>
                 <TextField source="name" />
                 <TextField source="extraction_method" />
+                <TextField source="description" />
 
                 <ReferenceManyField reference="isolates" target="dna_id" label="Isolates">
                     <Datagrid>
