@@ -86,7 +86,7 @@ export const SitesMap = (
             scrollWheelZoom={true}
         >
             <BaseLayers />
-            <MarkerClusterGroup maxClusterRadius={50} chunkedLoading >
+            <MarkerClusterGroup maxClusterRadius={25} chunkedLoading >
                 {markers}
             </MarkerClusterGroup>
         </MapContainer>

@@ -1,5 +1,15 @@
-import { Layout, AppBar, TitlePortal, usePermissions } from 'react-admin';
+import { 
+    Layout, 
+    Button, 
+    AppBar, 
+    TitlePortal,
+    usePermissions, 
+    useAuthProvider,
+    Menu,    
+    LabelIcon,
+} from 'react-admin';
 import { CssBaseline, Typography } from '@mui/material';
+import PublicIcon from '@mui/icons-material/Public';
 
 const MyAppBar = (props) => {
     const { isPending, permissions } = usePermissions();
@@ -30,11 +40,48 @@ const MyAppBar = (props) => {
                 {props.deployment ? appBarText() : ""}&nbsp;&nbsp;
 
             </Typography>
+            <LoginButton  />
 
         </AppBar>
     )
 };
+const LoginButton = () => {
+    const authProvider = useAuthProvider();
+    const { isPending, permissions } = usePermissions();
+   
+    const handleLoginLogout = () => {
+        if (permissions) {
+            authProvider.logout();
+        } else {
+            authProvider.login();
+        }
+    };
+    
+    if (isPending) return null;
+    return (
+        <Button variant="contained" color="secondary" onClick={handleLoginLogout}>
+            {permissions ? 'Logout' : 'Login'}
+        </Button>
+    );
+};
 
+
+const MyMenu = (props) => {
+    // const { isPending, permissions } = usePermissions();
+    // if (isPending) return null;
+    return (
+        <Menu>
+            <Menu.DashboardItem primaryText="Map" leftIcon={<PublicIcon/>}/>
+            {/* {permissions === 'admin' ? (
+                <> */}
+                    <Menu.ResourceItem name="sites" />
+                    <Menu.ResourceItem name="isolates" />
+                    <Menu.ResourceItem name="samples" />
+                    <Menu.ResourceItem name="dna" />
+                {/* </> */}
+        {/* ) : null} */}
+        </Menu>
+)};
 
 const MyLayout = ({ children, deployment }) => {
     return (
@@ -42,8 +89,10 @@ const MyLayout = ({ children, deployment }) => {
             <CssBaseline />
             <Layout
                 appBar={() => <MyAppBar deployment={deployment} />}
+                menu={MyMenu}
             >
                 {children}
+                
             </Layout>
         </>
     )

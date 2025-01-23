@@ -17,23 +17,12 @@ const Dashboard = ({ }) => {
         <>
             <Card>
                 <Title title="Welcome to CryoBioBank" />
-                {
-                    (permissions === 'admin') ?
-                        (
+                
                             <>
                                 <CardContent style={{ textAlign: 'center' }}>Welcome to CryoBioBank</CardContent>
                                 <SitesMap/>
                             </>
-                        )
-                        : (
-                            <>
-                                <CardContent>Welcome to CryoBioBank
-                                    This portal is only available to administrators.
-                                    <br /><br />
-                                    Permissions: {permissions.toString()}
-                                </CardContent>
-                            </>
-                        )}
+                
             </Card>
         </>
     );

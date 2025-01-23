@@ -36,26 +36,29 @@ export const keycloakAuthProvider = (
             redirectUri: options.logoutRedirectUri ?? window.location.origin,
         });
     },
-    async checkError() {
+    async checkError(error) {
+        if (error && (error.status === 401 || error.status === 403)) {
+            // Return a rejected promise so React-Admin knows it's an auth issue
+            return Promise.reject();
+        }
         return Promise.resolve();
     },
     async checkAuth() {
         try {
             if (!client.authenticated || !client.token) {
-                throw new Error('Authentication failed.');
+                // Allow public user
+                return Promise.resolve();
             }
 
             // Check if the token is expired or needs refreshing
             const isTokenValid = await this.isTokenValid(client.token);
 
             if (isTokenValid) {
-                console.log("Token is valid");
                 // Token is valid, proceed with the request
                 return Promise.resolve();
             } else {
                 // Token is expired or needs refreshing, initiate token refresh
                 await this.refreshToken();
-                console.log("Token refreshed")
                 // Token refreshed successfully, proceed with the request
                 return Promise.resolve();
             }
@@ -85,14 +88,9 @@ export const keycloakAuthProvider = (
     async refreshToken() {
         // Update the Keycloak client with the new token
         try {
-            const refreshed = await client.updateToken();
-            if (refreshed) {
-                console.log('Token was successfully refreshed');
-            } else {
-                console.log('Token is still valid');
-            }
+            await client.updateToken();
         } catch (error) {
-            console.log('Failed to refresh the token, or the session has expired', error);
+            console.error('Session has expired', error);
         }
     },
     async getPermissions() {

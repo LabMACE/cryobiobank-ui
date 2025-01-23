@@ -51,6 +51,7 @@ const ListComponent = () => {
         <List disableSyncWithLocation
             perPage={25}
             sort={{ field: 'name', order: 'ASC' }}
+            disableAuthentication
         >
             <Datagrid rowClick="show"
                 expand={<PostPanel />} >

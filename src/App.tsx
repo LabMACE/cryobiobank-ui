@@ -15,7 +15,10 @@ import Dashboard from './Dashboard';
 import MyLayout from './Layout';
 
 const initOptions: KeycloakInitOptions = {
-    onLoad: 'login-required',
+    // onLoad: 'login-required',
+    // checkLoginIframe: false,
+    onLoad: 'check-sso',
+    // or omit onLoad entirely for a pure "do nothing" init
     checkLoginIframe: false,
 };
 
@@ -81,23 +84,15 @@ const App = () => {
             dashboard={Dashboard}
             layout={(props) => <MyLayout {...props} deployment={deployment} />}
         >
-            {permissions => (
-                <>
-                    {permissions ? (
-                        <>
-                            {permissions === 'admin' ? (
-                                <>
-                                    <Resource name="sites" {...sites} />
-                                    <Resource name="site_replicates" {...site_replicates} />
-                                    <Resource name="isolates" {...isolates} />
-                                    <Resource name="samples" {...samples} />
-                                    <Resource name="dna" {...dna} />
-                                </>
-                            ) : null}
-                        </>
-                    ) : null}
-                </>
-            )}
+            {/* 
+                The resource mapping by permissions is done in the Menu 
+                component in the <MyLayout/> definition 
+            */}
+            <Resource name="sites" {...sites} />
+            <Resource name="site_replicates" {...site_replicates} />
+            <Resource name="isolates" {...isolates} />
+            <Resource name="samples" {...samples} />
+            <Resource name="dna" {...dna} />
         </Admin>
     );
 };
