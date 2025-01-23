@@ -171,19 +171,20 @@ const dataProvider = (
         }).then(({ json }) => ({ data: json })),
 
     // simple-rest doesn't handle filters on DELETE route, so we fallback to calling DELETE n times instead
-    deleteMany: (resource, params) =>
-        Promise.all(
-            params.ids.map(id =>
-                httpClient(`${apiUrl}/${resource}/${id}`, {
-                    method: 'DELETE',
-                    headers: new Headers({
-                        'Content-Type': 'text/plain',
-                    }),
-                })
-            )
-        ).then(responses => ({
-            data: responses.map(({ json }) => json.id),
-        })),
+    deleteMany: (resource, params) => {
+        // Send a list of ids to delete
+        // The API should return an array of the deleted ids
+        // So that the dataProvider can update the redux store
+        // and the view
+        if (params.ids.length === 0) {
+            return Promise.resolve({ data: [] });
+        } else {
+            return httpClient(`${apiUrl}/${resource}/batch`, {
+                method: 'DELETE',
+                body: JSON.stringify(params.ids),
+            }).then(({ json }) => ({ data: json }));
+        }
+    },
 
 
     getStatus: () => {

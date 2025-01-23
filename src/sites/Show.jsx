@@ -8,11 +8,55 @@ import {
     ArrayField,
     Datagrid,
     FunctionField,
+    useRecordContext,
+    Button,
+    Link,
+    usePermissions,
+    EditButton,
+    DeleteButton,
+    TopToolbar,
+    Loading,
+    useRedirect,
 } from 'react-admin';
 import { Grid } from '@mui/material';
 import { SitesMap } from '../maps/Sites';
-import { MyActionsByPermission } from '../custom/Toolbars';
+import AddIcon from '@mui/icons-material/Add';
 
+const AddSiteReplicateButton = () => {
+    const record = useRecordContext();        // the current Site record
+    const redirect = useRedirect();
+
+    if (!record) return null;
+
+    const handleClick = () => {
+        redirect('create', 'site_replicates', null, {}, { record: { site_id: record.id } });
+    };
+
+    return (
+        <Button
+            onClick={handleClick}
+            label="Add Site Replicate"
+            startIcon={<AddIcon />}
+        />
+    );
+};
+
+export const MyActionsByPermission = () => {
+    const { permissions, isLoading } = usePermissions();
+    
+    if (isLoading) return <Loading />;
+    
+    return (
+    <TopToolbar>
+        {permissions && permissions == 'admin' ? (
+        <>
+            <AddSiteReplicateButton />
+            <EditButton />
+            <DeleteButton mutationMode='pessimistic' />
+        </>
+        ) : null}
+    </TopToolbar>
+)};
 
 const ShowComponent = () => {
     const createPath = useCreatePath();

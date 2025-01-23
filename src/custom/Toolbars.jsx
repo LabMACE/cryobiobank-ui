@@ -5,6 +5,7 @@ import {
     Loading,
     CreateButton,
     ExportButton,
+    DeleteButton,
 } from 'react-admin';
 
 export const MyActionsByPermission = () => {
@@ -14,7 +15,12 @@ export const MyActionsByPermission = () => {
     
     return (
     <TopToolbar>
-        {permissions && permissions == 'admin' ? <EditButton /> : null}
+        {permissions && permissions == 'admin' ? (
+        <>
+            <EditButton />
+            <DeleteButton mutationMode='pessimistic' />
+        </>
+        ) : null}
     </TopToolbar>
 )};
 

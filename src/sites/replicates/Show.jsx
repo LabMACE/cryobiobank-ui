@@ -6,11 +6,40 @@ import {
     NumberField,
     Labeled,
     ReferenceField,
+    usePermissions,
+    TopToolbar,
+    EditButton,
+    DeleteButton,
+    Loading,
+    useRecordContext,
+    useCreatePath,
 } from 'react-admin';
 import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { MyActionsByPermission } from '../../custom/Toolbars';
 
+export const MyActionsByPermission = () => {
+    const { permissions, isLoading } = usePermissions();
+    const record = useRecordContext();
+    const createPath = useCreatePath();
+    
+    // Save site_id to redirect when deleting
+    const site_id = record ? record.site_id : null;
+    
+    if (isLoading) return <Loading />;
+    
+    return (
+    <TopToolbar>
+        {permissions && permissions == 'admin' ? (
+        <>
+            <EditButton />
+            <DeleteButton 
+            mutationMode='pessimistic' 
+            redirect={createPath({ resource: 'sites', type: 'show', id: site_id })}
+            />
+        </>
+        ) : null}
+    </TopToolbar>
+)};
 
 const SiteReplicateShow = (props) => {
     return (

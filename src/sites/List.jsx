@@ -6,6 +6,7 @@ import {
     useCreatePath,
     ReferenceManyCount,
     usePermissions,
+    BulkDeleteButton,
     Loading,
 } from "react-admin";
 import { Link } from 'react-router-dom';
@@ -60,7 +61,7 @@ const ListComponent = () => {
             <Datagrid 
                 rowClick="show" 
                 expand={<PostPanel />} 
-                bulkActionButtons={permissions === 'admin' ? true : false}
+                bulkActionButtons={permissions === 'admin' ? <BulkDeleteButton mutationMode="pessimistic" /> : false}
             >
                 <TextField source="name" />
                 <TextField source="latitude_4326" label="Latitude (°)" />
