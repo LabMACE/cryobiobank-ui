@@ -66,20 +66,14 @@ const LoginButton = () => {
 };
 
 
-const MyMenu = (props) => {
-    // const { isPending, permissions } = usePermissions();
-    // if (isPending) return null;
+const MyMenu = () => {
     return (
         <Menu>
             <Menu.DashboardItem primaryText="Map" leftIcon={<PublicIcon/>}/>
-            {/* {permissions === 'admin' ? (
-                <> */}
-                    <Menu.ResourceItem name="sites" />
-                    <Menu.ResourceItem name="isolates" />
-                    <Menu.ResourceItem name="samples" />
-                    <Menu.ResourceItem name="dna" />
-                {/* </> */}
-        {/* ) : null} */}
+            <Menu.ResourceItem name="sites" />
+            <Menu.ResourceItem name="isolates" />
+            <Menu.ResourceItem name="samples" />
+            <Menu.ResourceItem name="dna" />
         </Menu>
 )};
 

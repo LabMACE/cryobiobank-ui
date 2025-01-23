@@ -13,40 +13,40 @@ import { Link } from 'react-router-dom';
 import { ListActionsByPermission } from '../custom/Toolbars';
 
 
-const PostPanel = () => {
-    const record = useRecordContext();
-    const createPath = useCreatePath();
-    const objectClick = (id, resource, record) => (
-        createPath({ resource: 'site_replicates', type: 'show', id: record.id })
-    );
-    // Get sorted replicate list
-    const replicates = record.replicates.sort((a, b) => {
-        return new Date(a.sampling_date) - new Date(b.sampling_date);
-    });
+// const PostPanel = () => {
+//     const record = useRecordContext();
+//     const createPath = useCreatePath();
+//     const objectClick = (id, resource, record) => (
+//         createPath({ resource: 'site_replicates', type: 'show', id: record.id })
+//     );
+//     // Get sorted replicate list
+//     const replicates = record.replicates.sort((a, b) => {
+//         return new Date(a.sampling_date) - new Date(b.sampling_date);
+//     });
 
-    return (
-        <table>
-            <thead>
-                <tr>
-                    <th style={{ paddingRight: '20px' }}>Date</th>
-                    <th style={{ paddingRight: '20px' }}>Sample Type</th>
-                </tr>
-            </thead>
-            <tbody>
-                {replicates.map((replicate, index) => (
-                    <tr key={index}>
-                        <td style={{ paddingRight: '20px' }}>
-                            <Link to={objectClick(replicate.id, 'site_replicates', replicate)}>{replicate.sampling_date}</Link>
-                        </td>
-                        <td style={{ paddingRight: '20px' }}>
-                            {replicate.sample_type}
-                        </td>
-                    </tr>
-                ))}
-            </tbody>
-        </table>
-    );
-};
+//     return (
+//         <table>
+//             <thead>
+//                 <tr>
+//                     <th style={{ paddingRight: '20px' }}>Date</th>
+//                     <th style={{ paddingRight: '20px' }}>Sample Type</th>
+//                 </tr>
+//             </thead>
+//             <tbody>
+//                 {replicates.map((replicate, index) => (
+//                     <tr key={index}>
+//                         <td style={{ paddingRight: '20px' }}>
+//                             <Link to={objectClick(replicate.id, 'site_replicates', replicate)}>{replicate.sampling_date}</Link>
+//                         </td>
+//                         <td style={{ paddingRight: '20px' }}>
+//                             {replicate.sample_type}
+//                         </td>
+//                     </tr>
+//                 ))}
+//             </tbody>
+//         </table>
+//     );
+// };
 
 const ListComponent = () => {
     const { permissions, isLoading } = usePermissions();
@@ -60,7 +60,7 @@ const ListComponent = () => {
         >
             <Datagrid 
                 rowClick="show" 
-                expand={<PostPanel />} 
+                // expand={<PostPanel />} 
                 bulkActionButtons={permissions === 'admin' ? <BulkDeleteButton mutationMode="pessimistic" /> : false}
             >
                 <TextField source="name" />

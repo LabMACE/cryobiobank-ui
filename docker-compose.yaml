@@ -22,8 +22,6 @@ services:
       - DB_NAME=postgres
       - DB_PREFIX=postgresql
       - KEYCLOAK_UI_ID=${KEYCLOAK_UI_ID}
-      - KEYCLOAK_API_ID=${KEYCLOAK_API_ID}
-      - KEYCLOAK_API_SECRET=${KEYCLOAK_API_SECRET}
       - KEYCLOAK_REALM=${KEYCLOAK_REALM}
       - KEYCLOAK_URL=${KEYCLOAK_URL}
       - APP_NAME=${APP_NAME}
@@ -50,10 +48,12 @@ services:
   cryobiobank:
     build:
       context: .
+      # dockerfile: Dockerfile
       dockerfile: Dockerfile.dev
     labels:
       - "traefik.http.routers.cryobiobank.rule=Host(`cryobiobank`)"
       - "traefik.http.services.cryobiobank.loadbalancer.server.port=5173"
+      # - "traefik.http.services.cryobiobank.loadbalancer.server.port=80"
     volumes:
       - ../cryobiobank-ui:/app
 #      - ../cryobiobank-ui/node_modules:/app/node_modules
@@ -97,8 +97,6 @@ services:
   #     - KEYCLOAK_URL=http://fake-url-for-tests
   #     - KEYCLOAK_REALM=test
   #     - KEYCLOAK_UI_ID=test
-  #     - KEYCLOAK_API_ID=test
-  #     - KEYCLOAK_API_SECRET=test
   #     - APP_NAME=cryobiobank-api-tests
   #     - DEPLOYMENT=test
   #   volumes:
