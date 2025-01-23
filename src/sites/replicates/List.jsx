@@ -3,19 +3,23 @@ import {
     Datagrid,
     TextField,
     DateField,
+    usePermissions,
+    Loading,
 } from "react-admin";
 import { ListActionsByPermission } from '../../custom/Toolbars';
 
 
 const ListComponent = () => {
-
+    const { permissions, isLoading } = usePermissions();
+    if (isLoading) return <Loading />;
+    
     return (
         <List disableSyncWithLocation
             perPage={25}
             sort={{ field: 'created_on', order: 'DESC' }}
             actions={<ListActionsByPermission />}
         >
-            <Datagrid rowClick="show" >
+            <Datagrid rowClick="show" bulkActionButtons={permissions === 'admin' ? true : false}>
                 <TextField source="name" />
                 <TextField source="comment" />
                 <DateField

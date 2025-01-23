@@ -3,18 +3,22 @@ import {
     Datagrid,
     TextField,
     ReferenceManyCount,
+    usePermissions,
+    Loading,
 } from "react-admin";
 import { ListActionsByPermission } from '../custom/Toolbars';
 
 const ListComponent = () => {
-
+    const { permissions, isLoading } = usePermissions();
+    if (isLoading) return <Loading />;
+    
     return (
         <List disableSyncWithLocation
             perPage={25}
             sort={{ field: 'created_on', order: 'DESC' }}
             actions={<ListActionsByPermission />}
         >
-            <Datagrid rowClick="show" >
+            <Datagrid rowClick="show" bulkActionButtons={permissions === 'admin' ? true : false}>
                 <TextField source="name" />
                 <TextField source="extraction_method" />
                 <ReferenceManyCount reference="isolates" target="dna_id" label="Isolates" />

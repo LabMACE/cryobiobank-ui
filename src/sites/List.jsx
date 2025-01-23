@@ -5,6 +5,8 @@ import {
     useRecordContext,
     useCreatePath,
     ReferenceManyCount,
+    usePermissions,
+    Loading,
 } from "react-admin";
 import { Link } from 'react-router-dom';
 import { ListActionsByPermission } from '../custom/Toolbars';
@@ -46,15 +48,20 @@ const PostPanel = () => {
 };
 
 const ListComponent = () => {
-
+    const { permissions, isLoading } = usePermissions();
+    if (isLoading) return <Loading />;
+    
     return (
         <List disableSyncWithLocation
             perPage={25}
             sort={{ field: 'name', order: 'ASC' }}
             actions={<ListActionsByPermission />}
         >
-            <Datagrid rowClick="show"
-                expand={<PostPanel />} >
+            <Datagrid 
+                rowClick="show" 
+                expand={<PostPanel />} 
+                bulkActionButtons={permissions === 'admin' ? true : false}
+            >
                 <TextField source="name" />
                 <TextField source="latitude_4326" label="Latitude (°)" />
                 <TextField source="longitude_4326" label="Longitude (°)" />
