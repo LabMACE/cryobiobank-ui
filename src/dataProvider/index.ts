@@ -33,6 +33,27 @@ import { useAuthProvider, AuthProvider } from 'react-admin';
  *
  * export default App;
  */
+
+
+const convertFileToBase64 = file =>
+    new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file.rawFile);
+    });
+
+const handleBinaryUpload = async (resource, params) => {
+    const { data } = params;
+
+    if ((resource === 'isolates')
+        && data.photo && data.photo.rawFile instanceof File) {
+        data.photo = await convertFileToBase64(data.photo);
+    }
+
+    return params;
+};
+
 const dataProvider = (
     apiUrl: string,
     httpClient = fetchUtils.fetchJson,
@@ -138,11 +159,15 @@ const dataProvider = (
         });
     },
 
-    update: (resource, params) =>
-        httpClient(`${apiUrl}/${resource}/${params.id}`, {
+    update: async (resource, params) => {
+        params = await handleBinaryUpload(resource, params);
+        console.log("Resource", resource);
+        console.log("update", params);
+        return httpClient(`${apiUrl}/${resource}/${params.id}`, {
             method: 'PUT',
             body: JSON.stringify(params.data),
-        }).then(({ json }) => ({ data: json })),
+        }).then(({ json }) => ({ data: json }));
+    },
 
     // simple-rest doesn't handle provide an updateMany route, so we fallback to calling update n times instead
     updateMany: (resource, params) =>
