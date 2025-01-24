@@ -39,9 +39,17 @@ const ShowComponent = () => {
                     <Grid item xs={6}>
                         <Grid container spacing={0}>
                             <Grid item xs={6}>
-                                <Labeled label="Site Replicate ID">
+                                <Labeled label="Site Replicate">
                                     <ReferenceField source="site_replicate_id" reference="site_replicates" />
                                 </Labeled>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Labeled label="DNA">
+                                    <ReferenceField source="dna_id" reference="dna" emptyText="N/A"/>
+                                </Labeled>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <hr />
                             </Grid>
                             <Grid item xs={6}>
                                 <Labeled label="Name">
