@@ -7,7 +7,7 @@ import {
     Loading,
 } from "react-admin";
 import { ListActionsByPermission } from '../../custom/Toolbars';
-
+import CustomEmptyPage from '../Empty';
 
 const ListComponent = () => {
     const { permissions, isLoading } = usePermissions();
@@ -18,6 +18,8 @@ const ListComponent = () => {
             perPage={25}
             sort={{ field: 'created_on', order: 'DESC' }}
             actions={<ListActionsByPermission />}
+            empty={<CustomEmptyPage/>}
+
         >
             <Datagrid rowClick="show" bulkActionButtons={permissions === 'admin' ? true : false}>
                 <TextField source="name" />
