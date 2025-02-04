@@ -102,10 +102,11 @@ export const keycloakAuthProvider = (
         );
     },
     async getIdentity() {
+
         if (client.token) {
             const decoded = jwt_decode<KeycloakTokenParsed>(client.token);
             const id = decoded.sub || '';
-            const fullName = decoded.preferred_username;
+            const fullName = decoded.name;
             return Promise.resolve({ id, fullName });
         }
 
