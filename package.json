@@ -16,6 +16,7 @@
     "leaflet-tilelayer-swiss": "^2.3.0",
     "leaflet.awesome-markers": "^2.0.5",
     "proj4": "^2.15.0",
+    "proj4-fully-loaded": "^0.2.0",
     "ra-keycloak": "^1.0.1",
     "react": "^19.0.0",
     "react-admin": "^5.5.0",

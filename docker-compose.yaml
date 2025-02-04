@@ -69,39 +69,38 @@ services:
     volumes:
       - cryobiobank-db-data:/var/lib/postgresql/data
 
+  cryobiobank-test-db:
+    image: postgis/postgis:17-3.5
+    container_name: cryobiobank-test-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=psql
+      - POSTGRES_DB=postgres
+    ports:
+      - "5444:5432"
 
-  # cryobiobank-test-db:
-  #   image: postgis/postgis:17-3.5
-  #   container_name: cryobiobank-test-db
-  #   environment:
-  #     - POSTGRES_USER=postgres
-  #     - POSTGRES_PASSWORD=psql
-  #     - POSTGRES_DB=postgres
-  #   ports:
-  #     - "5444:5432"
+  cryobiobank-test-api:
+    build:
+      context: ../cryobiobank-api
+      dockerfile: Dockerfile.test
+    container_name: cryobiobank-test-api
+    depends_on:
+      - cryobiobank-test-db
+    environment:
+      - DB_HOST=cryobiobank-test-db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=psql
+      - DB_NAME=postgres
+      - DB_PREFIX=postgresql
+      - KEYCLOAK_URL=http://fake-url-for-tests
+      - KEYCLOAK_REALM=test
+      - KEYCLOAK_UI_ID=test
+      - APP_NAME=cryobiobank-api-tests
+      - DEPLOYMENT=test
+    volumes:
+      - ../cryobiobank-api:/app
 
-  # cryobiobank-test-api:
-  #   build:
-  #     context: ../cryobiobank-api
-  #     dockerfile: Dockerfile.test
-  #   container_name: cryobiobank-test-api
-  #   depends_on:
-  #     - cryobiobank-test-db
-  #   environment:
-  #     - DB_HOST=cryobiobank-test-db
-  #     - DB_PORT=5432
-  #     - DB_USER=postgres
-  #     - DB_PASSWORD=psql
-  #     - DB_NAME=postgres
-  #     - DB_PREFIX=postgresql
-  #     - KEYCLOAK_URL=http://fake-url-for-tests
-  #     - KEYCLOAK_REALM=test
-  #     - KEYCLOAK_UI_ID=test
-  #     - APP_NAME=cryobiobank-api-tests
-  #     - DEPLOYMENT=test
-  #   volumes:
-  #     - ../cryobiobank-api:/app
-      
 volumes:
   cryobiobank-db-data:
   cryobiobank-api-build-data:
