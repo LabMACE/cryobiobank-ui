@@ -81,7 +81,6 @@ export const keycloakAuthProvider = (
 
             return (currentTime < expirationTime);
         } catch (error) {
-            console.error('Error decoding token:', error);
             return false; // Consider the token invalid in case of decoding errors
         }
     },
@@ -109,7 +108,10 @@ export const keycloakAuthProvider = (
             const fullName = decoded.preferred_username;
             return Promise.resolve({ id, fullName });
         }
-        return Promise.reject('Failed to get identity.');
+
+        // Allow public user, so return a default public user if no token
+        return Promise.resolve({ id: 'public', fullName: 'Public User' });
+
     },
     getToken() {
         return client.token;
