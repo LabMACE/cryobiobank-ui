@@ -1,18 +1,41 @@
-FROM node:22.2.0-alpine AS builder
+FROM node:23.7.0-alpine AS builder
 
-# Split these two as to not invalidate the cache
+# Set working directory
 WORKDIR /app
+
+# Copy package files and install dependencies
 COPY package.json yarn.lock ./
 RUN yarn install
 
-# Copy the rest of the files and build
+# Copy all files and build
 COPY . .
 RUN yarn build
 
-# Copy the build output to the Nginx server and serve
-FROM nginx:1.12-alpine
+# Final stage: Use custom Nginx configuration
+FROM nginx:1.27.4-alpine
 
+# Remove default config
+RUN rm /etc/nginx/conf.d/default.conf
+
+# Write custom Nginx configuration using a heredoc
+RUN <<EOF > /etc/nginx/conf.d/default.conf
+    server {
+        listen       80;
+        server_name  localhost;
+        root   /usr/share/nginx/html;
+        index  index.html;
+
+        # For any route, try to serve a file; if not found, serve index.html
+        location / {
+            try_files \$uri \$uri/ /index.html;
+        }
+    }
+EOF
+
+# Copy build output to Nginx public folder
 COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Expose port 80
 EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]
