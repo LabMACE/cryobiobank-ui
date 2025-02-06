@@ -1,10 +1,9 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import AdminApp from './admin/App'
-import './index.css'
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import AdminApp from './admin/App';
+import FrontendApp from './frontend/App';
+import './index.css';
 import { RouterProvider, Routes, Route, createBrowserRouter } from 'react-router-dom';
-// import { StoreFront } from './StoreFront';
-// import { StoreAdmin } from './StoreAdmin';
 
 export const App = () => {
     const router = createBrowserRouter(
@@ -13,7 +12,7 @@ export const App = () => {
                 path: "*",
                 element: (
                     <Routes>
-                        {/* <Route path="/" element={<StoreFront />} /> */}
+                        <Route path="/" element={<FrontendApp />} />
                         <Route path="/admin/*" element={<AdminApp />} />
                     </Routes>
                 ),
@@ -27,6 +26,5 @@ export const App = () => {
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <App />
-    {/* <AdminApp /> */}
   </StrictMode>
 )

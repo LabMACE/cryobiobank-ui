@@ -7,7 +7,7 @@ import {
 import { Card } from '@mui/material';
 import { Title } from 'react-admin';
 import CardContent from '@mui/material/CardContent';
-import { SitesMap } from './maps/Sites';
+import { SitesMap } from '../maps/Sites';
 
 const Dashboard = ({ }) => {
     const { isPending: isPendingPermissions, permissions } = usePermissions();

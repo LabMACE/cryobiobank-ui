@@ -5,7 +5,7 @@ import {
     SaveButton,
 } from 'react-admin';
 import CustomEdit from '../custom/Edit';
-import CoordinateInput from '../maps/CoordinateEntry';
+import CoordinateInput from '../../maps/CoordinateEntry';
 
 const MyToolbar = () => (
     <Toolbar>

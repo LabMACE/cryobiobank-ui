@@ -6,7 +6,7 @@ import {
     TextInput,
     required,
 } from 'react-admin';
-import CoordinateInput from '../maps/CoordinateEntry';
+import CoordinateInput from '../../maps/CoordinateEntry';
 
 const CreateComponent = () => {
 

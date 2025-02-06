@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev/svgjs" width="252.28" height="210"><svg id="SvgjsSvg1126" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svg="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" version="1.1" viewBox="0 0 252.28 210">
+  <!-- Generator: Adobe Illustrator 29.2.1, SVG Export Plug-In . SVG Version: 2.1.0 Build 116)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: #999;
+        fill-opacity: 0;
+      }
+
+      .st0, .st1 {
+        stroke-width: 2px;
+      }
+
+      .st0, .st1, .st2, .st3, .st4, .st5, .st6, .st7, .st8 {
+        stroke: #000;
+      }
+
+      .st0, .st1, .st3, .st9, .st5 {
+        stroke-linecap: round;
+      }
+
+      .st0, .st1, .st9, .st5 {
+        stroke-linejoin: round;
+      }
+
+      .st10, .st11 {
+        fill-rule: evenodd;
+      }
+
+      .st10, .st12, .st9, .st5 {
+        fill: #fff;
+      }
+
+      .st13 {
+        fill: lime;
+      }
+
+      .st1, .st3, .st7, .st8 {
+        fill: none;
+      }
+
+      .st2 {
+        fill: #06f;
+      }
+
+      .st2, .st3, .st4, .st6, .st8 {
+        stroke-width: 2.79px;
+      }
+
+      .st9 {
+        stroke: url(#linear-gradient);
+        stroke-width: 1.23px;
+      }
+
+      .st4 {
+        fill: #0cf;
+      }
+
+      .st4, .st7 {
+        stroke-miterlimit: 11.34;
+      }
+
+      .st5 {
+        stroke-width: 1.29px;
+      }
+
+      .st14 {
+        fill: aqua;
+      }
+
+      .st6 {
+        fill: #2ca02c;
+      }
+
+      .st7 {
+        stroke-width: 7.06px;
+      }
+
+      .st15 {
+        fill: #80b3ff;
+      }
+    </style>
+    <linearGradient id="SvgjsLinearGradient1125" x1="-1324.17" y1="199.86" x2="-1320.5" y2="199.86" gradientTransform="translate(12118.38 -1682.53) scale(9.03 8.83)" gradientUnits="userSpaceOnUse">
+      <stop offset="1" stop-color="#000"></stop>
+      <stop offset="1" stop-color="#000" stop-opacity="0"></stop>
+    </linearGradient>
+  </defs>
+  <sodipodi:namedview id="SvgjsSodipodi:namedview1124" bordercolor="#eeeeee" borderopacity="1" inkscape:current-layer="svg5" inkscape:cx="-51.75302" inkscape:cy="26.523423" inkscape:deskcolor="#505050" inkscape:document-units="mm" inkscape:pagecheckerboard="0" inkscape:pageopacity="0" inkscape:showpageshadow="0" inkscape:window-height="1144" inkscape:window-maximized="0" inkscape:window-width="1898" inkscape:window-x="0" inkscape:window-y="0" inkscape:zoom="0.77290176" pagecolor="#505050" showgrid="true">
+    <inkscape:grid id="SvgjsInkscape:grid1123" color="#0099e5" dotted="false" empcolor="#0099e5" empopacity="0.30196078" empspacing="5" gridanglex="30" gridanglez="30" opacity="0.14901961" originx="-109.64076" originy="-95.208522" spacingx="1" spacingy="0.99999997" units="mm" visible="true"></inkscape:grid>
+  </sodipodi:namedview>
+  <path id="SvgjsPath1122" class="st11" d="M178.44,55.53c-2-3.94-6.22-5.15-9.44-2.7-.9.68-1.65,1.61-2.2,2.7l-9.88,21.77,3.51,8.62c4.09-8.48,9.53-16.34,12.73-25.21l70.66,138.75h8.04l-46.45-91.09-26.95-52.84h-.02Z"></path>
+  <path id="SvgjsPath1121" class="st11" d="M117.15.83c-2.26,0-4.38,1.22-5.71,3.27L.58,208.87h19.6l47.41-90.9,28.45-21.32,21.6,23.39,21.6-21.79,27.75,19.72,50.4,91.04,17.49.18L122.87,4.1c-1.33-2.06-3.46-3.27-5.72-3.27ZM137.42,77.44l-20.27,20.85-20.23-20.84-15.1,12.34,69.82-1.05-14.22-11.3h0Z" sodipodi:nodetypes="ccccccccccccccccccc"></path>
+  <ellipse id="SvgjsEllipse1120" class="st4" cx="106.96" cy="135.86" rx="9.48" ry="9.05"></ellipse>
+  <g id="SvgjsG1119">
+    <path id="SvgjsPath1118" class="st3" d="M139.8,139.4l4.12-1.74"></path>
+    <path id="SvgjsPath1117" class="st3" d="M151.68,137.36l6.01,1.73"></path>
+    <path id="SvgjsPath1116" class="st3" d="M131.12,164.05l-.72-4.7"></path>
+    <path id="SvgjsPath1115" class="st8" d="M141.97,138.92l3.05,8.31"></path>
+    <path id="SvgjsPath1114" class="st8" d="M165.49,146.51l-7.26,4.35"></path>
+    <path id="SvgjsPath1113" class="st8" d="M154.05,138.14l-1.61,8.93"></path>
+    <path id="SvgjsPath1112" class="st8" d="M130.85,161.98l8.31-2.05"></path>
+    <path id="SvgjsPath1111" class="st8" d="M131.25,148.27l8.96,3.79"></path>
+    <path id="SvgjsPath1110" class="st8" d="M159.82,157.43l7.58.13"></path>
+    <path id="SvgjsPath1109" class="st8" d="M151.21,167.7l1.7,8.74"></path>
+    <path id="SvgjsPath1108" class="st8" d="M157.13,162.95l6.28,5.85"></path>
+    <ellipse id="SvgjsEllipse1107" class="st6" cx="149.39" cy="157.05" rx="9.89" ry="10.05"></ellipse>
+    <path id="SvgjsPath1106" class="st3" d="M150.85,176.28l4.29-1.2"></path>
+    <path id="SvgjsPath1105" class="st3" d="M162.32,170.5l2.74-3.74"></path>
+    <path id="SvgjsPath1104" class="st3" d="M168.03,159.8l-.08-4.76"></path>
+    <path id="SvgjsPath1103" class="st3" d="M167.33,148.51l-2.78-4.76"></path>
+    <path id="SvgjsPath1102" class="st3" d="M130.48,150.2l1.49-4.48"></path>
+    <path id="SvgjsPath1101" class="st3" d="M142.04,174.23l-4.73-3.77"></path>
+    <path id="SvgjsPath1100" class="st8" d="M143.93,165.6l-4.32,6.99"></path>
+  </g>
+  <g id="SvgjsG1099">
+    <path id="SvgjsPath1098" class="st2" d="M70.51,157.79c3.62-5.09,12.96-3.65,20.86,3.2s11.37,16.53,7.75,21.62-12.96,3.65-20.86-3.2-11.37-16.53-7.75-21.62Z"></path>
+    <path id="SvgjsPath1097" class="st1" d="M100.77,179.58c1.16.13,2.11.75,3.82,2.25.96.85,1.28,2.21,1.16,1.8-.3-1.12.61,1.89.9,3.02.41,1.82,2.08,2.99,4.17,2.76,1.64-.18,2.07-1.67,3.6-1.81,2.19-.14,2.87,1.92,3.59,3.54"></path>
+    <path id="SvgjsPath1096" class="st0" d="M108.09,207.11"></path>
+    <path id="SvgjsPath1095" class="st0" d="M99.28,183.73c1.11.5,2.31.98,3.14,1.9,1.31,1.39,1.29,3.7,1.36,5.61.04,1.44-.18,2.82-.8,4.14-3.81,6.46.86,9.45,6.14,12.46"></path>
+    <path id="SvgjsPath1094" class="st0" d="M99.94,181.56c-3.27,4.03-3.1,9.91,3.18,7.73,6.88-2.39,13.41-9.4,20.49-1.82"></path>
+  </g>
+  <path id="SvgjsPath1093" class="st5" d="M105.81,92.33l-11.17-11.93-12.35,10.14c-3.45,2.81-.76-.7-.5-1.18,8.46-15.42,8.1-15.54,18.04-33.41,11.15-20.05,11.38-20.02,17.34-32.09,13.03,23.28,33.48,61.52,35.47,64.7-.34.34,1.39,2.15-1.59-.27l-9.84-7.97-11.16,12.05c-6.14,6.63-11.59,12.01-12.11,11.97-.52-.04-5.98-5.46-12.12-12.02h-.01Z" sodipodi:nodetypes="sccscccscscss"></path>
+  <path id="SvgjsPath1092" class="st9" d="M177.76,104.37c1.54,3.24-13.06-22.25-15.04-25.89l.28.28,5.42-10.7,4.3-8.17,18.01,33.71c7.23,13.53,2.45.89.99,1.81-1.03.65-6.57,3.71-9.41,5.1l-5.17,2.53.63,1.33h-.01Z" sodipodi:nodetypes="sccccscscs"></path>
+  <polygon id="SvgjsPolygon1091" points="155.22 106.24 133.34 88.75 140.95 80.37 162.82 97.87 155.22 106.24"></polygon>
+  <polygon id="SvgjsPolygon1090" points="73.98 95.64 95.04 80.86 103.44 89.55 82.38 104.33 73.98 95.64"></polygon>
+  <path id="SvgjsPath1089" class="st7" d="M175.7,103.09l16.8-9.59"></path>
+  <ellipse id="SvgjsEllipse1088" class="st14" cx="105.51" cy="132.96" rx="2.53" ry="2.4"></ellipse>
+  <ellipse id="SvgjsEllipse1087" class="st12" cx="107.87" cy="131.99" rx="1.06" ry=".98"></ellipse>
+  <ellipse id="SvgjsEllipse1086" class="st15" cx="83.99" cy="163.6" rx="3.33" ry="8.08" transform="translate(-99.08 146.12) rotate(-57.37)"></ellipse>
+  <path id="SvgjsPath1085" class="st10" d="M82.62,160.65c1.19.77,1.87,1.72,1.5,2.13s-1.63.1-2.82-.67-1.87-1.72-1.5-2.13,1.63-.1,2.82.67Z"></path>
+  <circle id="SvgjsCircle1084" class="st13" cx="145.99" cy="153.1" r="1.3"></circle>
+  <circle id="SvgjsCircle1083" class="st12" cx="146.19" cy="152.61" r=".57"></circle>
+  <circle id="SvgjsCircle1082" class="st13" cx="145.27" cy="156.22" r=".58"></circle>
+  <circle id="SvgjsCircle1081" class="st13" cx="148.41" cy="153.17" r=".58"></circle>
+</svg><style>@media (prefers-color-scheme: light) { :root { filter: none; } }
+@media (prefers-color-scheme: dark) { :root { filter: contrast(0.3846153846153846) brightness(4.5); } }
+</style></svg>

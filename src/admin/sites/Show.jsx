@@ -19,7 +19,7 @@ import {
     useRedirect,
 } from 'react-admin';
 import { Grid } from '@mui/material';
-import { SitesMap } from '../maps/Sites';
+import { SitesMap } from '../../maps/Sites';
 import AddIcon from '@mui/icons-material/Add';
 
 const AddSiteReplicateButton = () => {
