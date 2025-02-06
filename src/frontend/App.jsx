@@ -16,10 +16,7 @@ const FrontendApp = () => {
     // Close dropdown if clicked outside
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (
-                dropdownRef.current &&
-                !dropdownRef.current.contains(event.target)
-            ) {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setDataDropdownOpen(false);
             }
         };
@@ -45,9 +42,21 @@ const FrontendApp = () => {
                             <a href="#data" onClick={toggleDataDropdown}>Data</a>
                             {dataDropdownOpen && (
                                 <ul className="dropdown-menu">
-                                    <li><a href="#isolates" onClick={() => setDataDropdownOpen(false)}>Isolates</a></li>
-                                    <li><a href="#samples" onClick={() => setDataDropdownOpen(false)}>Samples</a></li>
-                                    <li><a href="#sites" onClick={() => setDataDropdownOpen(false)}>Sites</a></li>
+                                    <li>
+                                        <a href="#isolates" onClick={() => setDataDropdownOpen(false)}>
+                                            Isolates
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#samples" onClick={() => setDataDropdownOpen(false)}>
+                                            Samples
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#sites" onClick={() => setDataDropdownOpen(false)}>
+                                            Sites
+                                        </a>
+                                    </li>
                                 </ul>
                             )}
                         </li>
@@ -88,12 +97,19 @@ const FrontendApp = () => {
             </section>
 
             <footer className="footer">
-                <p>
-                  &copy; {new Date().getFullYear()} CryoBioBank.{' '}
-                  <a href="https://www.epfl.ch/labs/mace/" target="_blank" rel="noopener noreferrer">
-                    MACE EPFL
-                  </a>
+                <p className="footer-attribution">
+                    &copy; {new Date().getFullYear()} CryoBioBank.{' '}
+                    <a
+                        href="https://www.epfl.ch/labs/mace/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        MACE EPFL
+                    </a>
                 </p>
+                <a href="/admin" className="footer-lemon" title="Go to Admin">
+                    <i className="fa-regular fa-lemon"></i>
+                </a>
             </footer>
         </div>
     );

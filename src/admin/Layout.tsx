@@ -10,45 +10,60 @@ import {
 } from 'react-admin';
 import { CssBaseline, Typography } from '@mui/material';
 import PublicIcon from '@mui/icons-material/Public';
+import { useNavigate } from 'react-router-dom';
+
+const BackToMainButton = () => {
+    const navigate = useNavigate();
+    return (
+        <Button 
+            variant="contained" 
+            color="secondary" 
+            onClick={() => navigate('/')}
+            style={{ marginRight: '1rem' }}
+        >
+            &larr; back to main page
+        </Button>
+    );
+};
 
 const MyAppBar = (props) => {
     const { isPending, permissions } = usePermissions();
     const appBarText = () => {
         if (props.deployment) {
-            if (props.deployment == 'local') {
-                return "⭐Local Development⭐"
+            if (props.deployment === 'local') {
+                return "⭐Local Development⭐";
             }
-            if (props.deployment == 'dev') {
-                return "⭐Development⭐"
+            if (props.deployment === 'dev') {
+                return "⭐Development⭐";
             }
-            if (props.deployment == 'stage') {
-                return "⭐Staging⭐"
+            if (props.deployment === 'stage') {
+                return "⭐Staging⭐";
             }
         }
-    }
+    };
 
     if (isPending) return null;
 
     return (
-        <AppBar color="primary" >
+        <AppBar color="primary">
             <TitlePortal />
             <Typography
                 variant="h6"
-                color='#FF69B4'
+                color="#FF69B4"
                 id="react-admin-title"
             >
                 {props.deployment ? appBarText() : ""}&nbsp;&nbsp;
-
             </Typography>
-            <LoginButton  />
-
+            <BackToMainButton />
+            <LoginButton />
         </AppBar>
-    )
+    );
 };
+
 const LoginButton = () => {
     const authProvider = useAuthProvider();
     const { isPending, permissions } = usePermissions();
-   
+
     const handleLoginLogout = () => {
         if (permissions) {
             authProvider.logout();
@@ -56,7 +71,7 @@ const LoginButton = () => {
             authProvider.login();
         }
     };
-    
+
     if (isPending) return null;
     return (
         <Button variant="contained" color="secondary" onClick={handleLoginLogout}>
@@ -65,17 +80,17 @@ const LoginButton = () => {
     );
 };
 
-
 const MyMenu = () => {
     return (
         <Menu>
-            <Menu.DashboardItem primaryText="Map" leftIcon={<PublicIcon/>}/>
+            <Menu.DashboardItem primaryText="Map" leftIcon={<PublicIcon />} />
             <Menu.ResourceItem name="sites" />
             <Menu.ResourceItem name="isolates" />
             <Menu.ResourceItem name="samples" />
             <Menu.ResourceItem name="dna" />
         </Menu>
-)};
+    );
+};
 
 const MyLayout = ({ children, deployment }) => {
     return (
@@ -86,10 +101,9 @@ const MyLayout = ({ children, deployment }) => {
                 menu={MyMenu}
             >
                 {children}
-                
             </Layout>
         </>
-    )
+    );
 };
 
 export default MyLayout;

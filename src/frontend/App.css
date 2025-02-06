@@ -61,14 +61,14 @@ html, body, .frontend-app {
 
 .dropdown-menu {
   position: absolute;
-  top: 125%; /* directly below the parent link */
-  left: -60%;   /* aligned with the left edge of the parent */
-  background-color: #FF8C00; /* bright, appealing orange */
+  top: 100%; /* directly below the parent link */
+  left: 0;   /* align with the left edge of the parent */
+  background-color: #FF8C00; /* bright orange */
   border-radius: 4px;
-  padding: 2px 0; /* minimal vertical padding (~2px top and bottom) */
+  padding: 2px 0; /* minimal vertical padding */
   white-space: nowrap;
   z-index: 1100;
-  
+  min-width: 120px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -78,8 +78,8 @@ html, body, .frontend-app {
 
 .dropdown-menu li a {
   display: block;
-  padding: 2px 10px; /* minimal padding so height is just enough for the text */
-  font-size: 14px;   /* smaller text for the dropdown */
+  padding: 2px 10px; /* minimal padding */
+  font-size: 14px;   /* smaller text */
   color: #fff;
   text-decoration: none;
   transition: color 0.3s ease;
@@ -148,20 +148,41 @@ html, body, .frontend-app {
 
 /* Footer styling */
 .footer {
-  text-align: center;
-  padding: 20px;
   background: #333;
   color: #fff;
+  padding: 20px 30px;
+  position: relative;
+  text-align: center;
 }
 
-.footer a {
+.footer-attribution {
+  margin: 0;
+}
+
+/* Style for all footer links except the lemon icon */
+.footer a:not(.footer-lemon) {
   color: #FF6B6B;
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
-.footer a:hover {
+.footer a:not(.footer-lemon):hover {
   color: #FFD1A9;
+}
+
+/* Footer lemon icon using Font Awesome */
+.footer-lemon {
+  position: absolute;
+  right: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 24px;
+  color: #333; /* same as footer background, hidden by default */
+  transition: color 0.3s ease;
+}
+
+.footer-lemon:hover {
+  color: #FFD700; /* yellow on hover */
 }
 
 /* Map Section wrapper with shading */
