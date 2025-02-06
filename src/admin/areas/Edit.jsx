@@ -7,30 +7,16 @@ import {
     required,
 } from 'react-admin';
 import { MyActionsByPermission } from '../custom/Toolbars';
+import { ColorInput } from 'react-admin-color-picker';
+
 
 const SampleEdit = (props) => {
     return (
         <Edit {...props} redirect="show" actions={<MyActionsByPermission />} mutationMode="pessimistic">
             <SimpleForm>
-                <TextInput source="id" disabled label="ID" />
-                <ReferenceInput
-                    source="site_replicate_id"
-                    reference="site_replicates"
-                    label="Site Replicate"
-                >
-                    <SelectInput optionText="name" validate={[required()]} resettable/>
-                </ReferenceInput>
-                <ReferenceInput
-                    source="dna_id"
-                    reference="dna"
-                    label="DNA"
-                >
-                    <SelectInput optionText="name" resettable />
-                </ReferenceInput>
-                <TextInput source="name" label="Name" />
-                <TextInput source="type_of_sample" label="Type of Sample" />
+            <TextInput source="name" label="Name" />
                 <TextInput source="description" label="Description" />
-                <TextInput source="storage_location" label="Storage Location" />
+                <ColorInput source="colour" />
             </SimpleForm>
         </Edit>
     );

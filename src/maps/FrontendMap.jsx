@@ -52,7 +52,7 @@ const ZoomablePolygon = ({ area }) => {
     );
 };
 
-const FrontendMap = ({ height = "400px" }) => {
+const FrontendMap = ({ height = "60vh" }) => {
     const [sites, setSites] = useState([]);
     const [areas, setAreas] = useState([]);
     const [bounds, setBounds] = useState(null);
@@ -81,7 +81,11 @@ const FrontendMap = ({ height = "400px" }) => {
             bounds={bounds || [[45.398181, 5.140242], [47.808455, 10.492294]]}
             scrollWheelZoom={true}
             style={{ height: height, width: '100%' }}
-            minZoom={8}
+            maxBounds={[
+                [45.398181, 5.140242],
+                [47.808455, 10.492294]
+            ]}
+            minZoom={9}
         >
             <MapEvents setZoomLevel={setZoomLevel} />
             <BaseLayers />

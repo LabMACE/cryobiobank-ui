@@ -78,22 +78,6 @@ const FrontendApp = () => {
             <section className="map-section" id="map">
                 <h2>Explore Our Map</h2>
                 <div className="map-wrapper">
-                    {/* <MapContainer
-                        center={[46.2333, 7.3667]}
-                        zoom={8}
-                        scrollWheelZoom={true}
-                        style={{ height: '400px', width: '100%' }}
-                        maxBounds={[
-                            [45.398181, 5.140242],
-                            [47.808455, 10.492294]
-                        ]}
-                        minZoom={8}
-                    >
-                        <BaseLayers />
-                        <Marker position={[46.2333, 7.3667]}>
-                            <Popup>Sion, Switzerland</Popup>
-                        </Marker>
-                    </MapContainer> */}
                     <FrontendMap/>
                 </div>
             </section>
