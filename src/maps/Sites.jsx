@@ -23,7 +23,6 @@ import { useEffect, useState } from 'react';
 import MarkerClusterGroup from 'react-leaflet-cluster'
 
 
-
 export const SitesMap = (
     {
         height = "500px",
@@ -38,7 +37,7 @@ export const SitesMap = (
     const record = useRecordContext();  // If loaded from a record page, this will be the record
     const { data: sites, isPending: isPendingGetListSites } = useGetList('sites', {});
     const { data: areas, isPending: isPendingGetListAreas } = useGetList('areas', {});
-    console.log("Zoom Level", zoomLevel);
+
     const MapEvents = () => {
         const map = useMap();
         useMapEvents({
@@ -50,14 +49,6 @@ export const SitesMap = (
         return null;
     };
       
-
-    useEffect(() => {
-        // Constantly update the zoom level in the console when user zooms in/out
-        
-        console.log("Zoom Level: ", zoomLevel);
-        
-    }
-    , [zoomLevel]);
     useEffect(() => {
         if (sites) {
             if (sites.length > 0) {

@@ -3,6 +3,7 @@ import './App.css';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { BaseLayers } from '../maps/Layers';
+import  FrontendMap  from '../maps/FrontendMap';
 
 const FrontendApp = () => {
     const [dataDropdownOpen, setDataDropdownOpen] = useState(false);
@@ -77,7 +78,7 @@ const FrontendApp = () => {
             <section className="map-section" id="map">
                 <h2>Explore Our Map</h2>
                 <div className="map-wrapper">
-                    <MapContainer
+                    {/* <MapContainer
                         center={[46.2333, 7.3667]}
                         zoom={8}
                         scrollWheelZoom={true}
@@ -92,7 +93,8 @@ const FrontendApp = () => {
                         <Marker position={[46.2333, 7.3667]}>
                             <Popup>Sion, Switzerland</Popup>
                         </Marker>
-                    </MapContainer>
+                    </MapContainer> */}
+                    <FrontendMap/>
                 </div>
             </section>
 
