@@ -3,6 +3,9 @@ import {
     TextInput,
     Toolbar,
     SaveButton,
+    ReferenceInput,
+    SelectInput,
+    required,
 } from 'react-admin';
 import CustomEdit from '../custom/Edit';
 import CoordinateInput from '../../maps/CoordinateEntry';
@@ -18,6 +21,13 @@ const EditComponent = () => {
         <CustomEdit redirect="show" mutationMode="pessimistic">
             <SimpleForm toolbar={<MyToolbar />}>
                 <TextInput source="id" disabled />
+                <ReferenceInput
+                    source="area_id"
+                    reference="areas"
+                    label="Area"
+                >
+                    <SelectInput optionText="name" validate={[required()]} resettable/>
+                </ReferenceInput>
                 <TextInput source="name" />
                 <CoordinateInput />
             </SimpleForm>

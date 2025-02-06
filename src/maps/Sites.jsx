@@ -9,7 +9,10 @@ import {
     MapContainer,
     Tooltip,
     Marker,
+    Polygon,
     Popup,
+    useMapEvents,
+    useMap,
 } from 'react-leaflet';
 import { BaseLayers } from './Layers';
 import 'leaflet/dist/leaflet.css';
@@ -20,6 +23,7 @@ import { useEffect, useState } from 'react';
 import MarkerClusterGroup from 'react-leaflet-cluster'
 
 
+
 export const SitesMap = (
     {
         height = "500px",
@@ -28,10 +32,32 @@ export const SitesMap = (
 ) => {
     const [bounds, setBounds] = useState(null);
     const [markers, setMarkers] = useState(null);
+    const [polygons, setPolygons] = useState(null);
+    const [zoomLevel, setZoomLevel] = useState(13); // Default zoom level
     const createPath = useCreatePath();
     const record = useRecordContext();  // If loaded from a record page, this will be the record
-    const { data: sites, isPending: isPendingGetList } = useGetList('sites', {});
+    const { data: sites, isPending: isPendingGetListSites } = useGetList('sites', {});
+    const { data: areas, isPending: isPendingGetListAreas } = useGetList('areas', {});
+    console.log("Zoom Level", zoomLevel);
+    const MapEvents = () => {
+        const map = useMap();
+        useMapEvents({
+            zoomend() { // zoom event (when zoom animation ended)
+                const zoom = map.getZoom(); // get current Zoom of map
+                setZoomLevel(zoom);
+            },
+        });
+        return null;
+    };
+      
 
+    useEffect(() => {
+        // Constantly update the zoom level in the console when user zooms in/out
+        
+        console.log("Zoom Level: ", zoomLevel);
+        
+    }
+    , [zoomLevel]);
     useEffect(() => {
         if (sites) {
             if (sites.length > 0) {
@@ -73,22 +99,50 @@ export const SitesMap = (
                 setBounds(L.latLngBounds([[46.8, 6.0], [46.8, 10.5]]));
             }
         }
-    }, [sites, createPath, record]);
 
-    if (!bounds || isPendingGetList) {
+        if (areas && areas.length > 0) {
+            console.log("Areas", areas);
+            setPolygons(areas.map(area => (
+                <Polygon
+                    key={area.id}
+                    positions={area.geom.coordinates[0].map(coord => [coord[1], coord[0]])}
+                    color={area.colour}
+                >
+                     <Tooltip permanent interactive={true}>
+                        <Link to={createPath({ type: 'show', resource: 'areas', id: area['id'] })}>
+                            {area.name}
+                        </Link>
+                    </Tooltip>
+                    </Polygon>
+            )));
+        }
+    }, [sites, areas, createPath, record]);
+
+    if (!bounds || isPendingGetListSites || isPendingGetListAreas) {
         return <Loading />;
     }
+
+    const handleZoom = (e) => {
+        setZoomLevel(e.target.getZoom());
+    };
 
     return (
         <MapContainer
             style={{ width: '100%', height: height }}
             bounds={bounds}
             scrollWheelZoom={true}
+            onzoomend={handleZoom}
         >
+            <MapEvents /> 
             <BaseLayers />
-            <MarkerClusterGroup maxClusterRadius={25} chunkedLoading >
-                {markers}
-            </MarkerClusterGroup>
+            {zoomLevel >= 15 && (
+                <MarkerClusterGroup maxClusterRadius={25} chunkedLoading >
+                    {markers}
+                </MarkerClusterGroup>
+            )}
+            {polygons}
         </MapContainer>
     );
 };
+
+export default SitesMap;

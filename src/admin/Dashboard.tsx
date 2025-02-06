@@ -17,12 +17,10 @@ const Dashboard = ({ }) => {
         <>
             <Card>
                 <Title title="Welcome to CryoBioBank" />
-                
-                            <>
-                                <CardContent style={{ textAlign: 'center' }}>Welcome to CryoBioBank</CardContent>
-                                <SitesMap/>
-                            </>
-                
+                    <>
+                        <CardContent style={{ textAlign: 'center' }}>Welcome to CryoBioBank</CardContent>
+                        <SitesMap/>
+                    </>
             </Card>
         </>
     );

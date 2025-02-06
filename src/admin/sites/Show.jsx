@@ -10,7 +10,7 @@ import {
     FunctionField,
     useRecordContext,
     Button,
-    Link,
+    ReferenceField,
     usePermissions,
     EditButton,
     DeleteButton,
@@ -73,6 +73,11 @@ const ShowComponent = () => {
                             <Grid item xs={4}>
                                 <Labeled label="Name">
                                     <TextField source="name" />
+                                </Labeled>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Labeled label="Area">
+                                    <ReferenceField source="area_id" reference="areas" />
                                 </Labeled>
                             </Grid>
                             <Grid item xs={4}>

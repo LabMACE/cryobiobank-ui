@@ -3,11 +3,33 @@ import {
     SimpleShowLayout,
     TextField,
     Labeled,
-    ReferenceField,
+    ReferenceManyField,
+    Datagrid,
+    useRecordContext,
+    ReferenceManyCount,
 } from 'react-admin';
 import { Grid } from '@mui/material';
 import { MyActionsByPermission } from '../custom/Toolbars';
 
+export const ColorBox = () => {
+    const record = useRecordContext();
+    if (!record) return null;
+
+    return (
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div
+                style={{
+                    width: '20px', // Size of the box
+                    height: '20px', // Size of the box
+                    backgroundColor: record.colour, // Use the record color
+                    border: '1px solid #ccc', // Optional border for visibility
+                    marginRight: '10px', // Space between box and text
+                }}
+            />
+            <TextField source="colour" />
+        </div>
+    );
+};
 
 const ShowComponent = () => {
     return (
@@ -16,32 +38,9 @@ const ShowComponent = () => {
                 <Grid container spacing={2}>
                     <Grid item xs={6}>
                         <Grid container spacing={0}>
-                            <Grid item xs={6}>
-                            <Labeled label="Site Replicate">
-                                    <ReferenceField source="site_replicate_id" reference="site_replicates" />
-                                </Labeled>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Labeled label="DNA ID">
-                                    <ReferenceField source="dna_id" reference="dna" emptyText="N/A"/>
-                                </Labeled>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <hr />
-                            </Grid>
                             <Grid item xs={12}>
                                 <Labeled label="Name">
                                     <TextField source="name" />
-                                </Labeled>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Labeled label="Type of sample">
-                                    <TextField source="type_of_sample" />
-                                </Labeled>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Labeled label="Storage location">
-                                    <TextField source="storage_location" />
                                 </Labeled>
                             </Grid>
                             <Grid item xs={12}>
@@ -49,10 +48,21 @@ const ShowComponent = () => {
                                     <TextField source="description" />
                                 </Labeled>
                             </Grid>
-
+                            <Grid item xs={12}>
+                                <Labeled label="Colour">
+                                    <ColorBox />
+                                </Labeled>
+                            </Grid>
                         </Grid>
                     </Grid>
                 </Grid>
+                <ReferenceManyField reference="sites" target="area_id" label="Sites">
+                    <Datagrid>
+                        <TextField source="name" />
+                        <TextField source="elevation_metres" label="Elevation (m)" />
+                        <ReferenceManyCount reference="site_replicates" target="site_id" label="Replicates" />
+                    </Datagrid>
+                </ReferenceManyField>
             </SimpleShowLayout>
         </Show >
     )

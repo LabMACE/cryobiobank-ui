@@ -5,6 +5,8 @@ import {
     TextField,
     TextInput,
     required,
+    ReferenceInput,
+    SelectInput,
 } from 'react-admin';
 import CoordinateInput from '../../maps/CoordinateEntry';
 
@@ -14,6 +16,13 @@ const CreateComponent = () => {
         <Create redirect="show">
             <SimpleForm >
                 <TextField source="id" />
+                <ReferenceInput
+                    source="area_id"
+                    reference="areas"
+                    label="Area"
+                >
+                    <SelectInput optionText="name" validate={[required()]} resettable/>
+                </ReferenceInput>
                 <TextInput source="name" validate={[required()]}/>
                 <CoordinateInput />
             </SimpleForm>

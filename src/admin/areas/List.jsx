@@ -2,12 +2,14 @@ import {
     List,
     Datagrid,
     TextField,
-    ReferenceField,
+    FunctionField,
     usePermissions,
+    ReferenceManyCount,
     Loading,
 } from "react-admin";
 import { ListActionsByPermission } from '../custom/Toolbars';
 import CustomEmptyPage from '../Empty';
+import { ColorBox } from './Show';
 
 const ListComponent = () => {
     const { permissions, isLoading } = usePermissions();
@@ -22,10 +24,8 @@ const ListComponent = () => {
         >
             <Datagrid rowClick="show" bulkActionButtons={permissions === 'admin' ? true : false}>
                 <TextField source="name" />
-                <ReferenceField source="site_replicate_id" reference="site_replicates" />
-                <ReferenceField source="dna_id" reference="dna" />
-                <TextField source="type_of_sample" />
-                <TextField source="storage_location" />
+                <FunctionField render={() => <ColorBox />} label="Color" />
+                <ReferenceManyCount reference="sites" target="area_id" label="Sites" />
             </Datagrid>
         </List >
 
