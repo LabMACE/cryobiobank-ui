@@ -9,7 +9,8 @@ import {
     LabelIcon,
 } from 'react-admin';
 import { CssBaseline, Typography } from '@mui/material';
-import PublicIcon from '@mui/icons-material/Public';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEarthAmericas } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 
 const BackToMainButton = () => {
@@ -83,7 +84,8 @@ const LoginButton = () => {
 const MyMenu = () => {
     return (
         <Menu>
-            <Menu.DashboardItem primaryText="Map" leftIcon={<PublicIcon />} />
+            <Menu.DashboardItem primaryText="Map" leftIcon={<FontAwesomeIcon icon={faEarthAmericas} />} />
+            <Menu.ResourceItem name="areas" />
             <Menu.ResourceItem name="sites" />
             <Menu.ResourceItem name="isolates" />
             <Menu.ResourceItem name="samples" />

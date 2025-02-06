@@ -10,6 +10,7 @@ import isolates from './isolates';
 import samples from './samples';
 import site_replicates from './sites/replicates';
 import dna from './dna';
+import areas from './areas';
 import axios from 'axios';
 import Dashboard from './Dashboard';
 import MyLayout from './Layout';
@@ -88,6 +89,7 @@ const App = () => {
                 The resource mapping by permissions is done in the Menu 
                 component in the <MyLayout/> definition 
             */}
+            <Resource name="areas" {...areas} />
             <Resource name="sites" {...sites} />
             <Resource name="site_replicates" {...site_replicates} />
             <Resource name="isolates" {...isolates} />
