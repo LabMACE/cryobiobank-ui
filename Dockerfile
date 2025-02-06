@@ -18,7 +18,7 @@ FROM nginx:1.27.4-alpine
 RUN rm /etc/nginx/conf.d/default.conf
 
 # Write custom Nginx configuration using a heredoc
-RUN <<EOF > /etc/nginx/conf.d/default.conf
+RUN cat <<EOF > /etc/nginx/conf.d/default.conf
     server {
         listen       80;
         server_name  localhost;
