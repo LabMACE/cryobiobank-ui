@@ -1918,6 +1918,7 @@ __metadata:
     react: "npm:^19.0.0"
     react-admin: "npm:^5.5.0"
     react-admin-color-picker: "npm:^1.0.3"
+    react-debounce-input: "npm:^3.3.0"
     react-dom: "npm:^19.0.0"
     react-leaflet: "npm:^5.0.0"
     react-leaflet-cluster: "npm:^2.1.0"
@@ -3577,6 +3578,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash.debounce@npm:^4":
+  version: 4.0.8
+  resolution: "lodash.debounce@npm:4.0.8"
+  checksum: 10c0/762998a63e095412b6099b8290903e0a8ddcb353ac6e2e0f2d7e7d03abd4275fe3c689d88960eb90b0dde4f177554d51a690f22a343932ecbc50a5d111849987
+  languageName: node
+  linkType: hard
+
 "lodash.get@npm:^4.4.2":
   version: 4.4.2
   resolution: "lodash.get@npm:4.4.2"
@@ -4447,6 +4455,18 @@ __metadata:
   peerDependencies:
     react: "*"
   checksum: 10c0/6f9fce9ff3014926d960abccd5d79ecb391a41f835a4b85663fd48ff933554391222f40ed8cfc5417305d47b1e480023981ec22e13c3b16b0d8d718270fa815e
+  languageName: node
+  linkType: hard
+
+"react-debounce-input@npm:^3.3.0":
+  version: 3.3.0
+  resolution: "react-debounce-input@npm:3.3.0"
+  dependencies:
+    lodash.debounce: "npm:^4"
+    prop-types: "npm:^15.8.1"
+  peerDependencies:
+    react: ^15.3.0 || 16 || 17 || 18
+  checksum: 10c0/a015dc31ebb2777bdcc14b2b466994ff670f823c978bd5d3ee0bfd7955ccf4de48fadeac39a0a97bd8d628502c0808f384e48bf650d6a141b2f04c43275f0e29
   languageName: node
   linkType: hard
 

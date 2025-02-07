@@ -26,6 +26,7 @@
     "react": "^19.0.0",
     "react-admin": "^5.5.0",
     "react-admin-color-picker": "^1.0.3",
+    "react-debounce-input": "^3.3.0",
     "react-dom": "^19.0.0",
     "react-leaflet": "^5.0.0",
     "react-leaflet-cluster": "^2.1.0",

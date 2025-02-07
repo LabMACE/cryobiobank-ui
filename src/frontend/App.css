@@ -198,3 +198,76 @@ html, body, .frontend-app {
 .leaflet-control-layers {
   text-align: left !important;
 }
+.isolates-component {
+  max-width: 600px;         /* Not full width */
+  margin: 20px auto;        /* Centered with vertical spacing */
+  padding: 20px;
+  background: #fff;         /* White background */
+  color: #333;              /* Dark text for readability */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.query-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.query-input {
+  flex: 1;
+  padding: 8px;
+  font-size: 16px;
+  margin-right: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.query-button {
+  padding: 8px 12px;
+  font-size: 16px;
+  border: none;
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.query-button:hover {
+  background-color: #0056b3;
+}
+
+.results-container {
+  min-height: 200px; /* Fixed minimum height to prevent layout jumps */
+}
+
+.isolate-card {
+  background: #f0f0f0;
+  color: #333;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  list-style: none;
+}
+
+.isolate-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.isolate-header h3 {
+  margin: 0;
+}
+
+.arrow {
+  font-size: 20px;
+  margin-left: 10px;
+}
+
+.isolate-details {
+  margin-top: 10px;
+  border-top: 1px solid #ccc;
+  padding-top: 10px;
+}

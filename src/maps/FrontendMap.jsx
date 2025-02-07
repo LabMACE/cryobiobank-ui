@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { MapContainer, useMap, useMapEvents, Marker, Popup, Polygon, Tooltip } from 'react-leaflet';
 import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -52,11 +52,12 @@ const ZoomablePolygon = ({ area }) => {
     );
 };
 
-const FrontendMap = ({ height = "60vh" }) => {
+const FrontendMap = ({ height = "60%", width = "80%" }) => {
     const [sites, setSites] = useState([]);
     const [areas, setAreas] = useState([]);
     const [bounds, setBounds] = useState(null);
     const [zoomLevel, setZoomLevel] = useState(13); // Default zoom level
+    const fittedRef = useRef(false);  // Control refitting of the bounds at zoom
 
     useEffect(() => {
         Promise.all([
@@ -66,21 +67,51 @@ const FrontendMap = ({ height = "60vh" }) => {
         .then(([sitesData, areasData]) => {
             setSites(sitesData);
             setAreas(areasData);
-            if (sitesData && sitesData.length > 0) {
-                const siteBounds = L.latLngBounds(
-                    sitesData.map(site => [site.latitude_4326, site.longitude_4326])
-                );
-                setBounds(siteBounds);
-            }
+
+            // Calculate bounds for sites
+            const siteBounds = sitesData.length > 0 ? L.latLngBounds(
+                sitesData.map(site => [site.latitude_4326, site.longitude_4326])
+            ) : null;
+
+            // Calculate bounds for areas
+            const areaBounds = areasData.length > 0 ? L.latLngBounds(
+                areasData.flatMap(area => area.geom.coordinates[0].map(coord => [coord[1], coord[0]]))
+            ) : null;
+
+            // Combine bounds
+            const combinedBounds = siteBounds && areaBounds ? siteBounds.extend(areaBounds) : siteBounds || areaBounds;
+
+            setBounds(combinedBounds);
         })
         .catch(error => console.error('Error fetching data:', error));
     }, []);
+
+
+    // Component to update map view when bounds change
+    const FitBounds = ({ bounds }) => {
+        const map = useMap();
+
+        useEffect(() => {
+            if (bounds && !fittedRef.current) {
+                map.fitBounds(bounds);
+                fittedRef.current = true;
+            }
+            
+        }, [bounds, map, fittedRef]);
+
+        return null;
+    };
 
     return (
         <MapContainer
             bounds={bounds || [[45.398181, 5.140242], [47.808455, 10.492294]]}
             scrollWheelZoom={true}
-            style={{ height: height, width: '100%' }}
+            style={{ 
+                height: height, 
+                width: width,
+                margin: '20px auto',
+                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)'
+            }}
             maxBounds={[
                 [45.398181, 5.140242],
                 [47.808455, 10.492294]
@@ -89,6 +120,7 @@ const FrontendMap = ({ height = "60vh" }) => {
         >
             <MapEvents setZoomLevel={setZoomLevel} />
             <BaseLayers />
+            <FitBounds bounds={bounds} />
             {zoomLevel >= 15 && (
                 <MarkerClusterGroup maxClusterRadius={25} chunkedLoading>
                     {sites.map(site => (

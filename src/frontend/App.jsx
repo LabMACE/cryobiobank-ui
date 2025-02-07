@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
 import { BaseLayers } from '../maps/Layers';
-import  FrontendMap  from '../maps/FrontendMap';
+import FrontendMap from '../maps/FrontendMap';
+import Isolates from './Isolates';
 
 const FrontendApp = () => {
     const [dataDropdownOpen, setDataDropdownOpen] = useState(false);
@@ -75,12 +74,14 @@ const FrontendApp = () => {
                 </div>
             </section>
 
+           <section className="isolates-section" id="isolates">
+               <Isolates />
+           </section>
+            {/* Full viewport map section */}
             <section className="map-section" id="map">
-                <h2>Explore Our Map</h2>
-                <div className="map-wrapper">
-                    <FrontendMap/>
-                </div>
+                <FrontendMap height="400px" width="80%"/>
             </section>
+            
 
             <footer className="footer">
                 <p className="footer-attribution">
