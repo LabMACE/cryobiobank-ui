@@ -5,6 +5,7 @@ import {
     NumberInput,
     ReferenceInput,
     SelectInput,
+    AutocompleteInput,
     required,
     useRecordContext,
     ImageInput,
@@ -45,7 +46,12 @@ const IsolateEdit = (props) => {
                     reference="site_replicates"
                     label="Site Replicate"
                 >
-                    <SelectInput optionText="name" validate={[required()]} resettable/>
+                    <AutocompleteInput 
+                        optionText={choice => choice ? `${choice.name} - ${choice.sample_type} (${choice.sampling_date})` : ''} 
+                        validate={[required()]} 
+                        filterToQuery={searchText => ({ name: `${searchText}` })}
+                        debounce={500}
+                    />
                 </ReferenceInput>
                 <TextInput source="name" label="Name" validate={[required()]} />
                 <TextInput source="taxonomy" label="Taxonomy" />
