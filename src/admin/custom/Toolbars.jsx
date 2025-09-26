@@ -18,7 +18,7 @@ export const MyActionsByPermission = () => {
         {permissions && permissions == 'admin' ? (
         <>
             <EditButton />
-            <DeleteButton mutationMode='pessimistic' />
+            <DeleteButton />
         </>
         ) : null}
     </TopToolbar>

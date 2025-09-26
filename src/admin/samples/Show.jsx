@@ -2,14 +2,19 @@ import {
     Show,
     SimpleShowLayout,
     TextField,
+    FunctionField,
     Labeled,
     ReferenceField,
+    usePermissions,
 } from 'react-admin';
 import { Grid } from '@mui/material';
 import { MyActionsByPermission } from '../custom/Toolbars';
 
 
 const ShowComponent = () => {
+    const { permissions } = usePermissions();
+    const isAdmin = permissions === 'admin';
+
     return (
         <Show actions={<MyActionsByPermission />}>
             <SimpleShowLayout>
@@ -49,6 +54,15 @@ const ShowComponent = () => {
                                     <TextField source="description" />
                                 </Labeled>
                             </Grid>
+                            {isAdmin && (
+                                <Grid item xs={12}>
+                                    <Labeled label="Privacy">
+                                        <FunctionField render={record => 
+                                            record?.is_private ? '🔒 Private' : '🌐 Public'
+                                        } />
+                                    </Labeled>
+                                </Grid>
+                            )}
 
                         </Grid>
                     </Grid>

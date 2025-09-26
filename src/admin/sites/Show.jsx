@@ -2,6 +2,7 @@ import {
     Show,
     SimpleShowLayout,
     TextField,
+    BooleanField,
     useCreatePath,
     DateField,
     Labeled,
@@ -52,13 +53,15 @@ export const MyActionsByPermission = () => {
         <>
             <AddSiteReplicateButton />
             <EditButton />
-            <DeleteButton mutationMode='pessimistic' />
+            <DeleteButton />
         </>
         ) : null}
     </TopToolbar>
 )};
 
 const ShowComponent = () => {
+    const { permissions } = usePermissions();
+    const isAdmin = permissions === 'admin';
     const createPath = useCreatePath();
     const objectClick = (id, resource, record) => (
         createPath({ resource: 'site_replicates', type: 'show', id: record.id })
@@ -98,6 +101,15 @@ const ShowComponent = () => {
                                     <TextField source="elevation_metres" />
                                 </Labeled>
                             </Grid>
+                            {isAdmin && (
+                                <Grid item xs={12}>
+                                    <Labeled label="Privacy">
+                                        <FunctionField render={record => 
+                                            record?.is_private ? '🔒 Private' : '🌐 Public'
+                                        } />
+                                    </Labeled>
+                                </Grid>
+                            )}
                         </Grid>
                         
                         <Grid item xs={12} style={{ marginTop: '16px' }}>

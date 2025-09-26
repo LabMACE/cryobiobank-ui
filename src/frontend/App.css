@@ -5,10 +5,16 @@
   box-sizing: border-box;
 }
 
-html, body, .frontend-app {
-  height: 100%;
+html, body {
   font-family: 'Roboto', sans-serif;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
   scroll-behavior: smooth;
+}
+
+.frontend-app {
+  min-height: 100vh;
+  overflow-x: hidden;
+  scroll-snap-type: y mandatory;
 }
 
 /* Top Bar */
@@ -51,7 +57,7 @@ html, body, .frontend-app {
 }
 
 .nav-links li a:hover {
-  color: #FF6B6B;
+  color: #4A9AA5;
 }
 
 /* Dropdown Menu Styles */
@@ -62,14 +68,15 @@ html, body, .frontend-app {
 .dropdown-menu {
   position: absolute;
   top: 100%; /* directly below the parent link */
-  left: 0;   /* align with the left edge of the parent */
-  background-color: #FF8C00; /* bright orange */
-  border-radius: 4px;
-  padding: 2px 0; /* minimal vertical padding */
+  right: 0;   /* align with the right edge to prevent overflow */
+  background-color: #2E7D87; /* teal/blue-green */
+  border-radius: 8px;
+  padding: 8px 0;
   white-space: nowrap;
   z-index: 1100;
-  min-width: 120px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  min-width: 140px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .dropdown-menu li {
@@ -78,26 +85,34 @@ html, body, .frontend-app {
 
 .dropdown-menu li a {
   display: block;
-  padding: 2px 10px; /* minimal padding */
-  font-size: 14px;   /* smaller text */
+  padding: 8px 16px;
+  font-size: 15px;
   color: #fff;
   text-decoration: none;
-  transition: color 0.3s ease;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+  margin: 2px 8px;
 }
 
 .dropdown-menu li a:hover {
-  color: #000;
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #E8F4F8;
+  transform: translateX(2px);
 }
 
 /* Hero Section: full viewport height with a darker blue gradient */
 .hero-section {
   height: 100vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   background: linear-gradient(135deg, #1b3a57, #13384c);
   padding-top: 80px; /* account for fixed top bar */
+  box-sizing: border-box;
+  scroll-snap-align: start;
+  position: relative;
 }
 
 .hero-content {
@@ -118,27 +133,70 @@ html, body, .frontend-app {
   color: #fff;
 }
 
+.cta-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
 .cta-button {
-  padding: 10px 20px;
+  padding: 16px 28px;
   font-size: 18px;
+  font-weight: 600;
   color: #fff;
-  background-color: #FF6B6B;
+  background: linear-gradient(135deg, #2E7D87, #4A9AA5);
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 16px rgba(46, 125, 135, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.cta-button:hover::before {
+  left: 100%;
 }
 
 .cta-button:hover {
-  background-color: #004d7a;
+  background: linear-gradient(135deg, #4A9AA5, #5BADB8);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(46, 125, 135, 0.4);
 }
 
-/* Map Section: changes color on scroll */
+.cta-button i {
+  font-size: 16px;
+}
+
+/* Map Section: full viewport height */
 .map-section {
-  padding: 50px 20px;
-  text-align: center;
-  background: #f7f7f7;
+  height: 100vh;
+  min-height: 100vh;
+  padding: 120px 60px 80px 60px; /* more space top/bottom, moderate sides */
+  background: linear-gradient(135deg, #2E7D87, #4A9AA5); /* Deeper teal gradient */
   color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  scroll-snap-align: start;
+  position: relative;
 }
 
 .map-section h2 {
@@ -151,8 +209,9 @@ html, body, .frontend-app {
   background: #333;
   color: #fff;
   padding: 20px 30px;
-  position: relative;
   text-align: center;
+  width: 100%;
+  position: relative; /* Contain absolutely positioned lemon icon */
 }
 
 .footer-attribution {
@@ -161,13 +220,13 @@ html, body, .frontend-app {
 
 /* Style for all footer links except the lemon icon */
 .footer a:not(.footer-lemon) {
-  color: #FF6B6B;
+  color: #4A9AA5;
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
 .footer a:not(.footer-lemon):hover {
-  color: #FFD1A9;
+  color: #7BB8C4;
 }
 
 /* Footer lemon icon using Font Awesome */
@@ -179,33 +238,53 @@ html, body, .frontend-app {
   font-size: 24px;
   color: #333; /* same as footer background, hidden by default */
   transition: color 0.3s ease;
+  text-decoration: none;
 }
 
 .footer-lemon:hover {
   color: #FFD700; /* yellow on hover */
 }
 
-/* Map Section wrapper with shading */
-.map-wrapper {
-  margin: 0 auto;
-  max-width: 90%;
-  border-radius: 10px;
+/* Map container for inset effect */
+.map-container {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: #fff;
 }
 
 /* Force Leaflet layers control labels to align to the left */
 .leaflet-control-layers {
   text-align: left !important;
 }
+/* Isolates Section: full viewport height */
+.isolates-section {
+  height: 100vh;
+  min-height: 100vh;
+  padding: 80px 20px 20px 20px; /* account for fixed top bar */
+  background: linear-gradient(135deg, #E8F4F8, #F0F8FB); /* Light teal to very light blue gradient */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  scroll-snap-align: start;
+  position: relative;
+}
+
 .isolates-component {
-  max-width: 600px;         /* Not full width */
-  margin: 20px auto;        /* Centered with vertical spacing */
-  padding: 20px;
+  max-width: 800px;         /* Wider for better use of space */
+  width: 100%;
+  padding: 30px;
   background: #fff;         /* White background */
   color: #333;              /* Dark text for readability */
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  max-height: calc(100vh - 120px); /* Leave space for padding */
+  overflow-y: auto;         /* Allow scrolling if content is too tall */
 }
 
 .query-container {
@@ -224,17 +303,20 @@ html, body, .frontend-app {
 }
 
 .query-button {
-  padding: 8px 12px;
+  padding: 8px 16px;
   font-size: 16px;
   border: none;
-  background-color: #007bff;
+  background-color: #2E7D87;
   color: #fff;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .query-button:hover {
-  background-color: #0056b3;
+  background-color: #4A9AA5;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(46, 125, 135, 0.3);
 }
 
 .results-container {

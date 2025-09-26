@@ -15,6 +15,7 @@ import {
     useCreatePath,
     ReferenceManyField,
     Datagrid,
+    FunctionField,
 } from 'react-admin';
 import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -44,6 +45,8 @@ export const MyActionsByPermission = () => {
 )};
 
 const SiteReplicateShow = (props) => {
+    const { permissions } = usePermissions();
+    const isAdmin = permissions === 'admin';
 
     return (
         <Show {...props} actions={<MyActionsByPermission />}>
@@ -116,6 +119,15 @@ const SiteReplicateShow = (props) => {
                                     <NumberField source="ph" />
                                 </Labeled>
                             </Grid>
+                            {isAdmin && (
+                                <Grid item xs={12}>
+                                    <Labeled label="Privacy">
+                                        <FunctionField render={record => 
+                                            record?.is_private ? '🔒 Private' : '🌐 Public'
+                                        } />
+                                    </Labeled>
+                                </Grid>
+                            )}
                         </Grid>
                     </Grid>
                     <Grid item sm={4}>

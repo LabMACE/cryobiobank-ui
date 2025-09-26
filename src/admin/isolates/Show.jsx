@@ -4,7 +4,9 @@ import {
     TextField,
     ReferenceField,
     NumberField,
+    FunctionField,
     useRecordContext,
+    usePermissions,
     Loading,
     Labeled,
 } from 'react-admin';
@@ -32,6 +34,9 @@ const ImageField = ({ source }) => {
 };
 
 const ShowComponent = () => {
+    const { permissions } = usePermissions();
+    const isAdmin = permissions === 'admin';
+
     return (
         <Show actions={<MyActionsByPermission />}>
             <SimpleShowLayout>
@@ -76,6 +81,15 @@ const ShowComponent = () => {
                                     <TextField source="media_used_for_isolation" />
                                 </Labeled>
                             </Grid>
+                            {isAdmin && (
+                                <Grid item xs={12}>
+                                    <Labeled label="Privacy">
+                                        <FunctionField render={record => 
+                                            record?.is_private ? '🔒 Private' : '🌐 Public'
+                                        } />
+                                    </Labeled>
+                                </Grid>
+                            )}
                         </Grid>
                     </Grid>
                     <Grid item xs={6}>

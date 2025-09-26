@@ -2,12 +2,25 @@ import {
     List,
     Datagrid,
     TextField,
+    FunctionField,
     ReferenceField,
+    useRecordContext,
     usePermissions,
     Loading,
 } from "react-admin";
 import { ListActionsByPermission } from '../custom/Toolbars';
 import CustomEmptyPage from '../Empty';
+import LockIcon from '@mui/icons-material/Lock';
+import PublicIcon from '@mui/icons-material/Public';
+
+const PrivacyField = () => {
+    const record = useRecordContext();
+    return record?.is_private ? (
+        <LockIcon color="warning" titleAccess="Private Record" fontSize="small" />
+    ) : (
+        <PublicIcon color="success" titleAccess="Public Record" fontSize="small" />
+    );
+};
 
 const ListComponent = () => {
     const { permissions, isLoading } = usePermissions();
@@ -28,6 +41,9 @@ const ListComponent = () => {
                 <TextField source="taxonomy" />
                 <TextField source="storage_location" />
                 <TextField source="media_used_for_isolation" />
+                {permissions === 'admin' && (
+                    <FunctionField label="Privacy" render={() => <PrivacyField />} />
+                )}
 
             </Datagrid>
         </List >

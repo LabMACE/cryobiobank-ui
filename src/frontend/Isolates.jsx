@@ -42,10 +42,10 @@ const Isolates = () => {
     try {
       let url = '';
       if (filter.trim() === '') {
-        // Default load: get initial 10 isolates
-        url = `/api/isolates?range=[0,10]`;
+        // Default load: get initial 10 isolates from public API
+        url = `/api/public/isolates?range=[0,10]`;
       } else {
-        url = `/api/isolates?filter={"q":"${encodeURIComponent(filter)}"}`;
+        url = `/api/public/isolates?filter={"q":"${encodeURIComponent(filter)}"}`;
       }
       const response = await fetch(url);
       if (!response.ok) {

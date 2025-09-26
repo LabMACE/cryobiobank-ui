@@ -1,31 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
-import { BaseLayers } from '../maps/Layers';
 import FrontendMap from '../maps/FrontendMap';
 import Isolates from './Isolates';
 
 const FrontendApp = () => {
-    const [dataDropdownOpen, setDataDropdownOpen] = useState(false);
-    const dropdownRef = useRef(null);
-
-    const toggleDataDropdown = (e) => {
-        e.preventDefault();
-        setDataDropdownOpen((prev) => !prev);
-    };
-
-    // Close dropdown if clicked outside
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setDataDropdownOpen(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
 
     return (
         <div className="frontend-app">
@@ -37,29 +14,8 @@ const FrontendApp = () => {
                 <nav>
                     <ul className="nav-links">
                         <li><a href="#home">Home</a></li>
+                        <li><a href="#isolates">Data</a></li>
                         <li><a href="#map">Map</a></li>
-                        <li className="dropdown" ref={dropdownRef}>
-                            <a href="#data" onClick={toggleDataDropdown}>Data</a>
-                            {dataDropdownOpen && (
-                                <ul className="dropdown-menu">
-                                    <li>
-                                        <a href="#isolates" onClick={() => setDataDropdownOpen(false)}>
-                                            Isolates
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#samples" onClick={() => setDataDropdownOpen(false)}>
-                                            Samples
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#sites" onClick={() => setDataDropdownOpen(false)}>
-                                            Sites
-                                        </a>
-                                    </li>
-                                </ul>
-                            )}
-                        </li>
                     </ul>
                 </nav>
             </header>
@@ -70,7 +26,16 @@ const FrontendApp = () => {
                     <p>
                         Explore detailed information about isolates, samples, and sites from our fieldwork collection.
                     </p>
-                    <a href="#map" className="cta-button">Explore map</a>
+                    <div className="cta-buttons">
+                        <a href="#isolates" className="cta-button">
+                            <i className="fa-solid fa-database"></i>
+                            View data
+                        </a>
+                        <a href="#map" className="cta-button">
+                            <i className="fa-solid fa-map"></i>
+                            Explore map
+                        </a>
+                    </div>
                 </div>
             </section>
 
@@ -79,7 +44,9 @@ const FrontendApp = () => {
            </section>
             {/* Full viewport map section */}
             <section className="map-section" id="map">
-                <FrontendMap height="400px" width="80%"/>
+                <div className="map-container">
+                    <FrontendMap height="100%" width="100%"/>
+                </div>
             </section>
             
 

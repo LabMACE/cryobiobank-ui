@@ -3,13 +3,18 @@ import {
     SimpleForm,
     TextInput,
     NumberInput,
+    BooleanInput,
     ReferenceInput,
     SelectInput,
     AutocompleteInput,
     required,
+    usePermissions,
 } from 'react-admin';
 
 const IsolateCreate = (props) => {
+    const { permissions } = usePermissions();
+    const isAdmin = permissions === 'admin';
+
     return (
         <Create {...props} redirect="show">
             <SimpleForm>
@@ -36,6 +41,13 @@ const IsolateCreate = (props) => {
                 <ReferenceInput source="dna_id" reference="dna" label="DNA">
                     <SelectInput optionText="name" resettable />
                 </ReferenceInput>
+                {isAdmin && (
+                    <BooleanInput 
+                        source="is_private" 
+                        label="Private Record" 
+                        helperText="Private records are only visible to authenticated administrators" 
+                    />
+                )}
             </SimpleForm>
         </Create>
     );

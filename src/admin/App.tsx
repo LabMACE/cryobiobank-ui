@@ -16,10 +16,7 @@ import Dashboard from './Dashboard';
 import MyLayout from './Layout';
 
 const initOptions: KeycloakInitOptions = {
-    // onLoad: 'login-required',
-    // checkLoginIframe: false,
-    onLoad: 'check-sso',
-    // or omit onLoad entirely for a pure "do nothing" init
+    onLoad: 'login-required', // Force authentication for admin access
     checkLoginIframe: false,
 };
 
@@ -34,7 +31,7 @@ const getPermissions = (decoded: KeycloakTokenParsed) => {
 };
 
 const UIConfigUrl = '/api/config';
-export const apiUrl = '/api';
+export const apiUrl = '/api/admin';
 
 const App = () => {
     const [keycloak, setKeycloak] = useState();
@@ -42,41 +39,102 @@ const App = () => {
     const authProvider = useRef<AuthProvider>();
     const dataProvider = useRef<DataProvider>();
     const [deployment, setDeployment] = useState(undefined);
+    const [initError, setInitError] = useState<string | null>(null);
 
     useEffect(() => {
         const initKeyCloakClient = async () => {
-            const response = await axios.get(UIConfigUrl);
-            const keycloakConfig = response.data.keycloak;
-            setDeployment(response.data.deployment);
+            try {
+                const response = await axios.get(UIConfigUrl);
+                const keycloakConfig = response.data.keycloak;
+                setDeployment(response.data.deployment);
 
-            // Initialize Keycloak here, once you have the configuration
-            const keycloakClient = new Keycloak({
-                url: keycloakConfig.url,
-                realm: keycloakConfig.realm,
-                clientId: keycloakConfig.client_id,
-            });
-            await keycloakClient.init(initOptions);
+                // Initialize Keycloak here, once you have the configuration
+                const keycloakClient = new Keycloak({
+                    url: keycloakConfig.url,
+                    realm: keycloakConfig.realm,
+                    clientId: keycloakConfig.client_id,
+                });
+                await keycloakClient.init(initOptions);
 
-            authProvider.current = keycloakAuthProvider(keycloakClient, {
-                onPermissions: getPermissions,
-            });
-            dataProvider.current = simpleRestProvider(
-                apiUrl,
-                httpClient(keycloakClient)
-            );
-            return keycloakClient;
+                authProvider.current = keycloakAuthProvider(keycloakClient, {
+                    onPermissions: getPermissions,
+                    loginRedirectUri: window.location.origin + '/admin',
+                    logoutRedirectUri: window.location.origin + '/admin',
+                });
+                dataProvider.current = simpleRestProvider(
+                    apiUrl,
+                    httpClient(keycloakClient)
+                );
+                return keycloakClient;
+            } catch (error) {
+                console.error('Failed to initialize authentication:', error);
+                setInitError('Failed to initialize authentication. Please check your network connection and try again.');
+                throw error;
+            }
         };
 
         if (!initializingPromise.current) {
             initializingPromise.current = initKeyCloakClient();
         }
 
-        initializingPromise.current.then(keycloakClient => {
-            setKeycloak(keycloakClient);
-        });
+        initializingPromise.current
+            .then(keycloakClient => {
+                setKeycloak(keycloakClient);
+            })
+            .catch(error => {
+                console.error('Authentication initialization failed:', error);
+            });
     }, [keycloak]);
 
-    if (!keycloak) return <p>Loading...</p>;
+    if (initError) return (
+        <div style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            height: '100vh',
+            flexDirection: 'column',
+            fontSize: '18px',
+            color: '#d32f2f',
+            textAlign: 'center',
+            padding: '20px'
+        }}>
+            <p>Authentication Error</p>
+            <p style={{ fontSize: '14px', marginTop: '10px', color: '#666', maxWidth: '400px' }}>
+                {initError}
+            </p>
+            <button 
+                onClick={() => window.location.reload()} 
+                style={{
+                    marginTop: '20px',
+                    padding: '10px 20px',
+                    backgroundColor: '#2E7D87',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer'
+                }}
+            >
+                Retry
+            </button>
+        </div>
+    );
+
+    if (!keycloak) return (
+        <div style={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            height: '100vh',
+            flexDirection: 'column',
+            fontSize: '18px',
+            color: '#666'
+        }}>
+            <p>Loading CryoBioBank Admin...</p>
+            <p style={{ fontSize: '14px', marginTop: '10px', color: '#999' }}>
+                Initializing authentication...
+            </p>
+        </div>
+    );
     return (
         <Admin
             authProvider={authProvider.current}
@@ -84,6 +142,7 @@ const App = () => {
             title="CryoBioBank"
             dashboard={Dashboard}
             layout={(props) => <MyLayout {...props} deployment={deployment} />}
+            mutationMode="pessimistic"
         >
             {/* 
                 The resource mapping by permissions is done in the Menu 

@@ -2,6 +2,8 @@ import {
     List,
     Datagrid,
     TextField,
+    BooleanField,
+    FunctionField,
     useRecordContext,
     useCreatePath,
     ReferenceManyCount,
@@ -9,11 +11,25 @@ import {
     BulkDeleteButton,
     Loading,
     Link,
+    FilterButton,
+    TopToolbar,
+    ExportButton,
+    CreateButton,
 } from "react-admin";
 // import { Link } from 'react-router-dom';
 import { ListActionsByPermission } from '../custom/Toolbars';
 import CustomEmptyPage from '../Empty';
+import LockIcon from '@mui/icons-material/Lock';
+import PublicIcon from '@mui/icons-material/Public';
 
+const PrivacyField = () => {
+    const record = useRecordContext();
+    return record?.is_private ? (
+        <LockIcon color="warning" titleAccess="Private Record" fontSize="small" />
+    ) : (
+        <PublicIcon color="success" titleAccess="Public Record" fontSize="small" />
+    );
+};
 
 const PostPanel = () => {
     const record = useRecordContext();
@@ -65,13 +81,16 @@ const ListComponent = () => {
             <Datagrid 
                 rowClick="show" 
                 expand={<PostPanel />} 
-                bulkActionButtons={permissions === 'admin' ? <BulkDeleteButton mutationMode="pessimistic" /> : false}
+                bulkActionButtons={permissions === 'admin' ? <BulkDeleteButton /> : false}
             >
                 <TextField source="name" />
                 <TextField source="latitude_4326" label="Latitude (°)" />
                 <TextField source="longitude_4326" label="Longitude (°)" />
                 <TextField source="elevation_metres" label="Elevation (m)" />
                 <ReferenceManyCount reference="site_replicates" target="site_id" label="Replicates" />
+                {permissions === 'admin' && (
+                    <FunctionField label="Privacy" render={() => <PrivacyField />} />
+                )}
             </Datagrid>
         </List >
 

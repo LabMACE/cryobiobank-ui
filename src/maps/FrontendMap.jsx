@@ -18,22 +18,33 @@ const MapEvents = ({ setZoomLevel }) => {
     return null;
 };
 
-// Helper component for rendering a polygon that zooms in when its label is clicked
+// Helper component for rendering a polygon that fits to bounds when clicked
 const ZoomablePolygon = ({ area }) => {
     const map = useMap();
+    
+    // Check if area has valid geometry data
+    if (!area.geom || !area.geom.coordinates || !Array.isArray(area.geom.coordinates[0])) {
+        console.warn(`Area "${area.name}" has no valid geometry data`);
+        return null; // Don't render anything for areas without geometry
+    }
+
     // Convert coordinates from [lng, lat] to [lat, lng]
     const positions = area.geom.coordinates[0].map(coord => [coord[1], coord[0]]);
 
-    // Compute the centroid of the polygon
-    const center = positions.reduce(
-        (acc, pos) => [acc[0] + pos[0], acc[1] + pos[1]],
-        [0, 0]
-    );
-    const centerPos = [center[0] / positions.length, center[1] / positions.length];
-
-    // Handler to zoom the map to level 15 and center on the polygon's centroid
+    // Handler to fit the map view to show the entire polygon
     const handleZoom = () => {
-        map.setView(centerPos, 15);
+        // Calculate the bounding box of the polygon
+        const lats = positions.map(pos => pos[0]);
+        const lngs = positions.map(pos => pos[1]);
+        
+        const minLat = Math.min(...lats);
+        const maxLat = Math.max(...lats);
+        const minLng = Math.min(...lngs);
+        const maxLng = Math.max(...lngs);
+        
+        // Create bounds and fit the map to show the entire polygon
+        const bounds = L.latLngBounds([minLat, minLng], [maxLat, maxLng]);
+        map.fitBounds(bounds, { padding: [20, 20] }); // Add some padding around the polygon
     };
 
     return (
@@ -43,7 +54,7 @@ const ZoomablePolygon = ({ area }) => {
             eventHandlers={{ click: handleZoom }}
         >
             <Tooltip permanent interactive={true}>
-                {/* Add the click handler to the label text */}
+                {/* Click handler fits map to show entire polygon */}
                 <span onClick={handleZoom} style={{ cursor: 'pointer' }}>
                     {area.name}
                 </span>
@@ -61,29 +72,47 @@ const FrontendMap = ({ height = "60%", width = "80%" }) => {
 
     useEffect(() => {
         Promise.all([
-            fetch('/api/sites').then((res) => res.json()),
-            fetch('/api/areas').then((res) => res.json())
+            fetch('/api/public/sites').then((res) => {
+                if (!res.ok) throw new Error(`Sites API error: ${res.status}`);
+                return res.json();
+            }),
+            fetch('/api/public/areas').then((res) => {
+                if (!res.ok) throw new Error(`Areas API error: ${res.status}`);
+                return res.json();
+            })
         ])
         .then(([sitesData, areasData]) => {
-            setSites(sitesData);
-            setAreas(areasData);
+            setSites(Array.isArray(sitesData) ? sitesData : []);
+            setAreas(Array.isArray(areasData) ? areasData : []);
 
             // Calculate bounds for sites
-            const siteBounds = sitesData.length > 0 ? L.latLngBounds(
+            const siteBounds = sitesData && sitesData.length > 0 ? L.latLngBounds(
                 sitesData.map(site => [site.latitude_4326, site.longitude_4326])
             ) : null;
 
-            // Calculate bounds for areas
-            const areaBounds = areasData.length > 0 ? L.latLngBounds(
-                areasData.flatMap(area => area.geom.coordinates[0].map(coord => [coord[1], coord[0]]))
-            ) : null;
+            // Calculate bounds for areas (safely handle missing geometry)
+            let areaBounds = null;
+            if (areasData && areasData.length > 0) {
+                const areaCoords = areasData
+                    .filter(area => area.geom && area.geom.coordinates && area.geom.coordinates[0])
+                    .flatMap(area => area.geom.coordinates[0].map(coord => [coord[1], coord[0]]));
+                
+                if (areaCoords.length > 0) {
+                    areaBounds = L.latLngBounds(areaCoords);
+                }
+            }
 
             // Combine bounds
             const combinedBounds = siteBounds && areaBounds ? siteBounds.extend(areaBounds) : siteBounds || areaBounds;
 
             setBounds(combinedBounds);
         })
-        .catch(error => console.error('Error fetching data:', error));
+        .catch(error => {
+            console.error('Error fetching data:', error);
+            // Set empty arrays so the map still renders
+            setSites([]);
+            setAreas([]);
+        });
     }, []);
 
 
@@ -108,9 +137,7 @@ const FrontendMap = ({ height = "60%", width = "80%" }) => {
             scrollWheelZoom={true}
             style={{ 
                 height: height, 
-                width: width,
-                margin: '20px auto',
-                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)'
+                width: width
             }}
             maxBounds={[
                 [45.398181, 5.140242],
@@ -121,7 +148,7 @@ const FrontendMap = ({ height = "60%", width = "80%" }) => {
             <MapEvents setZoomLevel={setZoomLevel} />
             <BaseLayers />
             <FitBounds bounds={bounds} />
-            {zoomLevel >= 15 && (
+            {zoomLevel >= 12 && (
                 <MarkerClusterGroup maxClusterRadius={25} chunkedLoading>
                     {sites.map(site => (
                         <Marker

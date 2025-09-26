@@ -2,10 +2,13 @@ import {
     Show,
     SimpleShowLayout,
     TextField,
+    BooleanField,
+    FunctionField,
     Labeled,
     ReferenceManyField,
     Datagrid,
     useRecordContext,
+    usePermissions,
     ReferenceManyCount,
 } from 'react-admin';
 import { Grid } from '@mui/material';
@@ -32,6 +35,9 @@ export const ColorBox = () => {
 };
 
 const ShowComponent = () => {
+    const { permissions } = usePermissions();
+    const isAdmin = permissions === 'admin';
+
     return (
         <Show actions={<MyActionsByPermission />}>
             <SimpleShowLayout>
@@ -53,6 +59,15 @@ const ShowComponent = () => {
                                     <ColorBox />
                                 </Labeled>
                             </Grid>
+                            {isAdmin && (
+                                <Grid item xs={12}>
+                                    <Labeled label="Privacy">
+                                        <FunctionField render={record => 
+                                            record?.is_private ? '🔒 Private' : '🌐 Public'
+                                        } />
+                                    </Labeled>
+                                </Grid>
+                            )}
                         </Grid>
                     </Grid>
                 </Grid>

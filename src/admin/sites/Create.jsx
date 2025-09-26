@@ -4,13 +4,17 @@ import {
     SimpleForm,
     TextField,
     TextInput,
+    BooleanInput,
     required,
     ReferenceInput,
     SelectInput,
+    usePermissions,
 } from 'react-admin';
 import CoordinateInput from '../../maps/CoordinateEntry';
 
 const CreateComponent = () => {
+    const { permissions } = usePermissions();
+    const isAdmin = permissions === 'admin';
 
     return (
         <Create redirect="show">
@@ -25,6 +29,13 @@ const CreateComponent = () => {
                 </ReferenceInput>
                 <TextInput source="name" validate={[required()]}/>
                 <CoordinateInput />
+                {isAdmin && (
+                    <BooleanInput 
+                        source="is_private" 
+                        label="Private Record" 
+                        helperText="Private records are only visible to authenticated administrators" 
+                    />
+                )}
             </SimpleForm>
         </Create >
     )

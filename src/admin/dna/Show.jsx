@@ -2,18 +2,31 @@ import {
     Show,
     SimpleShowLayout,
     TextField,
+    FunctionField,
     ReferenceManyField,
     Datagrid,
+    usePermissions,
 } from 'react-admin';
 import { MyActionsByPermission } from '../custom/Toolbars';
 
 const ShowComponent = () => {
+    const { permissions } = usePermissions();
+    const isAdmin = permissions === 'admin';
+
     return (
         <Show actions={<MyActionsByPermission />}>
             <SimpleShowLayout>
                 <TextField source="name" />
                 <TextField source="extraction_method" />
                 <TextField source="description" />
+                {isAdmin && (
+                    <FunctionField 
+                        label="Privacy"
+                        render={record => 
+                            record?.is_private ? '🔒 Private' : '🌐 Public'
+                        } 
+                    />
+                )}
 
                 <ReferenceManyField reference="isolates" target="dna_id" label="Isolates">
                     <Datagrid>
