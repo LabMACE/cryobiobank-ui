@@ -7,6 +7,11 @@ import {
     required,
 } from 'react-admin';
 
+const sampleTypeChoices = [
+    { id: 'Snow', name: 'Snow' },
+    { id: 'Soil', name: 'Soil' },
+];
+
 const SampleCreate = (props) => {
     return (
         <Create {...props} redirect="show">
@@ -26,7 +31,9 @@ const SampleCreate = (props) => {
                     <SelectInput optionText="name" resettable/>
                 </ReferenceInput>
                 <TextInput source="name" label="Name" />
-                <TextInput source="type_of_sample" label="Type of Sample" />
+                <SelectInput source="sample_type" label="Sample Type"
+                    choices={sampleTypeChoices}
+                    validate={[required()]} />
                 <TextInput source="description" label="Description" />
                 <TextInput source="storage_location" label="Storage Location" />
             </SimpleForm>

@@ -47,7 +47,6 @@ const PostPanel = () => {
             <thead>
                 <tr>
                     <th style={{ paddingRight: '20px' }}>Date</th>
-                    <th style={{ paddingRight: '20px' }}>Sample Type</th>
                 </tr>
             </thead>
             <tbody>
@@ -55,9 +54,6 @@ const PostPanel = () => {
                     <tr key={index}>
                         <td style={{ paddingRight: '20px' }}>
                             <Link to={objectClick(replicate.id, 'site_replicates', replicate)}>{replicate.sampling_date}</Link>
-                        </td>
-                        <td style={{ paddingRight: '20px' }}>
-                            {replicate.sample_type}
                         </td>
                     </tr>
                 ))}

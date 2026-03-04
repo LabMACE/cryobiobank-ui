@@ -40,8 +40,8 @@ const ShowComponent = () => {
                                 </Labeled>
                             </Grid>
                             <Grid item xs={12}>
-                                <Labeled label="Type of sample">
-                                    <TextField source="type_of_sample" />
+                                <Labeled label="Sample Type">
+                                    <TextField source="sample_type" />
                                 </Labeled>
                             </Grid>
                             <Grid item xs={12}>

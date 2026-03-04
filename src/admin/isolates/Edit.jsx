@@ -46,9 +46,9 @@ const IsolateEdit = (props) => {
                     reference="site_replicates"
                     label="Site Replicate"
                 >
-                    <AutocompleteInput 
-                        optionText={choice => choice ? `${choice.name} - ${choice.sample_type} (${choice.sampling_date})` : ''} 
-                        validate={[required()]} 
+                    <AutocompleteInput
+                        optionText={choice => choice ? `${choice.name} (${choice.sampling_date})` : ''}
+                        validate={[required()]}
                         filterToQuery={searchText => ({ name: `${searchText}` })}
                         debounce={500}
                     />
@@ -56,7 +56,7 @@ const IsolateEdit = (props) => {
                 <TextInput source="name" label="Name" validate={[required()]} />
                 <SelectInput source="sample_type" label="Sample Type"
                     choices={[{ id: 'Snow', name: 'Snow' }, { id: 'Soil', name: 'Soil' }]}
-                    resettable />
+                    validate={[required()]} />
                 <TextInput source="taxonomy" label="Taxonomy" />
                 <TextInput source="storage_location" label="Storage Location" />
                 <NumberInput

@@ -4,6 +4,7 @@ import {
     TextField,
     FunctionField,
     ReferenceField,
+    SelectInput,
     useRecordContext,
     usePermissions,
     Loading,
@@ -22,6 +23,15 @@ const PrivacyField = () => {
     );
 };
 
+const sampleTypeChoices = [
+    { id: 'Snow', name: 'Snow' },
+    { id: 'Soil', name: 'Soil' },
+];
+
+const isolateFilters = [
+    <SelectInput source="sample_type" label="Sample Type" choices={sampleTypeChoices} alwaysOn />,
+];
+
 const ListComponent = () => {
     const { permissions, isLoading } = usePermissions();
     if (isLoading) return <Loading />;
@@ -32,7 +42,7 @@ const ListComponent = () => {
             sort={{ field: 'name', order: 'ASC' }}
             actions={<ListActionsByPermission />}
             empty={<CustomEmptyPage/>}
-
+            filters={isolateFilters}
         >
             <Datagrid rowClick="show" bulkActionButtons={permissions === 'admin' ? true : false}>
                 <TextField source="name" />

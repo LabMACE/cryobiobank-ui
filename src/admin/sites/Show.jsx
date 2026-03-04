@@ -119,7 +119,6 @@ const ShowComponent = () => {
                                     rowClick={objectClick}
                                 >
                                     <DateField source="sampling_date" label="Date" />
-                                    <TextField source="sample_type" label="Type" />
                                     <TextField source="sample_depth_cm" label="Sample depth (cm)"/>
                                     <TextField source="snow_depth_cm" label="Snow depth (cm)"/>
                                 </Datagrid>

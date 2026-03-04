@@ -65,11 +65,6 @@ const SiteReplicateShow = (props) => {
                                 </Labeled>
                             </Grid>
                             <Grid item xs={12} sm={6}>
-                                <Labeled label="Sample Type">
-                                    <TextField source="sample_type" />
-                                </Labeled>
-                            </Grid>
-                            <Grid item xs={12} sm={6}>
                                 <Labeled label="Sampling Date">
                                     <DateField source="sampling_date" />
                                 </Labeled>

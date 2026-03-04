@@ -11,12 +11,18 @@ const IsolateCard = ({ isolate }) => {
       <div className="isolate-header" onClick={toggleExpand}>
         <h3>{isolate.name}</h3>
         {isolate.taxonomy}
+        {isolate.sample_type && (
+          <span className="sample-type-badge">{isolate.sample_type}</span>
+        )}
         <span className="arrow">{expanded ? '▲' : '▼'}</span>
       </div>
       {expanded && (
         <div className="isolate-details">
           <p>
             <strong>Taxonomy:</strong> {isolate.taxonomy || 'N/A'}
+          </p>
+          <p>
+            <strong>Sample Type:</strong> {isolate.sample_type}
           </p>
           <p>
             <strong>Media:</strong> {isolate.media_used_for_isolation}
@@ -32,6 +38,7 @@ const IsolateCard = ({ isolate }) => {
 
 const Isolates = () => {
   const [filter, setFilter] = useState('');
+  const [sampleTypeFilter, setSampleTypeFilter] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -40,12 +47,19 @@ const Isolates = () => {
     setLoading(true);
     setError(null);
     try {
-      let url = '';
-      if (filter.trim() === '') {
-        // Default load: get initial 10 isolates from public API
-        url = `/api/public/isolates?range=[0,10]`;
+      const filterObj = {};
+      if (filter.trim() !== '') {
+        filterObj.q = filter;
+      }
+      if (sampleTypeFilter) {
+        filterObj.sample_type = sampleTypeFilter;
+      }
+
+      let url;
+      if (Object.keys(filterObj).length > 0) {
+        url = `/api/public/isolates?filter=${encodeURIComponent(JSON.stringify(filterObj))}`;
       } else {
-        url = `/api/public/isolates?filter={"q":"${encodeURIComponent(filter)}"}`;
+        url = `/api/public/isolates?range=[0,10]`;
       }
       const response = await fetch(url);
       if (!response.ok) {
@@ -59,12 +73,12 @@ const Isolates = () => {
     } finally {
       setLoading(false);
     }
-  }, [filter]);
+  }, [filter, sampleTypeFilter]);
 
   // Fetch data on mount and whenever the filter changes.
   useEffect(() => {
     handleSearch();
-  }, [filter, handleSearch]);
+  }, [filter, sampleTypeFilter, handleSearch]);
 
   return (
     <div className="isolates-component">
@@ -78,6 +92,16 @@ const Isolates = () => {
           placeholder="Enter filter parameter"
           className="query-input"
         />
+        <select
+          value={sampleTypeFilter}
+          onChange={(e) => setSampleTypeFilter(e.target.value)}
+          className="query-input"
+          style={{ marginLeft: '8px', maxWidth: '140px' }}
+        >
+          <option value="">All Types</option>
+          <option value="Snow">Snow</option>
+          <option value="Soil">Soil</option>
+        </select>
         <button onClick={handleSearch} className="query-button">
           Search
         </button>
