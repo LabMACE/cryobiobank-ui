@@ -31,6 +31,9 @@ const IsolateCreate = (props) => {
                     />
                 </ReferenceInput>
                 <TextInput source="name" label="Name" validate={[required()]} />
+                <SelectInput source="sample_type" label="Sample Type"
+                    choices={[{ id: 'Snow', name: 'Snow' }, { id: 'Soil', name: 'Soil' }]}
+                    resettable />
                 <TextInput source="taxonomy" label="Taxonomy" />
                 <TextInput source="storage_location" label="Storage Location" />
                 <NumberInput

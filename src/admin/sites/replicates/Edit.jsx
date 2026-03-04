@@ -33,7 +33,9 @@ const SiteReplicateEdit = (props) => {
                         <TextInput source="name" label="Name" validate={[required()]} />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                        <TextInput source="sample_type" label="Sample Type" validate={[required()]}/>
+                        <SelectInput source="sample_type" label="Sample Type"
+                            choices={[{ id: 'Snow', name: 'Snow' }, { id: 'Soil', name: 'Soil' }]}
+                            validate={[required()]} />
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <DateInput source="sampling_date" label="Sampling Date" validate={[required()]}/>

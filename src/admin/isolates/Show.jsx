@@ -67,6 +67,11 @@ const ShowComponent = () => {
                                 </Labeled>
                             </Grid>
                             <Grid item xs={6}>
+                                <Labeled label="Sample Type">
+                                    <TextField source="sample_type" emptyText="N/A" />
+                                </Labeled>
+                            </Grid>
+                            <Grid item xs={6}>
                                 <Labeled label="Storage Location">
                                     <TextField source="storage_location" />
                                 </Labeled>
