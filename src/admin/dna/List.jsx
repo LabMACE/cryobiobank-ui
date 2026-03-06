@@ -2,7 +2,7 @@ import {
     List,
     Datagrid,
     TextField,
-    ReferenceManyCount,
+    ReferenceField,
     usePermissions,
     Loading,
 } from "react-admin";
@@ -12,7 +12,7 @@ import CustomEmptyPage from '../Empty';
 const ListComponent = () => {
     const { permissions, isLoading } = usePermissions();
     if (isLoading) return <Loading />;
-    
+
     return (
         <List disableSyncWithLocation
             perPage={25}
@@ -24,8 +24,14 @@ const ListComponent = () => {
             <Datagrid rowClick="show" bulkActionButtons={permissions === 'admin' ? true : false}>
                 <TextField source="name" />
                 <TextField source="extraction_method" />
-                <ReferenceManyCount reference="isolates" target="dna_id" label="Isolates" />
-                <ReferenceManyCount reference="samples" target="dna_id" label="Samples" />
+                <ReferenceField source="site_replicate_id" reference="site_replicates" label="Site Replicate">
+                    <TextField source="name" />
+                </ReferenceField>
+                <ReferenceField source="site_replicate_id" reference="site_replicates" link={false} label="Site">
+                    <ReferenceField source="site_id" reference="sites" link="show">
+                        <TextField source="name" />
+                    </ReferenceField>
+                </ReferenceField>
             </Datagrid>
         </List >
 

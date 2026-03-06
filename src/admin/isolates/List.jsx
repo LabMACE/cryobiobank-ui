@@ -47,8 +47,14 @@ const ListComponent = () => {
             <Datagrid rowClick="show" bulkActionButtons={permissions === 'admin' ? true : false}>
                 <TextField source="name" />
                 <TextField source="sample_type" label="Sample Type" />
-                <ReferenceField source="site_replicate_id" reference="site_replicates" />
-                <ReferenceField source="dna_id" reference="dna" />
+                <ReferenceField source="site_replicate_id" reference="site_replicates" link={false} label="Site">
+                    <ReferenceField source="site_id" reference="sites" link="show">
+                        <TextField source="name" />
+                    </ReferenceField>
+                </ReferenceField>
+                <ReferenceField source="site_replicate_id" reference="site_replicates" link="show" label="Replicate">
+                    <TextField source="name" />
+                </ReferenceField>
                 <TextField source="taxonomy" />
                 <TextField source="storage_location" />
                 <TextField source="media_used_for_isolation" />

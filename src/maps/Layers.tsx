@@ -1,19 +1,27 @@
 import { LayersControl, TileLayer } from 'react-leaflet';
 
 export const BaseLayers = () => {
-    const { BaseLayer, Overlay } = LayersControl;
+    const { BaseLayer } = LayersControl;
     return (
-        <LayersControl>
+        <LayersControl collapsed={false}>
             <BaseLayer checked name="SwissTopo">
                 <TileLayer
                     attribution='&copy; <a href="https://www.swisstopo.admin.ch/">SwissTopo</a>'
                     url="https://wmts20.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/3857/{z}/{x}/{y}.jpeg"
                 />
             </BaseLayer>
-            <BaseLayer name="OpenStreetMap">
-                <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            <BaseLayer name="SwissTopo Aerial">
+                <TileLayer
+                    attribution='&copy; <a href="https://www.swisstopo.admin.ch/">SwissTopo</a>'
+                    url="https://wmts20.geo.admin.ch/1.0.0/ch.swisstopo.swissimage/default/current/3857/{z}/{x}/{y}.jpeg"
                 />
             </BaseLayer>
-        </LayersControl>)
+            <BaseLayer name="swissALTI3D Relief">
+                <TileLayer
+                    attribution='&copy; <a href="https://www.swisstopo.admin.ch/">SwissTopo swissALTI3D</a>'
+                    url="https://wmts20.geo.admin.ch/1.0.0/ch.swisstopo.swissalti3d-reliefschattierung/default/current/3857/{z}/{x}/{y}.png"
+                />
+            </BaseLayer>
+        </LayersControl>
+    );
 };

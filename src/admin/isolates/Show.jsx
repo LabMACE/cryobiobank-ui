@@ -1,109 +1,114 @@
 import {
     Show,
-    SimpleShowLayout,
-    TextField,
     ReferenceField,
-    NumberField,
-    FunctionField,
     useRecordContext,
     usePermissions,
-    Loading,
-    Labeled,
+    useCreatePath,
+    Link,
 } from 'react-admin';
-import { MyActionsByPermission } from '../custom/Toolbars';
-import { Typography, Grid } from '@mui/material';
+import { Box, Typography, Grid } from '@mui/material';
+import BiotechIcon from '@mui/icons-material/Biotech';
+import {
+    SectionCard,
+    FieldRow,
+    PrivacyToggle,
+    SampleTypeChip,
+    PhotoCard,
+    ShowActions,
+    useBreadcrumbChain,
+} from '../custom/ShowComponents';
 
-const ImageField = ({ source }) => {
-    const record = useRecordContext();
-    if (!record) {
-        return <Loading />;
-    }
-
-    if (!record[source]) {
-        return <>
-            <br />
-            <Typography align="center">No image available</Typography>
-        </>;
-    }
-    const base64Image = record[source];
+const LineageField = ({ label, resource, id, name }) => {
+    const createPath = useCreatePath();
     return (
-        <div style={{ textAlign: 'center', margin: '0 10px' }}>
-            <img src={`${base64Image}`} style={{ maxWidth: '80%', height: 'auto' }} />
-        </div>
+        <FieldRow label={label}>
+            {id ? (
+                <Link to={createPath({ resource, type: 'show', id })}>{name}</Link>
+            ) : null}
+        </FieldRow>
     );
 };
 
-const ShowComponent = () => {
+const ShowContent = () => {
+    const record = useRecordContext();
     const { permissions } = usePermissions();
     const isAdmin = permissions === 'admin';
+    const { replicate, site, area } = useBreadcrumbChain(record, {
+        needsReplicate: true,
+        needsSite: true,
+        needsArea: true,
+    });
+
+    if (!record) return null;
 
     return (
-        <Show actions={<MyActionsByPermission />}>
-            <SimpleShowLayout>
+        <Box sx={{ p: 2, pt: 0 }}>
+            <ShowActions breadcrumbItems={[
+                { resource: 'areas', id: area?.id, label: area?.name, type: 'Area' },
+                { resource: 'sites', id: site?.id, label: site?.name, type: 'Site' },
+                { resource: 'site_replicates', id: replicate?.id, label: replicate?.name, type: 'Replicate' },
+                { label: record.name, type: 'Isolate' },
+            ]} />
+
+            {/* Header with lineage */}
+            <SectionCard>
                 <Grid container spacing={2}>
-                    <Grid item xs={6}>
-                        <Grid container spacing={0}>
-                            <Grid item xs={6}>
-                                <Labeled label="Site Replicate">
-                                    <ReferenceField source="site_replicate_id" reference="site_replicates" />
-                                </Labeled>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Labeled label="DNA">
-                                    <ReferenceField source="dna_id" reference="dna" emptyText="N/A"/>
-                                </Labeled>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <hr />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Labeled label="Name">
-                                    <TextField source="name" />
-                                </Labeled>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Labeled label="Taxonomy">
-                                    <TextField source="taxonomy" />
-                                </Labeled>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Labeled label="Sample Type">
-                                    <TextField source="sample_type" emptyText="N/A" />
-                                </Labeled>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Labeled label="Storage Location">
-                                    <TextField source="storage_location" />
-                                </Labeled>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Labeled label="Temperature of Isolation">
-                                    <NumberField source="temperature_of_isolation" />
-                                </Labeled>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Labeled label="Media Used for Isolation">
-                                    <TextField source="media_used_for_isolation" />
-                                </Labeled>
-                            </Grid>
-                            {isAdmin && (
-                                <Grid item xs={12}>
-                                    <Labeled label="Privacy">
-                                        <FunctionField render={record => 
-                                            record?.is_private ? '🔒 Private' : '🌐 Public'
-                                        } />
-                                    </Labeled>
-                                </Grid>
-                            )}
-                        </Grid>
+                    <Grid item xs={12} md={6}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, flexWrap: 'wrap' }}>
+                            <Typography variant="h5" fontWeight={600}>{record.name}</Typography>
+                            <SampleTypeChip type={record.sample_type} />
+                            {isAdmin && <PrivacyToggle resource="isolates" id={record.id} isPrivate={record.is_private} />}
+                        </Box>
+                        {record.taxonomy && (
+                            <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic', mb: 1 }}>
+                                {record.taxonomy}
+                            </Typography>
+                        )}
+                        {record.genome_url && (
+                            <Typography variant="body2">
+                                <a href={record.genome_url} target="_blank" rel="noopener noreferrer">
+                                    Genome URL
+                                </a>
+                            </Typography>
+                        )}
                     </Grid>
-                    <Grid item xs={6}>
-                        <ImageField source="photo" />
+
+                    <Grid item xs={12} md={6}>
+                        <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>Lineage</Typography>
+                        <FieldRow label="Site Replicate">
+                            <ReferenceField source="site_replicate_id" reference="site_replicates" link="show" />
+                        </FieldRow>
+                        <LineageField label="Site" resource="sites" id={site?.id} name={site?.name} />
+                        <LineageField label="Area" resource="areas" id={area?.id} name={area?.name} />
                     </Grid>
                 </Grid>
-            </SimpleShowLayout>
-        </Show>
+            </SectionCard>
+
+            <Grid container spacing={2}>
+                {/* Left: Isolation Details */}
+                <Grid item xs={12} md={6}>
+                    <SectionCard title="Isolation Details" icon={<BiotechIcon fontSize="small" color="action" />}>
+                        <FieldRow label="Temperature">
+                            {record.temperature_of_isolation != null ? `${record.temperature_of_isolation} °C` : null}
+                        </FieldRow>
+                        <FieldRow label="Media">{record.media_used_for_isolation}</FieldRow>
+                        <FieldRow label="Storage Location">{record.storage_location}</FieldRow>
+                    </SectionCard>
+                </Grid>
+
+                {/* Right: Photo */}
+                <Grid item xs={12} md={6}>
+                    <PhotoCard base64={record.photo} />
+                </Grid>
+            </Grid>
+        </Box>
     );
 };
+
+const ShowComponent = () => (
+    <Show actions={false} component="div">
+        <ShowContent />
+    </Show>
+);
 
 export default ShowComponent;

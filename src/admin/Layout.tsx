@@ -1,17 +1,20 @@
-import { 
-    Layout, 
-    Button, 
-    AppBar, 
+import { createContext, useContext } from 'react';
+import {
+    Layout,
+    Button,
+    AppBar,
     TitlePortal,
-    usePermissions, 
+    usePermissions,
     useAuthProvider,
-    Menu,    
+    Menu,
     LabelIcon,
 } from 'react-admin';
 import { CssBaseline, Typography } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEarthAmericas } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
+
+const DeploymentContext = createContext(undefined);
 
 const BackToMainButton = () => {
     const navigate = useNavigate();
@@ -27,17 +30,18 @@ const BackToMainButton = () => {
     );
 };
 
-const MyAppBar = (props) => {
-    const { isPending, permissions } = usePermissions();
+const MyAppBar = () => {
+    const { isPending } = usePermissions();
+    const deployment = useContext(DeploymentContext);
     const appBarText = () => {
-        if (props.deployment) {
-            if (props.deployment === 'local') {
+        if (deployment) {
+            if (deployment === 'local') {
                 return "⭐Local Development⭐";
             }
-            if (props.deployment === 'dev') {
+            if (deployment === 'dev') {
                 return "⭐Development⭐";
             }
-            if (props.deployment === 'stage') {
+            if (deployment === 'stage') {
                 return "⭐Staging⭐";
             }
         }
@@ -51,9 +55,8 @@ const MyAppBar = (props) => {
             <Typography
                 variant="h6"
                 color="#FF69B4"
-                id="react-admin-title"
             >
-                {props.deployment ? appBarText() : ""}&nbsp;&nbsp;
+                {deployment ? appBarText() : ""}&nbsp;&nbsp;
             </Typography>
             <BackToMainButton />
             <LoginButton />
@@ -96,15 +99,15 @@ const MyMenu = () => {
 
 const MyLayout = ({ children, deployment }) => {
     return (
-        <>
+        <DeploymentContext.Provider value={deployment}>
             <CssBaseline />
             <Layout
-                appBar={() => <MyAppBar deployment={deployment} />}
+                appBar={MyAppBar}
                 menu={MyMenu}
             >
                 {children}
             </Layout>
-        </>
+        </DeploymentContext.Provider>
     );
 };
 

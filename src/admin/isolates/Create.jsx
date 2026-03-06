@@ -41,9 +41,7 @@ const IsolateCreate = (props) => {
                     label="Temperature of Isolation (°C)"
                 />
                 <TextInput source="media_used_for_isolation" label="Media Used for Isolation" />
-                <ReferenceInput source="dna_id" reference="dna" label="DNA">
-                    <SelectInput optionText="name" resettable />
-                </ReferenceInput>
+                <TextInput source="genome_url" label="Genome URL" />
                 {isAdmin && (
                     <BooleanInput 
                         source="is_private" 

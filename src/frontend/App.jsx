@@ -1,72 +1,183 @@
+import { useState, useEffect, useRef, useMemo } from 'react';
 import './App.css';
-import FrontendMap from '../maps/FrontendMap';
-import Isolates from './Isolates';
+import 'leaflet/dist/leaflet.css';
+import Cover from './Cover';
+import MapSection from './MapSection';
+import About from './About';
+import SideBar from './SideBar';
 
-const FrontendApp = () => {
+export default function FrontendApp() {
+  const [sites, setSites] = useState([]);
+  const [areas, setAreas] = useState([]);
+  const [replicates, setReplicates] = useState([]);
+  const [sampleTypeFilter, setSampleTypeFilter] = useState('All');
+  const [activeReplicateId, setActiveReplicateId] = useState(null);
+  const [activeAreaId, setActiveAreaId] = useState(null);
+  const [replicateData, setReplicateData] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('cover');
+  const [shouldRecenter, setShouldRecenter] = useState(false);
+  const [zoomToSiteId, setZoomToSiteId] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const sectionsRef = useRef([]);
 
-    return (
-        <div className="frontend-app">
-            <header className="top-bar">
-                <div className="logo">
-                    <img src="/favicon.ico" alt="CryoBioBank favicon" className="logo-icon" />
-                    CryoBioBank
-                </div>
-                <nav>
-                    <ul className="nav-links">
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#isolates">Data</a></li>
-                        <li><a href="#map">Map</a></li>
-                    </ul>
-                </nav>
-            </header>
+  // Compute area stats from already-fetched sites data
+  const areaStats = useMemo(() => {
+    return areas.map(area => {
+      const areaSites = sites.filter(s => s.area_id === area.id);
+      const sampleTypes = new Set(areaSites.flatMap(s => s.sample_types || []));
+      return {
+        ...area,
+        siteCount: areaSites.length,
+        replicateCount: areaSites.reduce((sum, s) => sum + (s.replicate_ids?.length || 0), 0),
+        sampleTypes: [...sampleTypes],
+        sites: areaSites,
+      };
+    });
+  }, [areas, sites]);
 
-            <section className="hero-section" id="home">
-                <div className="hero-content">
-                    <h1>Welcome to CryoBioBank</h1>
-                    <p>
-                        Explore detailed information about isolates, samples, and sites from our fieldwork collection.
-                    </p>
-                    <div className="cta-buttons">
-                        <a href="#isolates" className="cta-button">
-                            <i className="fa-solid fa-database"></i>
-                            View data
-                        </a>
-                        <a href="#map" className="cta-button">
-                            <i className="fa-solid fa-map"></i>
-                            Explore map
-                        </a>
-                    </div>
-                </div>
-            </section>
+  // Enrich replicates with parent site info
+  const enrichedReplicates = useMemo(() => {
+    return replicates.map(rep => {
+      const site = sites.find(s => s.id === rep.site_id);
+      return {
+        ...rep,
+        latitude_4326: site?.latitude_4326,
+        longitude_4326: site?.longitude_4326,
+        site_name: site?.name,
+        sample_types: site?.sample_types || [],
+        elevation_metres: site?.elevation_metres,
+      };
+    }).filter(rep => rep.latitude_4326 != null && rep.longitude_4326 != null);
+  }, [replicates, sites]);
 
-           <section className="isolates-section" id="isolates">
-               <Isolates />
-           </section>
-            {/* Full viewport map section */}
-            <section className="map-section" id="map">
-                <div className="map-container">
-                    <FrontendMap height="100%" width="100%"/>
-                </div>
-            </section>
-            
+  // Fetch sites, areas, and replicates on mount
+  useEffect(() => {
+    Promise.all([
+      fetch('/api/public/sites?range=[0,9999]').then(r => r.ok ? r.json() : Promise.reject(r.status)),
+      fetch('/api/public/areas?range=[0,9999]').then(r => r.ok ? r.json() : Promise.reject(r.status)),
+      fetch('/api/public/site_replicates?range=[0,9999]').then(r => r.ok ? r.json() : Promise.reject(r.status)),
+    ])
+      .then(([sitesData, areasData, replicatesData]) => {
+        setSites(Array.isArray(sitesData) ? sitesData : []);
+        setAreas(Array.isArray(areasData) ? areasData : []);
+        setReplicates(Array.isArray(replicatesData) ? replicatesData : []);
+      })
+      .catch(console.error);
+  }, []);
 
-            <footer className="footer">
-                <p className="footer-attribution">
-                    &copy; {new Date().getFullYear()} CryoBioBank.{' '}
-                    <a
-                        href="https://www.epfl.ch/labs/mace/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        MACE EPFL
-                    </a>
-                </p>
-                <a href="/admin" className="footer-lemon" title="Go to Admin">
-                    <i className="fa-regular fa-lemon"></i>
-                </a>
-            </footer>
-        </div>
-    );
-};
+  // Fetch isolates/samples when a replicate is selected
+  useEffect(() => {
+    if (!activeReplicateId) {
+      setReplicateData(null);
+      return;
+    }
 
-export default FrontendApp;
+    const fetchReplicateData = async () => {
+      setLoading(true);
+      try {
+        const [isolates, samples] = await Promise.all(
+          ['isolates', 'samples'].map(async (entity) => {
+            const res = await fetch(
+              `/api/public/${entity}?filter=${encodeURIComponent(JSON.stringify({ site_replicate_id: activeReplicateId }))}&range=[0,9999]`
+            );
+            if (res.ok) return res.json();
+            return [];
+          })
+        );
+        setReplicateData({ isolates, samples });
+      } catch (err) {
+        console.error('Error fetching replicate data:', err);
+        setReplicateData({ isolates: [], samples: [] });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReplicateData();
+  }, [activeReplicateId]);
+
+  const handleReplicateClick = (replicateId) => {
+    setActiveReplicateId(replicateId);
+  };
+
+  const handleSiteClick = (siteId) => {
+    // Zoom to site but don't select a replicate
+    setActiveReplicateId(null);
+    setReplicateData(null);
+    setZoomToSiteId(siteId);
+  };
+
+  const handleAreaClick = (areaId) => {
+    setActiveAreaId(areaId);
+    setActiveReplicateId(null);
+    setReplicateData(null);
+  };
+
+  const handleClosePanel = () => {
+    setActiveReplicateId(null);
+    setReplicateData(null);
+  };
+
+  // Prevent scroll events on map overlay elements from triggering section
+  // snap-scroll.
+  useEffect(() => {
+    const handleWheel = (event) => {
+      if (event.target.closest(
+        '.leaflet-popup, .leaflet-control, .leaflet-tooltip, .map-legend, .data-panel'
+      )) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    };
+    document.addEventListener('wheel', handleWheel, { capture: true, passive: false });
+    document.addEventListener('touchmove', handleWheel, { capture: true, passive: false });
+    return () => {
+      document.removeEventListener('wheel', handleWheel, { capture: true });
+      document.removeEventListener('touchmove', handleWheel, { capture: true });
+    };
+  }, []);
+
+  return (
+    <div className="App">
+      <SideBar
+        sectionsRef={sectionsRef}
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+        activeSection={activeSection}
+        setActiveSection={setActiveSection}
+        sampleTypeFilter={sampleTypeFilter}
+        setSampleTypeFilter={setSampleTypeFilter}
+        areaStats={areaStats}
+        activeAreaId={activeAreaId}
+        setActiveAreaId={setActiveAreaId}
+        onSiteClick={handleSiteClick}
+        sites={sites}
+      />
+
+      <main className="sections">
+        <Cover sectionsRef={sectionsRef} />
+        <MapSection
+          sites={sites}
+          areas={areas}
+          replicates={enrichedReplicates}
+          activeReplicateId={activeReplicateId}
+          activeAreaId={activeAreaId}
+          onReplicateClick={handleReplicateClick}
+          onSiteClick={handleSiteClick}
+          onAreaClick={handleAreaClick}
+          sampleTypeFilter={sampleTypeFilter}
+          replicateData={replicateData}
+          onClosePanel={handleClosePanel}
+          loading={loading}
+          shouldRecenter={shouldRecenter}
+          setShouldRecenter={setShouldRecenter}
+          zoomToSiteId={zoomToSiteId}
+          setZoomToSiteId={setZoomToSiteId}
+          sectionsRef={sectionsRef}
+        />
+        <About sectionsRef={sectionsRef} />
+      </main>
+    </div>
+  );
+}

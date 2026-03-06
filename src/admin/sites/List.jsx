@@ -4,9 +4,9 @@ import {
     TextField,
     BooleanField,
     FunctionField,
+    ReferenceField,
     useRecordContext,
     useCreatePath,
-    ReferenceManyCount,
     usePermissions,
     BulkDeleteButton,
     Loading,
@@ -15,8 +15,8 @@ import {
     TopToolbar,
     ExportButton,
     CreateButton,
+    useGetOne,
 } from "react-admin";
-// import { Link } from 'react-router-dom';
 import { ListActionsByPermission } from '../custom/Toolbars';
 import CustomEmptyPage from '../Empty';
 import LockIcon from '@mui/icons-material/Lock';
@@ -33,28 +33,42 @@ const PrivacyField = () => {
 
 const PostPanel = () => {
     const record = useRecordContext();
+    const { data, isLoading } = useGetOne('sites', { id: record?.id }, { enabled: !!record });
     const createPath = useCreatePath();
-    const objectClick = (id, resource, record) => (
-        createPath({ resource: 'site_replicates', type: 'show', id: record.id })
-    );
-    // Get sorted replicate list
-    const replicates = record.replicates.sort((a, b) => {
+
+    if (isLoading) return <Loading />;
+
+    const replicates = [...(data?.replicates || [])].sort((a, b) => {
         return new Date(a.sampling_date) - new Date(b.sampling_date);
     });
+
+    if (replicates.length === 0) {
+        return <em>No replicates recorded for this site.</em>;
+    }
 
     return (
         <table>
             <thead>
                 <tr>
-                    <th style={{ paddingRight: '20px' }}>Date</th>
+                    <th style={{ paddingRight: '20px', textAlign: 'left' }}>Replicate</th>
+                    <th style={{ paddingRight: '20px', textAlign: 'left' }}>Date</th>
+                    <th style={{ paddingRight: '20px', textAlign: 'left' }}>Samples</th>
+                    <th style={{ paddingRight: '20px', textAlign: 'left' }}>Isolates</th>
+                    <th style={{ paddingRight: '20px', textAlign: 'left' }}>DNA</th>
                 </tr>
             </thead>
             <tbody>
-                {replicates.map((replicate, index) => (
-                    <tr key={index}>
+                {replicates.map((replicate) => (
+                    <tr key={replicate.id}>
                         <td style={{ paddingRight: '20px' }}>
-                            <Link to={objectClick(replicate.id, 'site_replicates', replicate)}>{replicate.sampling_date}</Link>
+                            <Link to={createPath({ resource: 'site_replicates', type: 'show', id: replicate.id })}>
+                                {replicate.name}
+                            </Link>
                         </td>
+                        <td style={{ paddingRight: '20px' }}>{replicate.sampling_date}</td>
+                        <td style={{ paddingRight: '20px' }}>{replicate.sample_count ?? 0}</td>
+                        <td style={{ paddingRight: '20px' }}>{replicate.isolate_count ?? 0}</td>
+                        <td style={{ paddingRight: '20px' }}>{replicate.dna_count ?? 0}</td>
                     </tr>
                 ))}
             </tbody>
@@ -80,10 +94,13 @@ const ListComponent = () => {
                 bulkActionButtons={permissions === 'admin' ? <BulkDeleteButton /> : false}
             >
                 <TextField source="name" />
+                <ReferenceField source="area_id" reference="areas" link="show" label="Area">
+                    <TextField source="name" />
+                </ReferenceField>
                 <TextField source="latitude_4326" label="Latitude (°)" />
                 <TextField source="longitude_4326" label="Longitude (°)" />
                 <TextField source="elevation_metres" label="Elevation (m)" />
-                <ReferenceManyCount reference="site_replicates" target="site_id" label="Replicates" />
+                <FunctionField label="Replicates" render={record => record?.replicates?.length ?? 0} />
                 {permissions === 'admin' && (
                     <FunctionField label="Privacy" render={() => <PrivacyField />} />
                 )}

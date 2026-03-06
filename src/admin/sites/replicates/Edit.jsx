@@ -65,6 +65,9 @@ const SiteReplicateEdit = (props) => {
                     <Grid item xs={12} sm={6}>
                         <NumberInput source="ph" label="pH" />
                     </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <TextInput source="metagenome_url" label="Metagenome URL" />
+                    </Grid>
                 </Grid>
 
                 {/* Ions Accordion */}

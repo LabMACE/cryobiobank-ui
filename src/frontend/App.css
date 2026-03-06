@@ -1,224 +1,569 @@
-/* Reset and global settings */
-* {
+/* src/frontend/App.css */
+
+html,
+body,
+#root,
+.App {
+  height: 100%;
   margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+  font-family: 'Barlow', 'Roboto', sans-serif;
+  background: #1b3a57;
 }
 
-html, body {
-  font-family: 'Roboto', sans-serif;
-  overflow-x: hidden; /* Prevent horizontal scrolling */
-  scroll-behavior: smooth;
-}
-
-.frontend-app {
-  min-height: 100vh;
-  overflow-x: hidden;
-  scroll-snap-type: y mandatory;
-}
-
-/* Top Bar */
-.top-bar {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  padding: 15px 30px;
+.App {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgba(0, 0, 0, 0.6);
-  z-index: 1000;
-}
-
-.logo {
-  font-size: 24px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-}
-
-.logo-icon {
-  height: 30px;
-  width: auto;
-  margin-right: 10px;
-}
-
-.nav-links {
-  list-style: none;
-  display: flex;
-  gap: 20px;
-}
-
-.nav-links li a {
-  text-decoration: none;
-  font-size: 16px;
-  color: #fff;
-  transition: color 0.3s ease;
-}
-
-.nav-links li a:hover {
-  color: #4A9AA5;
-}
-
-/* Dropdown Menu Styles */
-.nav-links .dropdown {
-  position: relative;
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 100%; /* directly below the parent link */
-  right: 0;   /* align with the right edge to prevent overflow */
-  background-color: #2E7D87; /* teal/blue-green */
-  border-radius: 8px;
-  padding: 8px 0;
-  white-space: nowrap;
-  z-index: 1100;
-  min-width: 140px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.dropdown-menu li {
-  list-style: none;
-}
-
-.dropdown-menu li a {
-  display: block;
-  padding: 8px 16px;
-  font-size: 15px;
-  color: #fff;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  border-radius: 4px;
-  margin: 2px 8px;
-}
-
-.dropdown-menu li a:hover {
-  background-color: rgba(255, 255, 255, 0.15);
-  color: #E8F4F8;
-  transform: translateX(2px);
-}
-
-/* Hero Section: full viewport height with a darker blue gradient */
-.hero-section {
   height: 100vh;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  background: linear-gradient(135deg, #1b3a57, #13384c);
-  padding-top: 80px; /* account for fixed top bar */
-  box-sizing: border-box;
-  scroll-snap-align: start;
-  position: relative;
-}
-
-.hero-content {
-  background: rgba(0, 0, 0, 0.4);
-  padding: 40px 20px;
-  border-radius: 10px;
-}
-
-.hero-content h1 {
-  font-size: 48px;
-  margin-bottom: 20px;
-  color: #fff;
-}
-
-.hero-content p {
-  font-size: 20px;
-  margin-bottom: 30px;
-  color: #fff;
-}
-
-.cta-buttons {
-  display: flex;
-  gap: 20px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.cta-button {
-  padding: 16px 28px;
-  font-size: 18px;
-  font-weight: 600;
-  color: #fff;
-  background: linear-gradient(135deg, #2E7D87, #4A9AA5);
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  box-shadow: 0 4px 16px rgba(46, 125, 135, 0.3);
-  position: relative;
   overflow: hidden;
 }
 
-.cta-button::before {
+/* SIDEBAR */
+.sidebar {
+  position: relative;
+  background: #ececec;
+  color: #333;
+  overflow: hidden;
+  width: 50px;
+  transition: width 0.3s ease;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar.open {
+  width: 240px;
+}
+
+.sidebar.closed .sidebar-toggle {
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.sidebar-toggle {
+  position: absolute;
+  top: 1rem;
+  background: none;
+  border: none;
+  color: #333;
+  font-size: 1.5rem;
+  padding: 0.25rem 0.5rem;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 100;
+  transition: color 0.2s ease;
+}
+
+.sidebar-toggle:hover {
+  color: #000;
+}
+
+.sidebar nav {
+  opacity: 0;
+  padding-top: 5rem;
+  visibility: hidden;
+  transition: opacity 0.2s ease;
+}
+
+.sidebar.open nav {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease 0.3s;
+}
+
+.sidebar nav ul {
+  list-style: none;
+  padding-left: 1rem;
+  margin: 0;
+}
+
+.menu-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font-size: 1rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.menu-btn:hover {
+  color: #2E7D87;
+}
+
+/* Mode switch (sample type toggle) */
+.mode-switch {
+  position: relative;
+  display: inline-flex;
+  background: #e0e0e0;
+  border-radius: 999px;
+  padding: 2px;
+  font-size: 0.85rem;
+  user-select: none;
+  margin-bottom: 0.5rem;
+}
+
+.mode-switch-thumb {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  background-color: #2E7D87;
+  border-radius: 999px;
+  transition: left 0.25s ease, width 0.25s ease;
+}
+
+.mode-btn {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  white-space: nowrap;
+  padding: 0.25rem 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  color: #444;
+  text-align: center;
+  transition: color 0.25s;
+}
+
+.mode-btn.active {
+  color: #fff;
+}
+
+/* AREA NAVIGATION */
+.area-list-header {
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.area-list-empty {
+  font-size: 0.85rem;
+  color: #999;
+  padding: 0.25rem 0;
+}
+
+.area-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0.4rem 0.25rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #333;
+  text-align: left;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.area-item:hover {
+  background: rgba(46, 125, 135, 0.1);
+}
+
+.area-color-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.area-item-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.area-item-badge {
+  background: #2E7D87;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.area-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: none;
+  border: none;
+  padding: 0.25rem 0;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #2E7D87;
+  margin-bottom: 0.5rem;
+}
+
+.area-back-btn:hover {
+  text-decoration: underline;
+}
+
+.area-drilldown-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.area-drilldown-stats {
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 0.75rem;
+}
+
+.area-site-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0.4rem 0.25rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #333;
+  text-align: left;
+  border-radius: 4px;
+  transition: background 0.15s;
+  flex-wrap: wrap;
+}
+
+.area-site-item:hover {
+  background: rgba(46, 125, 135, 0.1);
+}
+
+.area-site-name {
+  flex: 1;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.area-site-types {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+/* SECTIONS */
+.sections {
+  flex: 1;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+}
+
+.section {
+  scroll-snap-align: start;
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #1b3a57;
+}
+
+.section h2 {
+  color: #fff;
+}
+
+/* COVER */
+.section.cover {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1b3a57, #0f2a3e);
+  color: #fff;
+}
+
+.section.cover::before {
   content: '';
   position: absolute;
   top: 0;
-  left: -100%;
+  left: 50%;
+  transform: translateX(-50%) scale(1);
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
+  background: url('/mountains.svg') no-repeat center 25%;
+  background-size: cover;
+  filter: invert(1) brightness(1);
+  z-index: 0;
 }
 
-.cta-button:hover::before {
-  left: 100%;
+.section.cover::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(27, 58, 87, 0.6);
+  z-index: 1;
 }
 
-.cta-button:hover {
-  background: linear-gradient(135deg, #4A9AA5, #5BADB8);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(46, 125, 135, 0.4);
+.cover-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 600px;
+  width: 60%;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
 }
 
-.cta-button i {
-  font-size: 16px;
+.cover-content h1 {
+  font-size: 3rem;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+  margin: 0;
 }
 
-/* Map Section: full viewport height */
-.map-section {
-  height: 100vh;
-  min-height: 100vh;
-  padding: 120px 60px 80px 60px; /* more space top/bottom, moderate sides */
-  background: linear-gradient(135deg, #2E7D87, #4A9AA5); /* Deeper teal gradient */
+.cover-subtitle {
+  font-size: 1.2rem;
+  opacity: 0.85;
+  margin-top: 0.5rem;
+}
+
+.down-arrow {
+  position: absolute;
+  bottom: 15rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 3rem;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.down-arrow:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.attribution {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  color: #fff;
+  font-size: 1.5rem;
+  z-index: 2;
+}
+
+/* MAP */
+.map-wrapper {
+  width: 95%;
+  height: 90vh;
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+}
+
+.map-with-chart {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.map-with-chart .leaflet-container {
+  flex: 1;
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.leaflet-container *,
+.leaflet-control *,
+.leaflet-popup-content *,
+.leaflet-tooltip *,
+.leaflet-bar a {
+  font-family: 'Barlow', 'Roboto', sans-serif;
+}
+
+/* Make tooltips more visible on light basemaps */
+.leaflet-tooltip {
+  background: rgba(30, 55, 80, 0.85);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.leaflet-tooltip-top:before,
+.leaflet-tooltip-bottom:before,
+.leaflet-tooltip-left:before,
+.leaflet-tooltip-right:before {
+  border-color: rgba(30, 55, 80, 0.85) transparent transparent transparent;
+}
+
+/* Force Leaflet layers control labels to align left */
+.leaflet-control-layers {
+  text-align: left !important;
+}
+
+/* DATA PANEL (overlay at bottom of map) */
+.overlay-chart.data-panel {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  right: 1rem;
+  max-height: 250px;
+  background: white;
   color: #333;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  overflow: auto;
+  z-index: 1000;
+  opacity: 0.95;
+  padding: 1rem;
+}
+
+.data-panel-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+  line-height: 1;
+}
+
+.data-panel-close:hover {
+  color: #000;
+}
+
+.data-panel-content h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.1rem;
+}
+
+.data-panel-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.data-panel-table th,
+.data-panel-table td {
+  padding: 0.4rem 0.6rem;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.data-panel-table th {
+  font-weight: 600;
+  background: #f5f5f5;
+  position: sticky;
+  top: 0;
+}
+
+.data-panel-table a {
+  color: #2E7D87;
+}
+
+/* Side-by-side columns in data panel */
+.data-panel-columns {
+  display: flex;
+  gap: 1rem;
+}
+
+.data-panel-column {
+  flex: 1;
+  min-width: 0;
+}
+
+.data-panel-column-header {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
   display: flex;
   align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  scroll-snap-align: start;
-  position: relative;
+  gap: 0.5rem;
 }
 
-.map-section h2 {
-  font-size: 36px;
-  margin-bottom: 20px;
-}
-
-/* Footer styling */
-.footer {
-  background: #333;
+.data-panel-count-badge {
+  background: #2E7D87;
   color: #fff;
-  padding: 20px 30px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 999px;
+}
+
+.data-panel-empty {
+  color: #999;
+  font-style: italic;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Push legend up when data panel is open */
+.map-with-chart:has(.overlay-chart) .leaflet-bottom.leaflet-right {
+  transition: bottom 0.2s;
+  bottom: 260px;
+}
+
+/* ABOUT */
+.about-section {
+  flex-direction: column;
+}
+
+.distinct-about-card {
+  background: #162d45;
+  color: #f0f0f0;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.14);
+  padding: 2rem 2rem 1.5rem 2rem;
+  border-radius: 20px;
+  max-width: 90%;
+  margin: 1.5rem auto;
+  font-size: 1rem;
+}
+
+.about-body a {
+  color: #90caf9;
+}
+
+.about-body a:hover {
+  color: #fff;
+}
+
+.about-body p {
+  line-height: 1.7;
+}
+
+/* Footer */
+.footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  padding: 15px 30px;
   text-align: center;
-  width: 100%;
-  position: relative; /* Contain absolutely positioned lemon icon */
 }
 
 .footer-attribution {
   margin: 0;
 }
 
-/* Style for all footer links except the lemon icon */
 .footer a:not(.footer-lemon) {
   color: #4A9AA5;
   text-decoration: none;
@@ -229,127 +574,113 @@ html, body {
   color: #7BB8C4;
 }
 
-/* Footer lemon icon using Font Awesome */
 .footer-lemon {
   position: absolute;
   right: 30px;
   top: 50%;
   transform: translateY(-50%);
   font-size: 24px;
-  color: #333; /* same as footer background, hidden by default */
-  transition: color 0.3s ease;
+  opacity: 0;
+  transition: opacity 0.3s ease;
   text-decoration: none;
 }
 
 .footer-lemon:hover {
-  color: #FFD700; /* yellow on hover */
+  opacity: 1;
 }
 
-/* Map container for inset effect */
-.map-container {
-  width: 100%;
-  height: 100%;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  background: #fff;
-}
-
-/* Force Leaflet layers control labels to align to the left */
-.leaflet-control-layers {
-  text-align: left !important;
-}
-/* Isolates Section: full viewport height */
-.isolates-section {
-  height: 100vh;
-  min-height: 100vh;
-  padding: 80px 20px 20px 20px; /* account for fixed top bar */
-  background: linear-gradient(135deg, #E8F4F8, #F0F8FB); /* Light teal to very light blue gradient */
+/* Custom cluster icons */
+.cluster-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-sizing: border-box;
-  scroll-snap-align: start;
-  position: relative;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  font-size: 11px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
-.isolates-component {
-  max-width: 800px;         /* Wider for better use of space */
-  width: 100%;
-  padding: 30px;
-  background: #fff;         /* White background */
-  color: #333;              /* Dark text for readability */
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  max-height: calc(100vh - 120px); /* Leave space for padding */
-  overflow-y: auto;         /* Allow scrolling if content is too tall */
-}
-
-.query-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.query-input {
-  flex: 1;
-  padding: 8px;
-  font-size: 16px;
-  margin-right: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.query-button {
-  padding: 8px 16px;
-  font-size: 16px;
-  border: none;
-  background-color: #2E7D87;
-  color: #fff;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.query-button:hover {
-  background-color: #4A9AA5;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(46, 125, 135, 0.3);
-}
-
-.results-container {
-  min-height: 200px; /* Fixed minimum height to prevent layout jumps */
-}
-
-.isolate-card {
-  background: #f0f0f0;
+/* Map legend */
+.map-legend {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 12px 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  font-size: 0.95rem;
   color: #333;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 4px;
-  list-style: none;
+  line-height: 1.5;
 }
 
-.isolate-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-}
+/* MOBILE */
+@media (max-width: 600px) {
+  .cover-content {
+    width: 90%;
+    padding: 1rem;
+  }
 
-.isolate-header h3 {
-  margin: 0;
-}
+  .cover-content h1 {
+    font-size: 2rem;
+    line-height: 1.2;
+    white-space: normal;
+  }
 
-.arrow {
-  font-size: 20px;
-  margin-left: 10px;
-}
+  .sidebar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1.5rem;
+    overflow: hidden;
+    background: #ececec;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
+    transition: height 0.3s ease;
+    z-index: 1000;
+    width: auto;
+  }
 
-.isolate-details {
-  margin-top: 10px;
-  border-top: 1px solid #ccc;
-  padding-top: 10px;
+  .sidebar.open {
+    height: 45vh;
+    width: auto;
+  }
+
+  .sidebar .grabber {
+    width: 40px;
+    height: 4px;
+    background: #888;
+    border-radius: 2px;
+    margin: 6px auto;
+    cursor: pointer;
+  }
+
+  .sidebar:not(.open) nav {
+    display: none;
+  }
+
+  .sidebar.open nav {
+    display: block;
+    padding: 1rem;
+  }
+
+  .sections,
+  .map-wrapper,
+  .leaflet-container {
+    padding-bottom: 0;
+    height: 100vh;
+    width: 100%;
+  }
+
+  .overlay-chart.data-panel {
+    bottom: 0.5rem;
+  }
+
+  .sidebar-toggle {
+    display: none;
+  }
+
+  .attribution {
+    bottom: 5rem;
+  }
 }

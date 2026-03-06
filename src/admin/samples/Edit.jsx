@@ -25,13 +25,6 @@ const SampleEdit = (props) => {
                 >
                     <SelectInput optionText="name" validate={[required()]} resettable/>
                 </ReferenceInput>
-                <ReferenceInput
-                    source="dna_id"
-                    reference="dna"
-                    label="DNA"
-                >
-                    <SelectInput optionText="name" resettable />
-                </ReferenceInput>
                 <TextInput source="name" label="Name" />
                 <SelectInput source="sample_type" label="Sample Type"
                     choices={sampleTypeChoices}

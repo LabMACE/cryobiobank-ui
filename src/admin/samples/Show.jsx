@@ -1,74 +1,88 @@
 import {
     Show,
-    SimpleShowLayout,
-    TextField,
-    FunctionField,
-    Labeled,
     ReferenceField,
+    useRecordContext,
     usePermissions,
+    useCreatePath,
+    Link,
 } from 'react-admin';
-import { Grid } from '@mui/material';
-import { MyActionsByPermission } from '../custom/Toolbars';
+import { Box, Typography, Grid } from '@mui/material';
+import {
+    SectionCard,
+    FieldRow,
+    PrivacyToggle,
+    SampleTypeChip,
+    ShowActions,
+    useBreadcrumbChain,
+} from '../custom/ShowComponents';
 
+const LineageField = ({ label, resource, id, name }) => {
+    const createPath = useCreatePath();
+    return (
+        <FieldRow label={label}>
+            {id ? (
+                <Link to={createPath({ resource, type: 'show', id })}>{name}</Link>
+            ) : null}
+        </FieldRow>
+    );
+};
 
-const ShowComponent = () => {
+const ShowContent = () => {
+    const record = useRecordContext();
     const { permissions } = usePermissions();
     const isAdmin = permissions === 'admin';
+    const { replicate, site, area } = useBreadcrumbChain(record, {
+        needsReplicate: true,
+        needsSite: true,
+        needsArea: true,
+    });
+
+    if (!record) return null;
 
     return (
-        <Show actions={<MyActionsByPermission />}>
-            <SimpleShowLayout>
-                <Grid container spacing={2}>
-                    <Grid item xs={6}>
-                        <Grid container spacing={0}>
-                            <Grid item xs={6}>
-                            <Labeled label="Site Replicate">
-                                    <ReferenceField source="site_replicate_id" reference="site_replicates" />
-                                </Labeled>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Labeled label="DNA ID">
-                                    <ReferenceField source="dna_id" reference="dna" emptyText="N/A"/>
-                                </Labeled>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <hr />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Labeled label="Name">
-                                    <TextField source="name" />
-                                </Labeled>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Labeled label="Sample Type">
-                                    <TextField source="sample_type" />
-                                </Labeled>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Labeled label="Storage location">
-                                    <TextField source="storage_location" />
-                                </Labeled>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Labeled label="Description">
-                                    <TextField source="description" />
-                                </Labeled>
-                            </Grid>
-                            {isAdmin && (
-                                <Grid item xs={12}>
-                                    <Labeled label="Privacy">
-                                        <FunctionField render={record => 
-                                            record?.is_private ? '🔒 Private' : '🌐 Public'
-                                        } />
-                                    </Labeled>
-                                </Grid>
-                            )}
+        <Box sx={{ p: 2, pt: 0 }}>
+            <ShowActions breadcrumbItems={[
+                { resource: 'areas', id: area?.id, label: area?.name, type: 'Area' },
+                { resource: 'sites', id: site?.id, label: site?.name, type: 'Site' },
+                { resource: 'site_replicates', id: replicate?.id, label: replicate?.name, type: 'Replicate' },
+                { label: record.name, type: 'Sample' },
+            ]} />
 
-                        </Grid>
+            {/* Header with lineage */}
+            <SectionCard>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} md={6}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, flexWrap: 'wrap' }}>
+                            <Typography variant="h5" fontWeight={600}>{record.name}</Typography>
+                            <SampleTypeChip type={record.sample_type} />
+                            {isAdmin && <PrivacyToggle resource="samples" id={record.id} isPrivate={record.is_private} />}
+                        </Box>
+                        <FieldRow label="Storage Location">{record.storage_location}</FieldRow>
+                        {record.description && (
+                            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                                {record.description}
+                            </Typography>
+                        )}
+                    </Grid>
+
+                    <Grid item xs={12} md={6}>
+                        <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>Lineage</Typography>
+                        <FieldRow label="Site Replicate">
+                            <ReferenceField source="site_replicate_id" reference="site_replicates" link="show" />
+                        </FieldRow>
+                        <LineageField label="Site" resource="sites" id={site?.id} name={site?.name} />
+                        <LineageField label="Area" resource="areas" id={area?.id} name={area?.name} />
                     </Grid>
                 </Grid>
-            </SimpleShowLayout>
-        </Show >
-    )
+            </SectionCard>
+        </Box>
+    );
 };
+
+const ShowComponent = () => (
+    <Show actions={false} component="div">
+        <ShowContent />
+    </Show>
+);
+
 export default ShowComponent;

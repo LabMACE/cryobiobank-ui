@@ -148,12 +148,12 @@ const App = () => {
                 The resource mapping by permissions is done in the Menu 
                 component in the <MyLayout/> definition 
             */}
-            <Resource name="areas" {...areas} />
-            <Resource name="sites" {...sites} />
-            <Resource name="site_replicates" {...site_replicates} />
-            <Resource name="isolates" {...isolates} />
-            <Resource name="samples" {...samples} />
-            <Resource name="dna" {...dna} />
+            <Resource name="areas" {...areas} recordRepresentation="name" />
+            <Resource name="sites" {...sites} recordRepresentation="name" />
+            <Resource name="site_replicates" {...site_replicates} recordRepresentation="name" />
+            <Resource name="isolates" {...isolates} recordRepresentation="name" />
+            <Resource name="samples" {...samples} recordRepresentation="name" />
+            <Resource name="dna" {...dna} recordRepresentation="name" />
         </Admin>
     );
 };
