@@ -478,24 +478,36 @@ body,
   color: #2E7D87;
 }
 
-/* Side-by-side columns in data panel */
-.data-panel-columns {
+/* Tabs in data panel */
+.data-panel-tabs {
   display: flex;
-  gap: 1rem;
+  gap: 0;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 0.75rem;
 }
 
-.data-panel-column {
-  flex: 1;
-  min-width: 0;
-}
-
-.data-panel-column-header {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
+.data-panel-tab {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #999;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.data-panel-tab:hover {
+  color: #555;
+}
+
+.data-panel-tab.active {
+  color: #2E7D87;
+  border-bottom-color: #2E7D87;
 }
 
 .data-panel-count-badge {
@@ -505,6 +517,10 @@ body,
   font-weight: 600;
   padding: 1px 6px;
   border-radius: 999px;
+}
+
+.data-panel-tab:not(.active) .data-panel-count-badge {
+  background: #ccc;
 }
 
 .data-panel-empty {

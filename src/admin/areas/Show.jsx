@@ -17,6 +17,7 @@ import {
     StatBox,
     PrivacyToggle,
     ShowActions,
+    ShowTitle,
 } from '../custom/ShowComponents';
 
 export const ColorBox = () => {
@@ -114,7 +115,7 @@ const ShowContent = () => {
 };
 
 const ShowComponent = () => (
-    <Show actions={false} component="div">
+    <Show actions={false} component="div" title={<ShowTitle label="Area" />}>
         <ShowContent />
     </Show>
 );

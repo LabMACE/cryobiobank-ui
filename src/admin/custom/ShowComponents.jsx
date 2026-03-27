@@ -1,4 +1,4 @@
-import { useGetOne, useCreatePath, useUpdate, useNotify, useRefresh, Link, TopToolbar, EditButton, DeleteButton, usePermissions, Loading } from 'react-admin';
+import { useGetOne, useCreatePath, useUpdate, useNotify, useRefresh, Link, TopToolbar, EditButton, DeleteButton, usePermissions, useRecordContext, Loading } from 'react-admin';
 import {
     Card,
     CardContent,
@@ -199,6 +199,12 @@ export const Breadcrumbs = ({ items }) => (
         })}
     </MuiBreadcrumbs>
 );
+
+export const ShowTitle = ({ label }) => {
+    const record = useRecordContext();
+    if (!record) return null;
+    return <span>{label}: {record.name}</span>;
+};
 
 export const ShowActions = ({ breadcrumbItems, deleteProps, children }) => {
     const { permissions, isLoading } = usePermissions();

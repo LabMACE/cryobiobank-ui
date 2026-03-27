@@ -15,6 +15,7 @@ import {
     SampleTypeChip,
     PhotoCard,
     ShowActions,
+    ShowTitle,
     useBreadcrumbChain,
 } from '../custom/ShowComponents';
 
@@ -106,7 +107,7 @@ const ShowContent = () => {
 };
 
 const ShowComponent = () => (
-    <Show actions={false} component="div">
+    <Show actions={false} component="div" title={<ShowTitle label="Isolate" />}>
         <ShowContent />
     </Show>
 );

@@ -262,6 +262,10 @@ export default function CryoLayers({
     ? areas
     : areas.filter(a => filteredSites.some(s => s.area_id === a.id));
 
+  // Sites that have no visible replicate markers — show as gray dots
+  const replicateSiteIds = new Set(filteredReplicates.map(r => r.site_id));
+  const sitesWithoutMarkers = filteredSites.filter(s => !replicateSiteIds.has(s.id));
+
   return (
     <>
       <BaseLayers />
@@ -317,6 +321,25 @@ export default function CryoLayers({
             </Marker>
           );
         })}
+        {sitesWithoutMarkers.map((site) => (
+          <Marker
+            key={`site-${site.id}`}
+            position={[site.latitude_4326, site.longitude_4326]}
+            icon={defaultIcon}
+            sampleTypes={[]}
+          >
+            <Tooltip>
+              <strong>{site.name}</strong>
+              <br />
+              <span style={{ fontSize: '0.85em', opacity: 0.85 }}>No replicates</span>
+            </Tooltip>
+            <Popup>
+              <strong>{site.name}</strong>
+              {site.elevation_metres != null && <><br />Elevation: {site.elevation_metres} m</>}
+              <br /><em>No replicates yet</em>
+            </Popup>
+          </Marker>
+        ))}
       </MarkerClusterGroup>
 
       {filteredAreas.map((area) => (

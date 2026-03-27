@@ -76,8 +76,8 @@ export default function FrontendApp() {
     const fetchReplicateData = async () => {
       setLoading(true);
       try {
-        const [isolates, samples] = await Promise.all(
-          ['isolates', 'samples'].map(async (entity) => {
+        const [isolates, samples, dna] = await Promise.all(
+          ['isolates', 'samples', 'dna'].map(async (entity) => {
             const res = await fetch(
               `/api/public/${entity}?filter=${encodeURIComponent(JSON.stringify({ site_replicate_id: activeReplicateId }))}&range=[0,9999]`
             );
@@ -85,10 +85,10 @@ export default function FrontendApp() {
             return [];
           })
         );
-        setReplicateData({ isolates, samples });
+        setReplicateData({ isolates, samples, dna });
       } catch (err) {
         console.error('Error fetching replicate data:', err);
-        setReplicateData({ isolates: [], samples: [] });
+        setReplicateData({ isolates: [], samples: [], dna: [] });
       } finally {
         setLoading(false);
       }

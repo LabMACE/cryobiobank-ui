@@ -22,6 +22,7 @@ import {
     SectionCard,
     PrivacyToggle,
     ShowActions,
+    ShowTitle,
 } from '../custom/ShowComponents';
 
 const AddSiteReplicateButton = () => {
@@ -107,7 +108,7 @@ const ShowContent = () => {
 };
 
 const ShowComponent = () => (
-    <Show actions={false} component="div">
+    <Show actions={false} component="div" title={<ShowTitle label="Site" />}>
         <ShowContent />
     </Show>
 );

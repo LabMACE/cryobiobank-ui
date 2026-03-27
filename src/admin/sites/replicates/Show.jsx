@@ -21,6 +21,7 @@ import {
     FieldRow,
     PrivacyToggle,
     ShowActions,
+    ShowTitle,
 } from '../../custom/ShowComponents';
 
 const TabLabelWithCount = ({ label, reference, target }) => (
@@ -196,7 +197,7 @@ const ShowContent = () => {
 };
 
 const SiteReplicateShow = () => (
-    <Show actions={false} component="div">
+    <Show actions={false} component="div" title={<ShowTitle label="Site replicate" />}>
         <ShowContent />
     </Show>
 );
