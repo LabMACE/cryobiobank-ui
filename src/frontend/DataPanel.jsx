@@ -83,22 +83,24 @@ export default function DataPanel({ replicateData, onClose, loading }) {
                 );
               })}
             </div>
-            {items.length === 0 ? (
-              <p className="data-panel-empty">No {activeTabDef?.label.toLowerCase()}</p>
-            ) : (
-              <table className="data-panel-table">
-                <thead>
-                  <tr>
-                    {activeTabDef.columns.map((col) => (
-                      <th key={col}>{col}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {items.map(activeTabDef.row)}
-                </tbody>
-              </table>
-            )}
+            <div className="data-panel-body">
+              {items.length === 0 ? (
+                <p className="data-panel-empty">No {activeTabDef?.label.toLowerCase()}</p>
+              ) : (
+                <table className="data-panel-table">
+                  <thead>
+                    <tr>
+                      {activeTabDef.columns.map((col) => (
+                        <th key={col}>{col}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {items.map(activeTabDef.row)}
+                  </tbody>
+                </table>
+              )}
+            </div>
           </>
         )}
       </div>
