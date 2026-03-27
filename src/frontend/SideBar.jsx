@@ -3,7 +3,7 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-const sampleTypeOptions = ['Snow', 'Soil', 'All'];
+const sampleTypeOptions = ['All', 'Snow', 'Soil'];
 
 export default function SideBar({
   sectionsRef,
@@ -59,6 +59,7 @@ export default function SideBar({
   }, [activeSection, setSidebarOpen]);
 
   // Update thumb position for sample type toggle
+  // Depends on sampleTypeFilter AND sidebarOpen — buttons have zero size when sidebar is collapsed
   useLayoutEffect(() => {
     const updateThumb = () => {
       const ref = btnRefs.current[sampleTypeFilter];
@@ -70,7 +71,7 @@ export default function SideBar({
     updateThumb();
     window.addEventListener('resize', updateThumb);
     return () => window.removeEventListener('resize', updateThumb);
-  }, [sampleTypeFilter]);
+  }, [sampleTypeFilter, sidebarOpen]);
 
   // Filter area stats by sample type
   const filteredAreaStats = sampleTypeFilter === 'All'
