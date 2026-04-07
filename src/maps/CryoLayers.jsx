@@ -43,28 +43,50 @@ function clusterIconCreate(cluster) {
   const total = children.length;
   let snow = 0;
   let soil = 0;
+  let noData = 0;
   for (const m of children) {
     const types = m.options.sampleTypes || [];
-    if (types.includes('Snow')) snow++;
-    if (types.includes('Soil')) soil++;
+    const hasSnow = types.includes('Snow');
+    const hasSoil = types.includes('Soil');
+    if (hasSnow) snow++;
+    if (hasSoil) soil++;
+    if (!hasSnow && !hasSoil) noData++;
   }
 
   const size = total < 10 ? 36 : total < 50 ? 44 : 52;
+
+  // Build conic-gradient segments for all present types
+  const segments = [];
+  if (snow > 0) segments.push({ color: SNOW_COLOR, count: snow });
+  if (soil > 0) segments.push({ color: SOIL_COLOR, count: soil });
+  if (noData > 0) segments.push({ color: '#888', count: noData });
+
   let bg;
-  if (snow > 0 && soil > 0) {
-    const snowPct = Math.round((snow / (snow + soil)) * 100);
-    bg = `conic-gradient(${SNOW_COLOR} 0% ${snowPct}%, ${SOIL_COLOR} ${snowPct}% 100%)`;
-  } else if (snow > 0) {
-    bg = SNOW_COLOR;
-  } else if (soil > 0) {
-    bg = SOIL_COLOR;
+  if (segments.length <= 1) {
+    bg = segments.length === 1 ? segments[0].color : '#888';
   } else {
-    bg = '#888';
+    const sum = segments.reduce((s, seg) => s + seg.count, 0);
+    const stops = [];
+    let cursor = 0;
+    for (const seg of segments) {
+      const pct = Math.round((seg.count / sum) * 100);
+      stops.push(`${seg.color} ${cursor}% ${cursor + pct}%`);
+      cursor += pct;
+    }
+    bg = `conic-gradient(${stops.join(', ')})`;
   }
 
-  const label = (snow > 0 && soil > 0)
-    ? `<span style="color:#b0d4f1">${snow}</span>/<span style="color:#d4b86a">${soil}</span>`
-    : `${total}`;
+  // Build label showing counts for each present type
+  let label;
+  if (segments.length <= 1) {
+    label = `${total}`;
+  } else {
+    const parts = [];
+    if (snow > 0) parts.push(`<span style="color:#b0d4f1">${snow}</span>`);
+    if (soil > 0) parts.push(`<span style="color:#d4b86a">${soil}</span>`);
+    if (noData > 0) parts.push(`<span style="color:#ccc">${noData}</span>`);
+    label = parts.join('/');
+  }
 
   return L.divIcon({
     className: '',
