@@ -5,14 +5,14 @@ const tabs = [
     key: 'isolates',
     label: 'Isolates',
     columns: ['Name', 'Taxonomy', 'Storage', 'Genome'],
-    row: (item) => (
-      <tr key={item.id}>
+    row: (item, onItemClick, selectedItemId) => (
+      <tr key={item.id} onClick={() => onItemClick?.('isolates', item.id)} className={item.id === selectedItemId ? 'selected' : ''}>
         <td>{item.name}</td>
         <td>{item.taxonomy || '—'}</td>
         <td>{item.storage_location || '—'}</td>
         <td>
           {item.genome_url ? (
-            <a href={item.genome_url} target="_blank" rel="noopener noreferrer">Link</a>
+            <a href={item.genome_url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>Link</a>
           ) : '—'}
         </td>
       </tr>
@@ -22,8 +22,8 @@ const tabs = [
     key: 'samples',
     label: 'Samples',
     columns: ['Name', 'Type', 'Storage'],
-    row: (item) => (
-      <tr key={item.id}>
+    row: (item, onItemClick, selectedItemId) => (
+      <tr key={item.id} onClick={() => onItemClick?.('samples', item.id)} className={item.id === selectedItemId ? 'selected' : ''}>
         <td>{item.name}</td>
         <td>{item.sample_type || '—'}</td>
         <td>{item.storage_location || '—'}</td>
@@ -34,8 +34,8 @@ const tabs = [
     key: 'dna',
     label: 'DNA',
     columns: ['Name', 'Description', 'Extraction method'],
-    row: (item) => (
-      <tr key={item.id}>
+    row: (item, onItemClick, selectedItemId) => (
+      <tr key={item.id} onClick={() => onItemClick?.('dna', item.id)} className={item.id === selectedItemId ? 'selected' : ''}>
         <td>{item.name}</td>
         <td>{item.description || '—'}</td>
         <td>{item.extraction_method || '—'}</td>
@@ -44,7 +44,7 @@ const tabs = [
   },
 ];
 
-export default function DataPanel({ replicateData, onClose, loading }) {
+export default function DataPanel({ replicateData, onClose, loading, onItemClick, selectedItemId }) {
   const [activeTab, setActiveTab] = useState('isolates');
 
   // Auto-select first tab with data when data changes
@@ -96,7 +96,7 @@ export default function DataPanel({ replicateData, onClose, loading }) {
                     </tr>
                   </thead>
                   <tbody>
-                    {items.map(activeTabDef.row)}
+                    {items.map((item) => activeTabDef.row(item, onItemClick, selectedItemId))}
                   </tbody>
                 </table>
               )}

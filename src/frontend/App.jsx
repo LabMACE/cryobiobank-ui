@@ -19,6 +19,7 @@ export default function FrontendApp() {
   const [shouldRecenter, setShouldRecenter] = useState(false);
   const [zoomToSiteId, setZoomToSiteId] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
   const sectionsRef = useRef([]);
 
   // Compute area stats from already-fetched sites data
@@ -99,6 +100,7 @@ export default function FrontendApp() {
 
   const handleReplicateClick = (replicateId) => {
     setActiveReplicateId(replicateId);
+    setSelectedItem(null);
   };
 
   const handleSiteClick = (siteId) => {
@@ -117,6 +119,15 @@ export default function FrontendApp() {
   const handleClosePanel = () => {
     setActiveReplicateId(null);
     setReplicateData(null);
+    setSelectedItem(null);
+  };
+
+  const handleItemClick = (type, id) => {
+    setSelectedItem({ type, id });
+  };
+
+  const handleCloseDetail = () => {
+    setSelectedItem(null);
   };
 
   // Prevent scroll events on map overlay elements from triggering section
@@ -124,7 +135,7 @@ export default function FrontendApp() {
   useEffect(() => {
     const handleWheel = (event) => {
       if (event.target.closest(
-        '.leaflet-popup, .leaflet-control, .leaflet-tooltip, .map-legend, .data-panel'
+        '.leaflet-popup, .leaflet-control, .leaflet-tooltip, .map-legend, .data-panel, .detail-side-panel'
       )) {
         event.preventDefault();
         event.stopPropagation();
@@ -170,6 +181,9 @@ export default function FrontendApp() {
           replicateData={replicateData}
           onClosePanel={handleClosePanel}
           loading={loading}
+          onItemClick={handleItemClick}
+          selectedItem={selectedItem}
+          onCloseDetail={handleCloseDetail}
           shouldRecenter={shouldRecenter}
           setShouldRecenter={setShouldRecenter}
           zoomToSiteId={zoomToSiteId}

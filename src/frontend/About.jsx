@@ -15,43 +15,6 @@ export default function About({ sectionsRef }) {
     >
       <div className="about-card distinct-about-card">
         <div className="about-body">
-          <Typography
-            variant="body1"
-            paragraph
-            sx={{ fontSize: '1rem', mb: 1.5, lineHeight: 1.6, textAlign: 'justify' }}
-          >
-            CryoBioBank is a platform for managing and exploring biological samples
-            collected from Swiss alpine cryosphere environments. The database stores
-            isolates, samples, and DNA extractions from snow and soil sites across
-            the Swiss Alps, supporting research into cold-adapted microbial communities.
-          </Typography>
-
-          <Typography
-            variant="h6"
-            component="h3"
-            sx={{ mt: 2, mb: 0.75, fontWeight: 600 }}
-          >
-            About the project
-          </Typography>
-          <Typography
-            variant="body1"
-            paragraph
-            sx={{ fontSize: '1rem', mb: 1.5, lineHeight: 1.6, textAlign: 'justify' }}
-          >
-            Sampling campaigns collect snow and soil specimens from alpine sites.
-            Organisms are isolated, identified, and preserved for further study.
-            DNA extractions enable genomic analysis of cryosphere biodiversity.
-            This platform provides public access to metadata about our collections.
-          </Typography>
-
-          <Typography
-            variant="h6"
-            component="h3"
-            sx={{ mt: 2, mb: 0.75, fontWeight: 600 }}
-          >
-            Attribution
-          </Typography>
-
           <List dense sx={{ pl: 1, mb: 1 }}>
             <ListItem disableGutters sx={{ py: 0.3 }}>
               <Link
@@ -60,7 +23,7 @@ export default function About({ sectionsRef }) {
                 rel="noopener noreferrer"
                 sx={{ fontSize: '1rem' }}
               >
-                MACE – Microbial ecology of Alpine Cryosphere Environments
+                MACE – Microbiome Adaptation to the Changing Environment
               </Link>
             </ListItem>
             <ListItem disableGutters sx={{ py: 0.3 }}>

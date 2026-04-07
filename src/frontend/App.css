@@ -545,6 +545,145 @@ body,
   margin: 0;
 }
 
+/* Clickable rows in data panel */
+.data-panel-table tbody tr {
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.data-panel-table tbody tr:hover {
+  background: #f0f7f8;
+}
+
+.data-panel-table tbody tr.selected {
+  background: #e0f0f2;
+}
+
+/* Detail side panel */
+.detail-side-panel {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  bottom: 270px;
+  width: 300px;
+  background: white;
+  color: #333;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  z-index: 1001;
+  opacity: 0.96;
+  padding: 1rem;
+  overflow-y: auto;
+  animation: slideInRight 0.25s ease;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 0.96;
+  }
+}
+
+.detail-side-panel-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+  line-height: 1;
+}
+
+.detail-side-panel-close:hover {
+  color: #000;
+}
+
+.detail-side-panel-loading {
+  color: #999;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+.detail-side-panel-header {
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #eee;
+}
+
+.detail-side-panel-type {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #2E7D87;
+  font-weight: 600;
+}
+
+.detail-side-panel-name {
+  margin: 0.25rem 0 0 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding-right: 1.5rem;
+}
+
+.detail-side-panel-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.detail-field {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.detail-field:last-child {
+  border-bottom: none;
+}
+
+.detail-field-label {
+  font-size: 0.75rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 0.15rem;
+}
+
+.detail-field-value {
+  font-size: 0.9rem;
+}
+
+.detail-field-value.italic {
+  font-style: italic;
+}
+
+.detail-field-value.chip {
+  display: inline-block;
+  background: #e8f4f5;
+  color: #2E7D87;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  width: fit-content;
+}
+
+.detail-field-value a {
+  color: #2E7D87;
+  text-decoration: none;
+}
+
+.detail-field-value a:hover {
+  text-decoration: underline;
+}
+
 /* Push legend up when data panel is open */
 .map-with-chart:has(.overlay-chart) .leaflet-bottom.leaflet-right {
   transition: bottom 0.2s;
@@ -709,6 +848,15 @@ body,
 
   .sidebar-toggle {
     display: none;
+  }
+
+  .detail-side-panel {
+    top: auto;
+    bottom: 270px;
+    left: 0.5rem;
+    right: 0.5rem;
+    width: auto;
+    max-height: 40vh;
   }
 
   .attribution {

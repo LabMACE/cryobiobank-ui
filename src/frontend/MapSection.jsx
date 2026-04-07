@@ -1,6 +1,7 @@
 import { MapContainer } from 'react-leaflet';
 import CryoLayers from '../maps/CryoLayers';
 import DataPanel from './DataPanel';
+import DetailSidePanel from './DetailSidePanel';
 
 export default function MapSection({
   sites,
@@ -15,6 +16,9 @@ export default function MapSection({
   replicateData,
   onClosePanel,
   loading,
+  onItemClick,
+  selectedItem,
+  onCloseDetail,
   shouldRecenter,
   setShouldRecenter,
   zoomToSiteId,
@@ -55,11 +59,20 @@ export default function MapSection({
               setZoomToSiteId={setZoomToSiteId}
             />
           </MapContainer>
+          {selectedItem && (
+            <DetailSidePanel
+              type={selectedItem.type}
+              itemId={selectedItem.id}
+              onClose={onCloseDetail}
+            />
+          )}
           {replicateData && (
             <DataPanel
               replicateData={replicateData}
               onClose={onClosePanel}
               loading={loading}
+              onItemClick={onItemClick}
+              selectedItemId={selectedItem?.id}
             />
           )}
         </div>

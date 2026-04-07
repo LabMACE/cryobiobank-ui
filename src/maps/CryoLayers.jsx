@@ -181,10 +181,6 @@ function MapLegend() {
             <span>Soil</span>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
-            <div style="background:${BOTH_GRADIENT};width:16px;height:16px;border-radius:50%;border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,0.3);flex-shrink:0"></div>
-            <span>Both</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px">
             <div style="background:#888;width:16px;height:16px;border-radius:50%;border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,0.3);flex-shrink:0"></div>
             <span>No data</span>
           </div>
