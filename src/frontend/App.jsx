@@ -55,9 +55,9 @@ export default function FrontendApp() {
   // Fetch sites, areas, and replicates on mount
   useEffect(() => {
     Promise.all([
-      fetch('/api/public/sites?range=[0,9999]').then(r => r.ok ? r.json() : Promise.reject(r.status)),
-      fetch('/api/public/areas?range=[0,9999]').then(r => r.ok ? r.json() : Promise.reject(r.status)),
-      fetch('/api/public/site_replicates?range=[0,9999]').then(r => r.ok ? r.json() : Promise.reject(r.status)),
+      fetch('/api/sites?range=[0,9999]').then(r => r.ok ? r.json() : Promise.reject(r.status)),
+      fetch('/api/areas?range=[0,9999]').then(r => r.ok ? r.json() : Promise.reject(r.status)),
+      fetch('/api/site_replicates?range=[0,9999]').then(r => r.ok ? r.json() : Promise.reject(r.status)),
     ])
       .then(([sitesData, areasData, replicatesData]) => {
         setSites(Array.isArray(sitesData) ? sitesData : []);
@@ -80,7 +80,7 @@ export default function FrontendApp() {
         const [isolates, samples, dna] = await Promise.all(
           ['isolates', 'samples', 'dna'].map(async (entity) => {
             const res = await fetch(
-              `/api/public/${entity}?filter=${encodeURIComponent(JSON.stringify({ site_replicate_id: activeReplicateId }))}&range=[0,9999]`
+              `/api/${entity}?filter=${encodeURIComponent(JSON.stringify({ site_replicate_id: activeReplicateId }))}&range=[0,9999]`
             );
             if (res.ok) return res.json();
             return [];

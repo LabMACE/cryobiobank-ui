@@ -49,7 +49,7 @@ const ShowContent = () => {
     return (
         <Box sx={{ p: 2, pt: 0 }}>
             <ShowActions breadcrumbItems={[
-                { label: record.name, type: 'Area' },
+                { label: record.name, type: 'Area', isPrivate: record.is_private },
             ]} />
 
             {/* Header card with colour accent */}

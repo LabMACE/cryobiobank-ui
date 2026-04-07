@@ -51,9 +51,9 @@ const ShowContent = () => {
         <Box sx={{ p: 2, pt: 0 }}>
             <ShowActions
                 breadcrumbItems={[
-                    { resource: 'areas', id: area?.id, label: area?.name, type: 'Area' },
-                    { resource: 'sites', id: site?.id, label: site?.name, type: 'Site' },
-                    { label: record.name, type: 'Replicate' },
+                    { resource: 'areas', id: area?.id, label: area?.name, type: 'Area', isPrivate: area?.is_private },
+                    { resource: 'sites', id: site?.id, label: site?.name, type: 'Site', isPrivate: site?.is_private },
+                    { label: record.name, type: 'Replicate', isPrivate: record.is_private },
                 ]}
                 deleteProps={{ mutationMode: 'pessimistic', redirect: deleteRedirect }}
             />

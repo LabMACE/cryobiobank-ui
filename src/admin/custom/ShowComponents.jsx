@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import LockIcon from '@mui/icons-material/Lock';
 import PublicIcon from '@mui/icons-material/Public';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import AcUnitIcon from '@mui/icons-material/AcUnit';
 import TerrainIcon from '@mui/icons-material/Terrain';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
@@ -187,13 +188,20 @@ export const Breadcrumbs = ({ items }) => (
                 </BreadcrumbLink>
             );
             return (
-                <Box key={i} sx={{ textAlign: 'center' }}>
+                <Box key={i} sx={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     {item.type && (
                         <Typography variant="caption" color="text.disabled" sx={{ fontSize: '0.65rem', lineHeight: 1, display: 'block' }}>
                             {item.type}
                         </Typography>
                     )}
-                    {content}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.25 }}>
+                        {content}
+                        {item.isPrivate && (
+                            <Tooltip title={`${item.type || 'This item'} is private`}>
+                                <LockIcon sx={{ fontSize: '0.85rem', color: 'warning.main' }} />
+                            </Tooltip>
+                        )}
+                    </Box>
                 </Box>
             );
         })}
@@ -206,22 +214,47 @@ export const ShowTitle = ({ label }) => {
     return <span>{label}: {record.name}</span>;
 };
 
+const EffectivePrivacyBanner = ({ items }) => {
+    if (!items || items.length < 2) return null;
+    const privateAncestors = items.slice(0, -1).filter(item => item.isPrivate);
+    if (privateAncestors.length === 0) return null;
+    const names = privateAncestors.map(a => `${a.type} '${a.label || '...'}'`).join(', ');
+    return (
+        <Box sx={{
+            display: 'flex', alignItems: 'center', gap: 0.75,
+            px: 1.5, py: 0.5, mb: 1,
+            borderRadius: 1,
+            backgroundColor: 'warning.lighter',
+            border: '1px solid',
+            borderColor: 'warning.light',
+        }}>
+            <VisibilityOffIcon sx={{ fontSize: '1rem', color: 'warning.main' }} />
+            <Typography variant="caption" color="warning.dark">
+                Effectively hidden from public API &mdash; {names} {privateAncestors.length === 1 ? 'is' : 'are'} private
+            </Typography>
+        </Box>
+    );
+};
+
 export const ShowActions = ({ breadcrumbItems, deleteProps, children }) => {
     const { permissions, isLoading } = usePermissions();
     if (isLoading) return <Loading />;
     return (
-        <TopToolbar sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
-            <Breadcrumbs items={breadcrumbItems || []} />
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                {children}
-                {permissions === 'admin' && (
-                    <>
-                        <EditButton />
-                        <DeleteButton {...deleteProps} />
-                    </>
-                )}
-            </Box>
-        </TopToolbar>
+        <>
+            <TopToolbar sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
+                <Breadcrumbs items={breadcrumbItems || []} />
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    {children}
+                    {permissions === 'admin' && (
+                        <>
+                            <EditButton />
+                            <DeleteButton {...deleteProps} />
+                        </>
+                    )}
+                </Box>
+            </TopToolbar>
+            {permissions === 'admin' && <EffectivePrivacyBanner items={breadcrumbItems} />}
+        </>
     );
 };
 

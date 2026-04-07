@@ -31,7 +31,7 @@ const getPermissions = (decoded: KeycloakTokenParsed) => {
 };
 
 const UIConfigUrl = '/api/config';
-export const apiUrl = '/api/admin';
+export const apiUrl = '/api';
 
 const App = () => {
     const [keycloak, setKeycloak] = useState();

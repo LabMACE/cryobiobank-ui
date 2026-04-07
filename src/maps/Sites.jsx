@@ -61,7 +61,7 @@ export const SitesMap = (
                                 <br />
                                 Elevation: {site.elevation_metres}
                                 <br />
-                                Replicates: {site.replicates.length}
+                                Replicates: {site.replicates?.length ?? 0}
                                 <br /><br />
                                 <Link to={createPath({ type: 'show', resource: 'sites', id: site['id'] })}>
                                     Go to Site

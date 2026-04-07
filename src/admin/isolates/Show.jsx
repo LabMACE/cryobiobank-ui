@@ -45,10 +45,10 @@ const ShowContent = () => {
     return (
         <Box sx={{ p: 2, pt: 0 }}>
             <ShowActions breadcrumbItems={[
-                { resource: 'areas', id: area?.id, label: area?.name, type: 'Area' },
-                { resource: 'sites', id: site?.id, label: site?.name, type: 'Site' },
-                { resource: 'site_replicates', id: replicate?.id, label: replicate?.name, type: 'Replicate' },
-                { label: record.name, type: 'Isolate' },
+                { resource: 'areas', id: area?.id, label: area?.name, type: 'Area', isPrivate: area?.is_private },
+                { resource: 'sites', id: site?.id, label: site?.name, type: 'Site', isPrivate: site?.is_private },
+                { resource: 'site_replicates', id: replicate?.id, label: replicate?.name, type: 'Replicate', isPrivate: replicate?.is_private },
+                { label: record.name, type: 'Isolate', isPrivate: record.is_private },
             ]} />
 
             {/* Header with lineage */}

@@ -53,8 +53,8 @@ const ShowContent = () => {
     return (
         <Box sx={{ p: 2, pt: 0 }}>
             <ShowActions breadcrumbItems={[
-                { resource: 'areas', id: areaData?.id, label: areaData?.name, type: 'Area' },
-                { label: record.name, type: 'Site' },
+                { resource: 'areas', id: areaData?.id, label: areaData?.name, type: 'Area', isPrivate: areaData?.is_private },
+                { label: record.name, type: 'Site', isPrivate: record.is_private },
             ]}>
                 <AddSiteReplicateButton />
             </ShowActions>
