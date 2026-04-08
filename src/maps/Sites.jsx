@@ -9,106 +9,165 @@ import {
     MapContainer,
     Tooltip,
     Marker,
-    Polygon,
     Popup,
 } from 'react-leaflet';
 import { BaseLayers } from './Layers';
 import 'leaflet/dist/leaflet.css';
-import * as L from 'leaflet';
-import { useEffect, useState } from 'react';
-import MarkerClusterGroup from 'react-leaflet-cluster'
+import './map.css';
+import { useMemo } from 'react';
+import MarkerClusterGroup from 'react-leaflet-cluster';
+import {
+    getMarkerIcon,
+    clusterIconCreate,
+    FitBounds,
+    FitToRecord,
+    FitToArea,
+    ZoomablePolygon,
+    MapLegend,
+    SWISS_BOUNDS,
+} from './mapUtils.jsx';
 
+const ALL_PAGES = { page: 1, perPage: 9999 };
 
-export const SitesMap = (
-    {
-        height = "500px",
-        labels = true,
-    }
-) => {
-    const [bounds, setBounds] = useState(null);
-    const [markers, setMarkers] = useState(null);
-    const [polygons, setPolygons] = useState(null);
+export const SitesMap = ({
+    height = "500px",
+    labels = true,
+}) => {
     const createPath = useCreatePath();
-    const record = useRecordContext();  // If loaded from a record page, this will be the record
-    const { data: sites, isPending: isPendingGetListSites } = useGetList('sites', {});
-    const { data: areas, isPending: isPendingGetListAreas } = useGetList('areas', {});
+    const record = useRecordContext();
+    const { data: sites, isPending: isPendingSites } = useGetList('sites', { pagination: ALL_PAGES });
+    const { data: areas, isPending: isPendingAreas } = useGetList('areas', { pagination: ALL_PAGES });
+    const { data: siteReplicates, isPending: isPendingReplicates } = useGetList('site_replicates', { pagination: ALL_PAGES });
 
-    useEffect(() => {
-        if (sites) {
-            if (sites.length > 0) {
-                if (record && record.latitude_4326 != null && record.longitude_4326 != null) {
-                    setBounds(L.latLngBounds([[record.latitude_4326, record.longitude_4326], [record.latitude_4326, record.longitude_4326]]).pad(5000));
-                } else {
-                    setBounds(L.latLngBounds(sites.map(site => [site.latitude_4326, site.longitude_4326])).pad(0.6));
-                }
-                setMarkers(sites.map(site => {
+    // Compute sample types per site from replicates
+    const siteTypesMap = useMemo(() => {
+        const map = new Map();
+        if (!siteReplicates) return map;
+        for (const rep of siteReplicates) {
+            const types = new Set([
+                ...(rep.samples || []).map(s => s.sample_type).filter(Boolean),
+                ...(rep.isolates || []).map(i => i.sample_type).filter(Boolean),
+            ]);
+            const existing = map.get(rep.site_id) || new Set();
+            types.forEach(t => existing.add(t));
+            map.set(rep.site_id, existing);
+        }
+        // Convert Sets to Arrays
+        for (const [key, val] of map) {
+            map.set(key, [...val]);
+        }
+        return map;
+    }, [siteReplicates]);
+
+    // Compute replicate count per site
+    const siteReplicateCountMap = useMemo(() => {
+        const map = new Map();
+        if (!siteReplicates) return map;
+        for (const rep of siteReplicates) {
+            map.set(rep.site_id, (map.get(rep.site_id) || 0) + 1);
+        }
+        return map;
+    }, [siteReplicates]);
+
+    if (isPendingSites || isPendingAreas || isPendingReplicates) {
+        return <Loading />;
+    }
+
+    if (!sites || sites.length === 0) {
+        return (
+            <MapContainer
+                style={{ width: '100%', height }}
+                bounds={SWISS_BOUNDS}
+                maxBounds={SWISS_BOUNDS}
+                minZoom={9}
+                scrollWheelZoom={true}
+            >
+                <BaseLayers />
+            </MapContainer>
+        );
+    }
+
+    // Determine what kind of record context we're in
+    const isSiteRecord = record && record.latitude_4326 != null && record.longitude_4326 != null;
+    const isAreaRecord = record && record.colour !== undefined && !isSiteRecord;
+
+    // For area pages, get the matching area from the list (which has geom populated)
+    const areaFromList = isAreaRecord
+        ? (areas || []).find(a => a.id === record.id)
+        : null;
+
+    // For area pages, show only that area's sites and polygon
+    const visibleSites = isAreaRecord
+        ? sites.filter(s => s.area_id === record.id)
+        : sites;
+
+    const visibleAreas = areaFromList
+        ? [areaFromList]
+        : isAreaRecord ? [] : (areas || []);
+
+    return (
+        <MapContainer
+            style={{ width: '100%', height }}
+            bounds={SWISS_BOUNDS}
+            maxBounds={SWISS_BOUNDS}
+            minZoom={9}
+            scrollWheelZoom={true}
+        >
+            <BaseLayers />
+            {isSiteRecord ? (
+                <FitToRecord latitude={record.latitude_4326} longitude={record.longitude_4326} />
+            ) : areaFromList ? (
+                <FitToArea area={areaFromList} />
+            ) : (
+                <FitBounds sites={sites} areas={areas || []} />
+            )}
+            <MapLegend />
+
+            <MarkerClusterGroup
+                maxClusterRadius={25}
+                chunkedLoading
+                iconCreateFunction={clusterIconCreate}
+            >
+                {visibleSites.map(site => {
+                    const siteTypes = siteTypesMap.get(site.id) || [];
                     const opacity = !record ? 1 : (site.id === record.id ? 1.0 : 0.6);
                     return (
                         <Marker
                             key={site.id}
                             position={[site.latitude_4326, site.longitude_4326]}
-                            icon={L.divIcon({
-                                className: '',
-                                html: '<div style="background:#2E7D32;width:14px;height:14px;border-radius:50%;border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,0.4)"></div>',
-                                iconSize: [14, 14],
-                                iconAnchor: [7, 7],
-                            })}
+                            icon={getMarkerIcon(siteTypes)}
+                            sampleTypes={siteTypes}
                             opacity={opacity}
                         >
-                            {labels ? <Tooltip>{site.name}</Tooltip> : null}
+                            {labels && <Tooltip>{site.name}</Tooltip>}
                             <Popup>
                                 <b>{site.name}</b>
                                 <br />
-                                Elevation: {site.elevation_metres}
+                                Elevation: {site.elevation_metres} m
                                 <br />
-                                Replicates: {site.replicates?.length ?? 0}
+                                Replicates: {siteReplicateCountMap.get(site.id) || 0}
                                 <br /><br />
-                                <Link to={createPath({ type: 'show', resource: 'sites', id: site['id'] })}>
+                                <Link to={createPath({ type: 'show', resource: 'sites', id: site.id })}>
                                     Go to Site
                                 </Link>
                             </Popup>
                         </Marker>
                     );
-                }));
-            } else {
-                setBounds(L.latLngBounds([[46.8, 6.0], [46.8, 10.5]]));
-            }
-        }
+                })}
+            </MarkerClusterGroup>
 
-        if (areas && areas.length > 0) {
-            setPolygons(areas
+            {visibleAreas
                 .filter(area => area.geom?.coordinates?.[0])
                 .map(area => (
-                <Polygon
-                    key={area.id}
-                    positions={area.geom.coordinates[0].map(coord => [coord[1], coord[0]])}
-                    color={area.colour}
-                >
-                     <Tooltip interactive={true}>
-                        <Link to={createPath({ type: 'show', resource: 'areas', id: area['id'] })}>
+                    <ZoomablePolygon key={area.id} area={area}>
+                        <Link
+                            to={createPath({ type: 'show', resource: 'areas', id: area.id })}
+                            style={{ color: '#fff', textDecoration: 'none' }}
+                        >
                             {area.name}
                         </Link>
-                    </Tooltip>
-                    </Polygon>
-            )));
-        }
-    }, [sites, areas, createPath, record]);
-
-    if (!bounds || isPendingGetListSites || isPendingGetListAreas) {
-        return <Loading />;
-    }
-
-    return (
-        <MapContainer
-            style={{ width: '100%', height: height }}
-            bounds={bounds}
-            scrollWheelZoom={true}
-        >
-            <BaseLayers />
-            <MarkerClusterGroup maxClusterRadius={25} chunkedLoading>
-                {markers}
-            </MarkerClusterGroup>
-            {polygons}
+                    </ZoomablePolygon>
+                ))}
         </MapContainer>
     );
 };

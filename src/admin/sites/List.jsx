@@ -66,9 +66,9 @@ const PostPanel = () => {
                             </Link>
                         </td>
                         <td style={{ paddingRight: '20px' }}>{replicate.sampling_date}</td>
-                        <td style={{ paddingRight: '20px' }}>{replicate.sample_count ?? 0}</td>
-                        <td style={{ paddingRight: '20px' }}>{replicate.isolate_count ?? 0}</td>
-                        <td style={{ paddingRight: '20px' }}>{replicate.dna_count ?? 0}</td>
+                        <td style={{ paddingRight: '20px' }}>{replicate.samples?.length ?? 0}</td>
+                        <td style={{ paddingRight: '20px' }}>{replicate.isolates?.length ?? 0}</td>
+                        <td style={{ paddingRight: '20px' }}>{replicate.dna?.length ?? 0}</td>
                     </tr>
                 ))}
             </tbody>

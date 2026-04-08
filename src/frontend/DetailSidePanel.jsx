@@ -36,7 +36,7 @@ export default function DetailSidePanel({ type, itemId, onClose }) {
   useEffect(() => {
     if (!itemId || !type) return;
     setLoading(true);
-    fetch(`/api/public/${type}/${itemId}`)
+    fetch(`/api/${type}/${itemId}`)
       .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
       .then(setData)
       .catch((err) => {

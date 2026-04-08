@@ -22,31 +22,40 @@ export default function FrontendApp() {
   const [selectedItem, setSelectedItem] = useState(null);
   const sectionsRef = useRef([]);
 
-  // Compute area stats from already-fetched sites data
+  // Compute area stats from already-fetched sites and replicates data
   const areaStats = useMemo(() => {
     return areas.map(area => {
       const areaSites = sites.filter(s => s.area_id === area.id);
-      const sampleTypes = new Set(areaSites.flatMap(s => s.sample_types || []));
+      const areaSiteIds = new Set(areaSites.map(s => s.id));
+      const areaReps = replicates.filter(r => areaSiteIds.has(r.site_id));
+      const sampleTypes = new Set(areaReps.flatMap(r => [
+        ...(r.samples || []).map(s => s.sample_type),
+        ...(r.isolates || []).map(i => i.sample_type),
+      ]));
       return {
         ...area,
         siteCount: areaSites.length,
-        replicateCount: areaSites.reduce((sum, s) => sum + (s.replicate_ids?.length || 0), 0),
+        replicateCount: areaReps.length,
         sampleTypes: [...sampleTypes],
         sites: areaSites,
       };
     });
-  }, [areas, sites]);
+  }, [areas, sites, replicates]);
 
-  // Enrich replicates with parent site info
+  // Enrich replicates with parent site info and derive sample_types from joined children
   const enrichedReplicates = useMemo(() => {
     return replicates.map(rep => {
       const site = sites.find(s => s.id === rep.site_id);
+      const types = new Set([
+        ...(rep.samples || []).map(s => s.sample_type),
+        ...(rep.isolates || []).map(i => i.sample_type),
+      ]);
       return {
         ...rep,
         latitude_4326: site?.latitude_4326,
         longitude_4326: site?.longitude_4326,
         site_name: site?.name,
-        sample_types: site?.sample_types || [],
+        sample_types: [...types],
         elevation_metres: site?.elevation_metres,
       };
     }).filter(rep => rep.latitude_4326 != null && rep.longitude_4326 != null);
