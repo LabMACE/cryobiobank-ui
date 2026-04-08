@@ -7,14 +7,13 @@ import {
     useRecordContext,
     usePermissions,
 } from 'react-admin';
-import { Box, Typography, Grid } from '@mui/material';
+import { Box, Typography, Grid, Chip } from '@mui/material';
 import MapIcon from '@mui/icons-material/Map';
 import PlaceIcon from '@mui/icons-material/Place';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { SitesMap } from '../../maps/Sites';
 import {
     SectionCard,
-    StatBox,
     PrivacyToggle,
     ShowActions,
     ShowTitle,
@@ -77,24 +76,19 @@ const ShowContent = () => {
                 )}
             </SectionCard>
 
-            {/* Stats row */}
-            <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
-                <StatBox
-                    label="Sites"
-                    icon={<PlaceIcon fontSize="small" color="action" />}
-                    value={<ReferenceManyCount reference="sites" target="area_id" />}
-                />
-                <StatBox
-                    label="Total Replicates"
-                    icon={<ContentCopyIcon fontSize="small" color="action" />}
-                    value={<ReferenceManyCount reference="site_replicates" target="area_id" />}
-                />
-            </Box>
-
             {/* Two column: sites table + map */}
             <Grid container spacing={2}>
-                <Grid item xs={12} md={8}>
-                    <SectionCard title="Sites" icon={<PlaceIcon fontSize="small" color="action" />}>
+                <Grid item xs={12} md={5}>
+                    <SectionCard
+                        title="Sites"
+                        icon={<PlaceIcon fontSize="small" color="action" />}
+                        headerExtra={
+                            <>
+                                <Chip size="small" variant="outlined" label={<><ReferenceManyCount reference="sites" target="area_id" link={false} /> sites</>} />
+                                <Chip size="small" variant="outlined" icon={<ContentCopyIcon sx={{ fontSize: 14 }} />} label={<><ReferenceManyCount reference="site_replicates" target="area_id" link={false} /> replicates</>} />
+                            </>
+                        }
+                    >
                         <ReferenceManyField reference="sites" target="area_id" label={false}>
                             <Datagrid bulkActionButtons={false} rowClick="show">
                                 <TextField source="name" />
@@ -104,9 +98,9 @@ const ShowContent = () => {
                         </ReferenceManyField>
                     </SectionCard>
                 </Grid>
-                <Grid item xs={12} md={4}>
+                <Grid item xs={12} md={7}>
                     <SectionCard title="Map" icon={<MapIcon fontSize="small" color="action" />}>
-                        <SitesMap height="350px" labels={false} />
+                        <SitesMap height="500px" labels={false} />
                     </SectionCard>
                 </Grid>
             </Grid>

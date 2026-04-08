@@ -1,6 +1,6 @@
 /* eslint react/jsx-key: off */
 import { useState, useRef, useEffect } from 'react';
-import { Admin, Resource, AuthProvider, DataProvider } from 'react-admin';
+import { Admin, Resource, AuthProvider, DataProvider, defaultDarkTheme } from 'react-admin';
 import simpleRestProvider from './dataProvider/index'
 import Keycloak, { KeycloakTokenParsed, KeycloakInitOptions, } from 'keycloak-js';
 import { httpClient } from 'ra-keycloak';
@@ -14,6 +14,14 @@ import areas from './areas';
 import axios from 'axios';
 import Dashboard from './Dashboard';
 import MyLayout from './Layout';
+
+const darkTheme = {
+    ...defaultDarkTheme,
+    sidebar: {
+        width: 180,
+        closedWidth: 50,
+    },
+};
 
 const initOptions: KeycloakInitOptions = {
     onLoad: 'login-required', // Force authentication for admin access
@@ -143,6 +151,7 @@ const App = () => {
             dashboard={Dashboard}
             layout={(props) => <MyLayout {...props} deployment={deployment} />}
             mutationMode="pessimistic"
+            darkTheme={darkTheme}
         >
             {/* 
                 The resource mapping by permissions is done in the Menu 

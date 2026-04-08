@@ -18,12 +18,13 @@ import TerrainIcon from '@mui/icons-material/Terrain';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 
-export const SectionCard = ({ title, icon, children, sx }) => (
+export const SectionCard = ({ title, icon, children, sx, headerExtra }) => (
     <Card variant="outlined" sx={{ mb: 2, ...sx }}>
         {title && (
             <Box sx={{ px: 2, pt: 1.5, pb: 0, display: 'flex', alignItems: 'center', gap: 1 }}>
                 {icon}
                 <Typography variant="subtitle1" fontWeight={600}>{title}</Typography>
+                {headerExtra && <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', gap: 1.5 }}>{headerExtra}</Box>}
             </Box>
         )}
         <CardContent sx={{ pt: title ? 1 : undefined }}>{children}</CardContent>
