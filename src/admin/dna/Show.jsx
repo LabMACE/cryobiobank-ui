@@ -1,31 +1,16 @@
 import {
     Show,
-    ReferenceField,
     useRecordContext,
     usePermissions,
-    useCreatePath,
-    Link,
 } from 'react-admin';
-import { Box, Chip, Typography, Grid } from '@mui/material';
+import { Box, Chip, Typography } from '@mui/material';
 import {
     SectionCard,
-    FieldRow,
     PrivacyToggle,
     ShowActions,
     ShowTitle,
     useBreadcrumbChain,
 } from '../custom/ShowComponents';
-
-const LineageField = ({ label, resource, id, name }) => {
-    const createPath = useCreatePath();
-    return (
-        <FieldRow label={label}>
-            {id ? (
-                <Link to={createPath({ resource, type: 'show', id })}>{name}</Link>
-            ) : null}
-        </FieldRow>
-    );
-};
 
 const ShowContent = () => {
     const record = useRecordContext();
@@ -48,33 +33,20 @@ const ShowContent = () => {
                 { label: record.name, type: 'DNA', isPrivate: record.is_private },
             ]} />
 
-            {/* Header with lineage */}
+            {/* Header */}
             <SectionCard>
-                <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, flexWrap: 'wrap' }}>
-                            <Typography variant="h5" fontWeight={600}>{record.name}</Typography>
-                            {record.extraction_method && (
-                                <Chip label={record.extraction_method} size="small" color="primary" variant="outlined" />
-                            )}
-                            {isAdmin && <PrivacyToggle resource="dna" id={record.id} isPrivate={record.is_private} />}
-                        </Box>
-                        {record.description && (
-                            <Typography variant="body2" color="text.secondary">
-                                {record.description}
-                            </Typography>
-                        )}
-                    </Grid>
-
-                    <Grid item xs={12} md={6}>
-                        <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>Lineage</Typography>
-                        <FieldRow label="Site Replicate">
-                            <ReferenceField source="site_replicate_id" reference="site_replicates" link="show" />
-                        </FieldRow>
-                        <LineageField label="Site" resource="sites" id={site?.id} name={site?.name} />
-                        <LineageField label="Area" resource="areas" id={area?.id} name={area?.name} />
-                    </Grid>
-                </Grid>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, flexWrap: 'wrap' }}>
+                    <Typography variant="h5" fontWeight={600}>{record.name}</Typography>
+                    {record.extraction_method && (
+                        <Chip label={record.extraction_method} size="small" color="primary" variant="outlined" />
+                    )}
+                    {isAdmin && <PrivacyToggle resource="dna" id={record.id} isPrivate={record.is_private} />}
+                </Box>
+                {record.description && (
+                    <Typography variant="body2" color="text.secondary">
+                        {record.description}
+                    </Typography>
+                )}
             </SectionCard>
         </Box>
     );

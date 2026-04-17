@@ -1,12 +1,9 @@
 import {
     Show,
-    ReferenceField,
     useRecordContext,
     usePermissions,
-    useCreatePath,
-    Link,
 } from 'react-admin';
-import { Box, Typography, Grid } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import {
     SectionCard,
     FieldRow,
@@ -16,17 +13,6 @@ import {
     ShowTitle,
     useBreadcrumbChain,
 } from '../custom/ShowComponents';
-
-const LineageField = ({ label, resource, id, name }) => {
-    const createPath = useCreatePath();
-    return (
-        <FieldRow label={label}>
-            {id ? (
-                <Link to={createPath({ resource, type: 'show', id })}>{name}</Link>
-            ) : null}
-        </FieldRow>
-    );
-};
 
 const ShowContent = () => {
     const record = useRecordContext();
@@ -49,32 +35,21 @@ const ShowContent = () => {
                 { label: record.name, type: 'Sample', isPrivate: record.is_private },
             ]} />
 
-            {/* Header with lineage */}
+            {/* Header */}
             <SectionCard>
-                <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, flexWrap: 'wrap' }}>
-                            <Typography variant="h5" fontWeight={600}>{record.name}</Typography>
-                            <SampleTypeChip type={record.sample_type} />
-                            {isAdmin && <PrivacyToggle resource="samples" id={record.id} isPrivate={record.is_private} />}
-                        </Box>
-                        <FieldRow label="Storage Location">{record.storage_location}</FieldRow>
-                        {record.description && (
-                            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                                {record.description}
-                            </Typography>
-                        )}
-                    </Grid>
-
-                    <Grid item xs={12} md={6}>
-                        <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>Lineage</Typography>
-                        <FieldRow label="Site Replicate">
-                            <ReferenceField source="site_replicate_id" reference="site_replicates" link="show" />
-                        </FieldRow>
-                        <LineageField label="Site" resource="sites" id={site?.id} name={site?.name} />
-                        <LineageField label="Area" resource="areas" id={area?.id} name={area?.name} />
-                    </Grid>
-                </Grid>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, flexWrap: 'wrap' }}>
+                    <Typography variant="h5" fontWeight={600}>{record.name}</Typography>
+                    <SampleTypeChip type={record.sample_type} />
+                    {isAdmin && <PrivacyToggle resource="samples" id={record.id} isPrivate={record.is_private} />}
+                </Box>
+                {record.storage_location && (
+                    <FieldRow label="Storage Location">{record.storage_location}</FieldRow>
+                )}
+                {record.description && (
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                        {record.description}
+                    </Typography>
+                )}
             </SectionCard>
         </Box>
     );

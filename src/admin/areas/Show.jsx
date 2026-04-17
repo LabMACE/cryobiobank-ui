@@ -1,11 +1,12 @@
 import {
     Show,
     TextField,
-    ReferenceManyField,
-    ReferenceManyCount,
+    ArrayField,
+    FunctionField,
     Datagrid,
     useRecordContext,
     usePermissions,
+    useCreatePath,
 } from 'react-admin';
 import { Box, Typography, Grid, Chip } from '@mui/material';
 import MapIcon from '@mui/icons-material/Map';
@@ -42,6 +43,9 @@ const ShowContent = () => {
     const record = useRecordContext();
     const { permissions } = usePermissions();
     const isAdmin = permissions === 'admin';
+    const createPath = useCreatePath();
+    const siteClick = (id, resource, rec) =>
+        createPath({ resource: 'sites', type: 'show', id: rec.id });
 
     if (!record) return null;
 
@@ -84,18 +88,18 @@ const ShowContent = () => {
                         icon={<PlaceIcon fontSize="small" color="action" />}
                         headerExtra={
                             <>
-                                <Chip size="small" variant="outlined" label={<><ReferenceManyCount reference="sites" target="area_id" link={false} /> sites</>} />
-                                <Chip size="small" variant="outlined" icon={<ContentCopyIcon sx={{ fontSize: 14 }} />} label={<><ReferenceManyCount reference="site_replicates" target="area_id" link={false} /> replicates</>} />
+                                <Chip size="small" variant="outlined" label={`${record.sites?.length ?? 0} sites`} />
+                                <Chip size="small" variant="outlined" icon={<ContentCopyIcon sx={{ fontSize: 14 }} />} label={`${record.sites?.reduce((sum, s) => sum + (s.replicates?.length || 0), 0) ?? 0} replicates`} />
                             </>
                         }
                     >
-                        <ReferenceManyField reference="sites" target="area_id" label={false}>
-                            <Datagrid bulkActionButtons={false} rowClick="show">
+                        <ArrayField source="sites">
+                            <Datagrid bulkActionButtons={false} rowClick={siteClick}>
                                 <TextField source="name" />
                                 <TextField source="elevation_metres" label="Elevation (m)" />
-                                <ReferenceManyCount reference="site_replicates" target="site_id" label="Replicates" />
+                                <FunctionField label="Replicates" render={record => record?.replicates?.length ?? 0} />
                             </Datagrid>
-                        </ReferenceManyField>
+                        </ArrayField>
                     </SectionCard>
                 </Grid>
                 <Grid item xs={12} md={7}>

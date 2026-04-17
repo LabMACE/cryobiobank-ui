@@ -4,7 +4,6 @@ import {
     TextField,
     ArrayField,
     Datagrid,
-    ReferenceField,
     useRecordContext,
     usePermissions,
     useCreatePath,
@@ -17,7 +16,10 @@ import PlaceIcon from '@mui/icons-material/Place';
 import MapIcon from '@mui/icons-material/Map';
 import AddIcon from '@mui/icons-material/Add';
 import HeightIcon from '@mui/icons-material/Height';
+import proj4 from 'proj4';
 import { SitesMap } from '../../maps/Sites';
+
+proj4.defs("EPSG:2056", "+proj=somerc +lat_0=46.9524055555556 +lon_0=7.43958333333333 +k_0=1 +x_0=2600000 +y_0=1200000 +ellps=bessel +towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs +type=crs");
 import {
     SectionCard,
     PrivacyToggle,
@@ -50,6 +52,10 @@ const ShowContent = () => {
 
     if (!record) return null;
 
+    const [swissE, swissN] = record.longitude_4326 && record.latitude_4326
+        ? proj4('EPSG:4326', 'EPSG:2056', [record.longitude_4326, record.latitude_4326]).map(Math.round)
+        : [null, null];
+
     return (
         <Box sx={{ p: 2, pt: 0 }}>
             <ShowActions breadcrumbItems={[
@@ -69,12 +75,11 @@ const ShowContent = () => {
                         size="small"
                         variant="outlined"
                     />
-                    <ReferenceField source="area_id" reference="areas" link="show" />
                     {isAdmin && <PrivacyToggle resource="sites" id={record.id} isPrivate={record.is_private} />}
                 </Box>
                 <Typography variant="body2" color="text.secondary">
                     <a
-                        href={`https://map.geo.admin.ch/?lang=en&center=${record.longitude_4326},${record.latitude_4326}&z=17&bgLayer=ch.swisstopo.pixelkarte-farbe`}
+                        href={swissE ? `https://map.geo.admin.ch/?lang=en&center=${swissE},${swissN}&z=13&crosshair=marker&bgLayer=ch.swisstopo.pixelkarte-farbe` : '#'}
                         target="_blank"
                         rel="noopener noreferrer"
                     >
@@ -89,6 +94,7 @@ const ShowContent = () => {
                     <SectionCard title="Site Replicates" icon={<PlaceIcon fontSize="small" color="action" />}>
                         <ArrayField source="replicates">
                             <Datagrid bulkActionButtons={false} rowClick={objectClick}>
+                                <TextField source="name" />
                                 <DateField source="sampling_date" label="Date" />
                                 <TextField source="sample_depth_cm" label="Sample depth (cm)" />
                                 <TextField source="snow_depth_cm" label="Snow depth (cm)" />

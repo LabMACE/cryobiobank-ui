@@ -1,7 +1,6 @@
 import {
     Show,
     TextField,
-    ReferenceField,
     usePermissions,
     useRecordContext,
     useCreatePath,
@@ -10,8 +9,11 @@ import {
     Datagrid,
     TabbedShowLayout,
     useGetOne,
+    useRedirect,
+    Button,
 } from 'react-admin';
 import { Box, Typography, Grid } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 import ThermostatIcon from '@mui/icons-material/Thermostat';
 import ScienceIcon from '@mui/icons-material/Science';
 import BiotechIcon from '@mui/icons-material/Biotech';
@@ -29,6 +31,19 @@ const TabLabelWithCount = ({ label, reference, target }) => (
         {label} (<ReferenceManyCount reference={reference} target={target} />)
     </span>
 );
+
+const AddChildButton = ({ resource, label }) => {
+    const record = useRecordContext();
+    const redirect = useRedirect();
+    if (!record) return null;
+    return (
+        <Button
+            onClick={() => redirect('create', resource, null, {}, { record: { site_replicate_id: record.id } })}
+            label={label}
+            startIcon={<AddIcon />}
+        />
+    );
+};
 
 const ShowContent = () => {
     const record = useRecordContext();
@@ -62,7 +77,6 @@ const ShowContent = () => {
             <SectionCard>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, flexWrap: 'wrap' }}>
                     <Typography variant="h5" fontWeight={600}>{record.name}</Typography>
-                    <ReferenceField source="site_id" reference="sites" link="show" />
                     {isAdmin && <PrivacyToggle resource="site_replicates" id={record.id} isPrivate={record.is_private} />}
                 </Box>
                 {record.sampling_date && (
@@ -79,84 +93,105 @@ const ShowContent = () => {
                 )}
             </SectionCard>
 
-            <SectionCard title="Physical Conditions" icon={<ThermostatIcon fontSize="small" color="action" />}>
-                <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6} md={4}>
-                        <FieldRow label="Sample Depth (cm)">{record.sample_depth_cm}</FieldRow>
-                        <FieldRow label="Snow Depth (cm)">{record.snow_depth_cm}</FieldRow>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={4}>
-                        <FieldRow label="Air Temperature (°C)">{record.air_temperature_celsius}</FieldRow>
-                        <FieldRow label="Snow Temperature (°C)">{record.snow_temperature_celsius}</FieldRow>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={4}>
-                        <FieldRow label="pH">{record.ph}</FieldRow>
-                    </Grid>
-                </Grid>
-            </SectionCard>
+            {(() => {
+                const groups = [
+                    [
+                        ['Sample Depth (cm)', record.sample_depth_cm],
+                        ['Snow Depth (cm)', record.snow_depth_cm],
+                    ],
+                    [
+                        ['Air Temperature (°C)', record.air_temperature_celsius],
+                        ['Snow Temperature (°C)', record.snow_temperature_celsius],
+                        ['pH', record.ph],
+                    ],
+                    [
+                        ['Bacterial Abundance', record.bacterial_abundance],
+                        ['CFU Count R2A', record.cfu_count_r2a],
+                        ['CFU Count Another', record.cfu_count_another],
+                        ['PAR', record.photosynthetic_active_radiation],
+                    ],
+                ];
+                const hasAny = groups.some(g => g.some(([, v]) => v != null));
+
+                return hasAny && (
+                    <SectionCard title="Physical Conditions" icon={<ThermostatIcon fontSize="small" color="action" />}>
+                        <Grid container spacing={2}>
+                            {groups.map((group, i) => {
+                                const visible = group.filter(([, v]) => v != null);
+                                if (visible.length === 0) return null;
+                                return (
+                                    <Grid item xs={12} sm={6} md={4} key={i}>
+                                        {visible.map(([label, value]) => (
+                                            <FieldRow label={label} key={label}>{value}</FieldRow>
+                                        ))}
+                                    </Grid>
+                                );
+                            })}
+                        </Grid>
+                    </SectionCard>
+                );
+            })()}
+
+            {(() => {
+                const ions = [
+                    ['Fluoride', record.ions_fluoride],
+                    ['Chloride', record.ions_chloride],
+                    ['Nitrite', record.ions_nitrite],
+                    ['Nitrate', record.ions_nitrate],
+                    ['Bromide', record.ions_bromide],
+                    ['Sulfate', record.ions_sulfate],
+                    ['Phosphate', record.ions_phosphate],
+                    ['Sodium', record.ions_sodium],
+                    ['Ammonium', record.ions_ammonium],
+                    ['Potassium', record.ions_potassium],
+                    ['Magnesium', record.ions_magnesium],
+                    ['Calcium', record.ions_calcium],
+                ].filter(([, value]) => value != null);
+
+                return ions.length > 0 && (
+                    <SectionCard title="Ions" icon={<WaterDropIcon fontSize="small" color="action" />}>
+                        <Grid container spacing={0} columnGap={2}>
+                            {ions.map(([label, value]) => (
+                                <Grid item xs={12} sm={5} key={label}>
+                                    <FieldRow label={label}>{value}</FieldRow>
+                                </Grid>
+                            ))}
+                        </Grid>
+                    </SectionCard>
+                );
+            })()}
+
+            {(() => {
+                const acids = [
+                    ['Formate', record.organic_acids_formate],
+                    ['Malate', record.organic_acids_malate],
+                    ['Propionate', record.organic_acids_propionate],
+                    ['Citrate', record.organic_acids_citrate],
+                    ['Lactate', record.organic_acids_lactate],
+                    ['Butyrate', record.organic_acids_butyrate],
+                    ['Oxalate', record.organic_acids_oxalate],
+                    ['Acetate', record.organic_acids_acetate],
+                ].filter(([, value]) => value != null);
+
+                return acids.length > 0 && (
+                    <SectionCard title="Organic Acids" icon={<ScienceIcon fontSize="small" color="action" />}>
+                        <Grid container spacing={0} columnGap={2}>
+                            {acids.map(([label, value]) => (
+                                <Grid item xs={12} sm={5} key={label}>
+                                    <FieldRow label={label}>{value}</FieldRow>
+                                </Grid>
+                            ))}
+                        </Grid>
+                    </SectionCard>
+                );
+            })()}
 
             <TabbedShowLayout syncWithLocation={false}>
-                <TabbedShowLayout.Tab label="Chemistry" icon={<WaterDropIcon />}>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12} md={6}>
-                            <SectionCard title="Biological Counts" icon={<BiotechIcon fontSize="small" color="action" />}>
-                                <FieldRow label="Bacterial Abundance">{record.bacterial_abundance}</FieldRow>
-                                <FieldRow label="CFU Count R2A">{record.cfu_count_r2a}</FieldRow>
-                                <FieldRow label="CFU Count Another">{record.cfu_count_another}</FieldRow>
-                                <FieldRow label="PAR">{record.photosynthetic_active_radiation}</FieldRow>
-                            </SectionCard>
-                        </Grid>
-                        <Grid item xs={12} md={6}>
-                            <SectionCard title="Ions" icon={<WaterDropIcon fontSize="small" color="action" />}>
-                                <Grid container spacing={0} columnGap={2}>
-                                    {[
-                                        ['Fluoride', record.ions_fluoride],
-                                        ['Chloride', record.ions_chloride],
-                                        ['Nitrite', record.ions_nitrite],
-                                        ['Nitrate', record.ions_nitrate],
-                                        ['Bromide', record.ions_bromide],
-                                        ['Sulfate', record.ions_sulfate],
-                                        ['Phosphate', record.ions_phosphate],
-                                        ['Sodium', record.ions_sodium],
-                                        ['Ammonium', record.ions_ammonium],
-                                        ['Potassium', record.ions_potassium],
-                                        ['Magnesium', record.ions_magnesium],
-                                        ['Calcium', record.ions_calcium],
-                                    ].map(([label, value]) => (
-                                        <Grid item xs={12} sm={5} key={label}>
-                                            <FieldRow label={label} dimmed={value == null}>{value}</FieldRow>
-                                        </Grid>
-                                    ))}
-                                </Grid>
-                            </SectionCard>
-                        </Grid>
-                        <Grid item xs={12} md={6}>
-                            <SectionCard title="Organic Acids" icon={<ScienceIcon fontSize="small" color="action" />}>
-                                <Grid container spacing={0} columnGap={2}>
-                                    {[
-                                        ['Formate', record.organic_acids_formate],
-                                        ['Malate', record.organic_acids_malate],
-                                        ['Propionate', record.organic_acids_propionate],
-                                        ['Citrate', record.organic_acids_citrate],
-                                        ['Lactate', record.organic_acids_lactate],
-                                        ['Butyrate', record.organic_acids_butyrate],
-                                        ['Oxalate', record.organic_acids_oxalate],
-                                        ['Acetate', record.organic_acids_acetate],
-                                    ].map(([label, value]) => (
-                                        <Grid item xs={12} sm={5} key={label}>
-                                            <FieldRow label={label} dimmed={value == null}>{value}</FieldRow>
-                                        </Grid>
-                                    ))}
-                                </Grid>
-                            </SectionCard>
-                        </Grid>
-                    </Grid>
-                </TabbedShowLayout.Tab>
-
                 <TabbedShowLayout.Tab
                     label={<TabLabelWithCount label="Isolates" reference="isolates" target="site_replicate_id" />}
                     icon={<BiotechIcon />}
                 >
+                    {isAdmin && <Box sx={{ mb: 1 }}><AddChildButton resource="isolates" label="Add Isolate" /></Box>}
                     <ReferenceManyField reference="isolates" target="site_replicate_id" label={false}>
                         <Datagrid bulkActionButtons={false} rowClick="show">
                             <TextField source="name" />
@@ -171,6 +206,7 @@ const ShowContent = () => {
                     label={<TabLabelWithCount label="Samples" reference="samples" target="site_replicate_id" />}
                     icon={<ScienceIcon />}
                 >
+                    {isAdmin && <Box sx={{ mb: 1 }}><AddChildButton resource="samples" label="Add Sample" /></Box>}
                     <ReferenceManyField reference="samples" target="site_replicate_id" label={false}>
                         <Datagrid bulkActionButtons={false} rowClick="show">
                             <TextField source="name" />
@@ -184,6 +220,7 @@ const ShowContent = () => {
                     label={<TabLabelWithCount label="DNA" reference="dna" target="site_replicate_id" />}
                     icon={<ScienceIcon />}
                 >
+                    {isAdmin && <Box sx={{ mb: 1 }}><AddChildButton resource="dna" label="Add DNA" /></Box>}
                     <ReferenceManyField reference="dna" target="site_replicate_id" label={false}>
                         <Datagrid bulkActionButtons={false} rowClick="show">
                             <TextField source="name" />
