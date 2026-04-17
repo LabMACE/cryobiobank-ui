@@ -95,17 +95,23 @@ export default function FrontendApp() {
             return [];
           })
         );
-        setReplicateData({ isolates, samples, dna });
+        const activeRep = replicates.find(r => r.id === activeReplicateId);
+        setReplicateData({
+          isolates,
+          samples,
+          dna,
+          metagenome_url: activeRep?.metagenome_url ?? null,
+        });
       } catch (err) {
         console.error('Error fetching replicate data:', err);
-        setReplicateData({ isolates: [], samples: [], dna: [] });
+        setReplicateData({ isolates: [], samples: [], dna: [], metagenome_url: null });
       } finally {
         setLoading(false);
       }
     };
 
     fetchReplicateData();
-  }, [activeReplicateId]);
+  }, [activeReplicateId, replicates]);
 
   const handleReplicateClick = (replicateId) => {
     setActiveReplicateId(replicateId);

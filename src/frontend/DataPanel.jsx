@@ -60,6 +60,31 @@ export default function DataPanel({ replicateData, onClose, loading, onItemClick
 
   const activeTabDef = tabs.find(t => t.key === activeTab);
   const items = replicateData?.[activeTab] || [];
+  const metagenomeUrl = replicateData?.metagenome_url;
+  const samplesCount = (replicateData?.samples || []).length;
+  const dnaCount = (replicateData?.dna || []).length;
+
+  const renderTabHeader = () => {
+    if (activeTab === 'dna' && metagenomeUrl) {
+      return (
+        <div className="data-panel-tab-header">
+          <span>Metagenome:</span>{' '}
+          <a href={metagenomeUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
+            {metagenomeUrl}
+          </a>
+        </div>
+      );
+    }
+    if (activeTab === 'samples') {
+      return (
+        <div className="data-panel-tab-header">
+          <span className="data-panel-badge">DNA tubes: {dnaCount}</span>
+          <span className="data-panel-badge">Samples: {samplesCount}</span>
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <div className="overlay-chart data-panel">
@@ -83,6 +108,7 @@ export default function DataPanel({ replicateData, onClose, loading, onItemClick
                 );
               })}
             </div>
+            {renderTabHeader()}
             <div className="data-panel-body">
               {items.length === 0 ? (
                 <p className="data-panel-empty">No {activeTabDef?.label.toLowerCase()}</p>

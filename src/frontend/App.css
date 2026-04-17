@@ -545,6 +545,32 @@ body,
   margin: 0;
 }
 
+.data-panel-tab-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+  padding: 0.25rem 0.1rem;
+}
+
+.data-panel-tab-header a {
+  color: #2E7D87;
+  word-break: break-all;
+}
+
+.data-panel-badge {
+  background: #eef4f5;
+  color: #2E7D87;
+  border: 1px solid #cfe0e3;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
 /* Clickable rows in data panel */
 .data-panel-table tbody tr {
   cursor: pointer;
