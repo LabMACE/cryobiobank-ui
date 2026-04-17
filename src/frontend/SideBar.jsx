@@ -4,6 +4,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const sampleTypeOptions = ['All', 'Snow', 'Soil'];
+const productOptions = ['All', 'Isolates', 'Samples', 'DNA'];
 
 export default function SideBar({
   sectionsRef,
@@ -13,11 +14,12 @@ export default function SideBar({
   setActiveSection,
   sampleTypeFilter,
   setSampleTypeFilter,
+  productFilter,
+  setProductFilter,
   areaStats,
   activeAreaId,
   setActiveAreaId,
   onSiteClick,
-  sites,
 }) {
   const menuItems = [
     { key: 'cover', label: 'Home' },
@@ -26,7 +28,9 @@ export default function SideBar({
   ];
 
   const btnRefs = useRef({});
+  const productBtnRefs = useRef({});
   const [thumbStyle, setThumbStyle] = useState({ left: 0, width: 0 });
+  const [productThumbStyle, setProductThumbStyle] = useState({ left: 0, width: 0 });
 
   const scrollTo = (key) => {
     const idx = menuItems.findIndex(i => i.key === key);
@@ -58,8 +62,6 @@ export default function SideBar({
     }
   }, [activeSection, setSidebarOpen]);
 
-  // Update thumb position for sample type toggle
-  // Depends on sampleTypeFilter AND sidebarOpen — buttons have zero size when sidebar is collapsed
   useLayoutEffect(() => {
     const updateThumb = () => {
       const ref = btnRefs.current[sampleTypeFilter];
@@ -67,29 +69,21 @@ export default function SideBar({
         const { offsetLeft, offsetWidth } = ref;
         setThumbStyle({ left: offsetLeft, width: offsetWidth });
       }
+      const pref = productBtnRefs.current[productFilter];
+      if (pref) {
+        setProductThumbStyle({ left: pref.offsetLeft, width: pref.offsetWidth });
+      }
     };
     updateThumb();
     window.addEventListener('resize', updateThumb);
     return () => window.removeEventListener('resize', updateThumb);
-  }, [sampleTypeFilter, sidebarOpen]);
-
-  // Filter area stats by sample type
-  const filteredAreaStats = sampleTypeFilter === 'All'
-    ? (areaStats || [])
-    : (areaStats || []).filter(a =>
-        a.sites.some(s => (s.sample_types || []).includes(sampleTypeFilter))
-      );
+  }, [sampleTypeFilter, productFilter, sidebarOpen]);
 
   const selectedArea = activeAreaId
     ? (areaStats || []).find(a => a.id === activeAreaId)
     : null;
 
-  // Filter sites within selected area by sample type
-  const filteredAreaSites = selectedArea
-    ? (sampleTypeFilter === 'All'
-        ? selectedArea.sites
-        : selectedArea.sites.filter(s => (s.sample_types || []).includes(sampleTypeFilter)))
-    : [];
+  const areaSites = selectedArea?.sites || [];
 
   return (
     <aside className={`sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
@@ -132,7 +126,7 @@ export default function SideBar({
             <li>
               <hr style={{ width: '90%', margin: '1rem 0', marginLeft: 0 }} />
 
-              {/* Sample type toggle: Snow / Soil / All */}
+              {/* Sample type toggle: All / Snow / Soil */}
               <div className="mode-switch">
                 <div
                   className="mode-switch-thumb"
@@ -150,17 +144,34 @@ export default function SideBar({
                 ))}
               </div>
 
+              {/* Product toggle: All / Isolates / Samples / DNA */}
+              <div className="mode-switch" style={{ marginTop: '0.5rem' }}>
+                <div
+                  className="mode-switch-thumb"
+                  style={{ left: productThumbStyle.left, width: productThumbStyle.width }}
+                />
+                {productOptions.map((opt) => (
+                  <button
+                    key={opt}
+                    ref={(el) => (productBtnRefs.current[opt] = el)}
+                    className={`mode-btn ${productFilter === opt ? 'active' : ''}`}
+                    onClick={() => setProductFilter(opt)}
+                  >
+                    {opt}
+                  </button>
+                ))}
+              </div>
+
               <hr style={{ width: '90%', margin: '1rem 0', marginLeft: 0 }} />
 
               {/* Area navigation */}
               {!activeAreaId ? (
-                // Area list
                 <div className="area-list">
                   <div className="area-list-header">Areas</div>
-                  {filteredAreaStats.length === 0 ? (
-                    <div className="area-list-empty">No areas found</div>
+                  {(areaStats || []).length === 0 ? (
+                    <div className="area-list-empty">No areas match</div>
                   ) : (
-                    filteredAreaStats.map((area) => (
+                    (areaStats || []).map((area) => (
                       <button
                         key={area.id}
                         className="area-item"
@@ -177,7 +188,6 @@ export default function SideBar({
                   )}
                 </div>
               ) : (
-                // Drilled-down area view showing sites
                 <div className="area-drilldown">
                   <button
                     className="area-back-btn"
@@ -201,7 +211,7 @@ export default function SideBar({
                         {selectedArea.replicateCount} replicate{selectedArea.replicateCount !== 1 ? 's' : ''}
                       </div>
                       <div className="area-sites-list">
-                        {filteredAreaSites.map((site) => (
+                        {areaSites.map((site) => (
                           <button
                             key={site.id}
                             className="area-site-item"
@@ -209,14 +219,14 @@ export default function SideBar({
                           >
                             <span className="area-site-name">{site.name}</span>
                             <span className="area-site-types">
-                              {(site.sample_types || []).join(', ') || 'No data'}
+                              {(site.sample_types || []).join(', ')}
                             </span>
                             <span className="area-item-badge">
-                              {site.replicate_ids?.length || 0}
+                              {site.matching_replicate_count ?? site.replicate_count ?? 0}
                             </span>
                           </button>
                         ))}
-                        {filteredAreaSites.length === 0 && (
+                        {areaSites.length === 0 && (
                           <div className="area-list-empty">No matching sites</div>
                         )}
                       </div>

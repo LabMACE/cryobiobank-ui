@@ -5,27 +5,19 @@ const fieldConfigs = {
     label: 'Isolate',
     fields: [
       { key: 'taxonomy', label: 'Taxonomy', italic: true },
-      { key: 'sample_type', label: 'Sample Type', chip: true },
-      { key: 'temperature_of_isolation', label: 'Temperature of Isolation', suffix: ' \u00b0C' },
-      { key: 'media_used_for_isolation', label: 'Media Used' },
-      { key: 'storage_location', label: 'Storage Location' },
+      { key: 'description', label: 'Description' },
       { key: 'genome_url', label: 'Genome', link: true },
     ],
   },
   samples: {
     label: 'Sample',
     fields: [
-      { key: 'sample_type', label: 'Sample Type', chip: true },
-      { key: 'storage_location', label: 'Storage Location' },
-      { key: 'description', label: 'Description' },
+      { key: 'is_available', label: 'Availability', render: v => v ? 'In stock' : 'Depleted' },
     ],
   },
   dna: {
     label: 'DNA',
-    fields: [
-      { key: 'extraction_method', label: 'Extraction Method', chip: true },
-      { key: 'description', label: 'Description' },
-    ],
+    fields: [],
   },
 };
 
@@ -76,6 +68,8 @@ export default function DetailSidePanel({ type, itemId, onClose }) {
                       <a href={value} target="_blank" rel="noopener noreferrer">
                         Link
                       </a>
+                    ) : field.render ? (
+                      field.render(value)
                     ) : field.suffix ? (
                       `${value}${field.suffix}`
                     ) : (

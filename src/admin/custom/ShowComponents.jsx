@@ -137,6 +137,15 @@ export const SampleTypeChip = ({ type }) => {
     );
 };
 
+export const AvailabilityChip = ({ isAvailable }) => (
+    <Chip
+        label={isAvailable ? 'In stock' : 'Depleted'}
+        size="small"
+        variant="outlined"
+        color={isAvailable ? 'success' : 'default'}
+    />
+);
+
 export const PhotoCard = ({ base64 }) => (
     <Card variant="outlined">
         <CardContent sx={{ textAlign: 'center', p: base64 ? 0 : 3 }}>

@@ -6,13 +6,17 @@ import DetailSidePanel from './DetailSidePanel';
 export default function MapSection({
   sites,
   areas,
-  replicates,
-  activeReplicateId,
+  activeSiteId,
   activeAreaId,
-  onReplicateClick,
   onSiteClick,
   onAreaClick,
+  view,
+  activeSite,
+  activeReplicateId,
+  onReplicateClick,
+  onBackToSite,
   sampleTypeFilter,
+  productFilter,
   replicateData,
   onClosePanel,
   loading,
@@ -46,13 +50,10 @@ export default function MapSection({
             <CryoLayers
               sites={sites}
               areas={areas}
-              replicates={replicates}
-              activeReplicateId={activeReplicateId}
+              activeSiteId={activeSiteId}
               activeAreaId={activeAreaId}
-              onReplicateClick={onReplicateClick}
               onSiteClick={onSiteClick}
               onAreaClick={onAreaClick}
-              sampleTypeFilter={sampleTypeFilter}
               shouldRecenter={shouldRecenter}
               setShouldRecenter={setShouldRecenter}
               zoomToSiteId={zoomToSiteId}
@@ -66,9 +67,16 @@ export default function MapSection({
               onClose={onCloseDetail}
             />
           )}
-          {replicateData && (
+          {view && (
             <DataPanel
+              view={view}
+              activeSite={activeSite}
+              activeReplicateId={activeReplicateId}
               replicateData={replicateData}
+              sampleTypeFilter={sampleTypeFilter}
+              productFilter={productFilter}
+              onReplicateClick={onReplicateClick}
+              onBackToSite={onBackToSite}
               onClose={onClosePanel}
               loading={loading}
               onItemClick={onItemClick}

@@ -2,9 +2,10 @@ import {
     List,
     Datagrid,
     TextField,
+    BooleanField,
     ReferenceField,
     FunctionField,
-    SelectInput,
+    BooleanInput,
     useRecordContext,
     usePermissions,
     Loading,
@@ -23,13 +24,8 @@ const PrivacyField = () => {
     );
 };
 
-const sampleTypeChoices = [
-    { id: 'Snow', name: 'Snow' },
-    { id: 'Soil', name: 'Soil' },
-];
-
 const sampleFilters = [
-    <SelectInput source="sample_type" label="Sample Type" choices={sampleTypeChoices} alwaysOn />,
+    <BooleanInput source="is_available" label="In stock only" alwaysOn />,
 ];
 
 const ListComponent = () => {
@@ -54,7 +50,7 @@ const ListComponent = () => {
                 <ReferenceField source="site_replicate_id" reference="site_replicates" link="show" label="Replicate">
                     <TextField source="name" />
                 </ReferenceField>
-                <TextField source="sample_type" label="Sample Type" />
+                <BooleanField source="is_available" label="In stock" />
                 <TextField source="storage_location" />
                 {permissions === 'admin' && (
                     <FunctionField label="Privacy" render={() => <PrivacyField />} />

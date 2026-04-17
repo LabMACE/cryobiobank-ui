@@ -4,7 +4,6 @@ import {
     TextInput,
     NumberInput,
     ReferenceInput,
-    SelectInput,
     AutocompleteInput,
     required,
     useRecordContext,
@@ -54,10 +53,8 @@ const IsolateEdit = (props) => {
                     />
                 </ReferenceInput>
                 <TextInput source="name" label="Name" validate={[required()]} />
-                <SelectInput source="sample_type" label="Sample Type"
-                    choices={[{ id: 'Snow', name: 'Snow' }, { id: 'Soil', name: 'Soil' }]}
-                    validate={[required()]} />
                 <TextInput source="taxonomy" label="Taxonomy" />
+                <TextInput source="description" label="Description" multiline />
                 <TextInput source="storage_location" label="Storage Location" />
                 <NumberInput
                     source="temperature_of_isolation"

@@ -39,32 +39,34 @@ export const SitesMap = ({
     const { data: areas, isPending: isPendingAreas } = useGetList('areas', { pagination: ALL_PAGES });
     const { data: siteReplicates, isPending: isPendingReplicates } = useGetList('site_replicates', { pagination: ALL_PAGES });
 
-    // Compute sample types per site from replicates
+    // Union of replicate sample_types per site (sample_type lives on the replicate after Phase A)
     const siteTypesMap = useMemo(() => {
         const map = new Map();
         if (!siteReplicates) return map;
         for (const rep of siteReplicates) {
-            const types = new Set([
-                ...(rep.samples || []).map(s => s.sample_type).filter(Boolean),
-                ...(rep.isolates || []).map(i => i.sample_type).filter(Boolean),
-            ]);
+            if (!rep.sample_type) continue;
             const existing = map.get(rep.site_id) || new Set();
-            types.forEach(t => existing.add(t));
+            existing.add(rep.sample_type);
             map.set(rep.site_id, existing);
         }
-        // Convert Sets to Arrays
         for (const [key, val] of map) {
             map.set(key, [...val]);
         }
         return map;
     }, [siteReplicates]);
 
-    // Compute replicate count per site
-    const siteReplicateCountMap = useMemo(() => {
+    // Per-site counts: replicates + aggregated isolate/sample/DNA totals.
+    // Admin view uses unfiltered raw totals (unlike public which filters by is_available).
+    const siteCountsMap = useMemo(() => {
         const map = new Map();
         if (!siteReplicates) return map;
         for (const rep of siteReplicates) {
-            map.set(rep.site_id, (map.get(rep.site_id) || 0) + 1);
+            const cur = map.get(rep.site_id) || { replicates: 0, isolates: 0, samples: 0, dna: 0 };
+            cur.replicates += 1;
+            cur.isolates += (rep.isolates || []).length;
+            cur.samples += (rep.samples || []).length;
+            cur.dna += (rep.dna || []).length;
+            map.set(rep.site_id, cur);
         }
         return map;
     }, [siteReplicates]);
@@ -130,6 +132,7 @@ export const SitesMap = ({
             >
                 {visibleSites.map(site => {
                     const siteTypes = siteTypesMap.get(site.id) || [];
+                    const counts = siteCountsMap.get(site.id) || { replicates: 0, isolates: 0, samples: 0, dna: 0 };
                     const opacity = !record ? 1 : (site.id === record.id ? 1.0 : 0.6);
                     return (
                         <Marker
@@ -145,7 +148,9 @@ export const SitesMap = ({
                                 <br />
                                 Elevation: {site.elevation_metres} m
                                 <br />
-                                Replicates: {siteReplicateCountMap.get(site.id) || 0}
+                                Replicates: {counts.replicates}
+                                <br />
+                                Isolates: {counts.isolates} · Samples: {counts.samples} · DNA: {counts.dna}
                                 <br /><br />
                                 <Link to={createPath({ type: 'show', resource: 'sites', id: site.id })}>
                                     Go to Site

@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
-const tabs = [
+const productTabs = [
   {
     key: 'isolates',
     label: 'Isolates',
@@ -21,102 +21,245 @@ const tabs = [
   {
     key: 'samples',
     label: 'Samples',
-    columns: ['Name', 'Type', 'Storage'],
+    columns: ['Name', 'Availability'],
     row: (item, onItemClick, selectedItemId) => (
       <tr key={item.id} onClick={() => onItemClick?.('samples', item.id)} className={item.id === selectedItemId ? 'selected' : ''}>
         <td>{item.name}</td>
-        <td>{item.sample_type || '—'}</td>
-        <td>{item.storage_location || '—'}</td>
+        <td>{item.is_available ? 'In stock' : 'Depleted'}</td>
       </tr>
     ),
   },
   {
     key: 'dna',
     label: 'DNA',
-    columns: ['Name', 'Description', 'Extraction method'],
+    columns: ['Name', 'Description'],
     row: (item, onItemClick, selectedItemId) => (
       <tr key={item.id} onClick={() => onItemClick?.('dna', item.id)} className={item.id === selectedItemId ? 'selected' : ''}>
         <td>{item.name}</td>
         <td>{item.description || '—'}</td>
-        <td>{item.extraction_method || '—'}</td>
       </tr>
     ),
   },
 ];
 
-export default function DataPanel({ replicateData, onClose, loading, onItemClick, selectedItemId }) {
+function productCount(rep, product) {
+  if (product === 'samples') {
+    return (rep.samples || []).filter(s => s.is_available).length;
+  }
+  return (rep[product] || []).length;
+}
+
+function byDateDesc(a, b) {
+  const da = a.sampling_date || '';
+  const db = b.sampling_date || '';
+  if (da === db) return 0;
+  return db.localeCompare(da);
+}
+
+function SiteReplicateList({ site, sampleTypeFilter, productFilter, onReplicateClick }) {
+  const typeActive = sampleTypeFilter !== 'All';
+  const productActive = productFilter !== 'All';
+  const productKey = productActive ? productFilter.toLowerCase() : null;
+
+  const replicates = useMemo(() => {
+    const reps = [...(site?.replicates || [])];
+    return reps.sort((a, b) => {
+      // Type match wins first when sample_type filter is active
+      if (typeActive) {
+        const ma = a.sample_type === sampleTypeFilter ? 0 : 1;
+        const mb = b.sample_type === sampleTypeFilter ? 0 : 1;
+        if (ma !== mb) return ma - mb;
+      }
+      // Then product count desc when product filter is active
+      if (productActive) {
+        const delta = productCount(b, productKey) - productCount(a, productKey);
+        if (delta !== 0) return delta;
+      }
+      // Tie-break on date desc
+      return byDateDesc(a, b);
+    });
+  }, [site, sampleTypeFilter, productFilter, typeActive, productActive, productKey]);
+
+  if (!replicates.length) return <p className="data-panel-empty">No replicates.</p>;
+
+  const colType = typeActive ? 'highlight' : '';
+  const colIso = productKey === 'isolates' ? 'highlight' : '';
+  const colSam = productKey === 'samples' ? 'highlight' : '';
+  const colDna = productKey === 'dna' ? 'highlight' : '';
+
+  return (
+    <table className="data-panel-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Date</th>
+          <th className={colType}>Type</th>
+          <th>Air (°C)</th>
+          <th className={colIso}>Isolates</th>
+          <th className={colSam}>Samples</th>
+          <th className={colDna}>DNA</th>
+        </tr>
+      </thead>
+      <tbody>
+        {replicates.map(rep => {
+          const typeMismatch = typeActive && rep.sample_type !== sampleTypeFilter;
+          const productMismatch = productActive && productCount(rep, productKey) === 0;
+          const dim = typeMismatch || productMismatch;
+          return (
+            <tr
+              key={rep.id}
+              onClick={() => onReplicateClick(rep.id)}
+              className={dim ? 'dim' : ''}
+            >
+              <td>{rep.name}</td>
+              <td>{rep.sampling_date || '—'}</td>
+              <td className={colType}>{rep.sample_type || '—'}</td>
+              <td>{rep.air_temperature_celsius ?? '—'}</td>
+              <td className={colIso}>{(rep.isolates || []).length}</td>
+              <td className={colSam}>
+                {(rep.samples || []).filter(s => s.is_available).length}
+              </td>
+              <td className={colDna}>{(rep.dna || []).length}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  );
+}
+
+function ReplicateProducts({ replicateData, onItemClick, selectedItemId }) {
   const [activeTab, setActiveTab] = useState('isolates');
 
-  // Auto-select first tab with data when data changes
   useEffect(() => {
     if (!replicateData) return;
-    const firstWithData = tabs.find(t => (replicateData[t.key] || []).length > 0);
-    if (firstWithData) {
-      setActiveTab(firstWithData.key);
-    } else {
-      setActiveTab('isolates');
-    }
+    const firstWithData = productTabs.find(t => (replicateData[t.key] || []).length > 0);
+    setActiveTab(firstWithData ? firstWithData.key : 'isolates');
   }, [replicateData]);
 
-  const activeTabDef = tabs.find(t => t.key === activeTab);
+  const activeTabDef = productTabs.find(t => t.key === activeTab);
   const items = replicateData?.[activeTab] || [];
   const metagenomeUrl = replicateData?.metagenome_url;
 
-  const renderTabHeader = () => {
-    if (activeTab === 'dna' && metagenomeUrl) {
-      return (
+  return (
+    <>
+      <div className="data-panel-tabs">
+        {productTabs.map((tab) => {
+          const count = (replicateData?.[tab.key] || []).length;
+          return (
+            <button
+              key={tab.key}
+              className={`data-panel-tab ${activeTab === tab.key ? 'active' : ''}`}
+              onClick={() => setActiveTab(tab.key)}
+            >
+              {tab.label} <span className="data-panel-count-badge">{count}</span>
+            </button>
+          );
+        })}
+      </div>
+      {activeTab === 'dna' && metagenomeUrl && (
         <div className="data-panel-tab-header">
           <span>Metagenome:</span>{' '}
           <a href={metagenomeUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
             {metagenomeUrl}
           </a>
         </div>
-      );
-    }
-    return null;
-  };
+      )}
+      <div className="data-panel-body">
+        {items.length === 0 ? (
+          <p className="data-panel-empty">No {activeTabDef?.label.toLowerCase()}</p>
+        ) : (
+          <table className="data-panel-table">
+            <thead>
+              <tr>
+                {activeTabDef.columns.map((col) => <th key={col}>{col}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((item) => activeTabDef.row(item, onItemClick, selectedItemId))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </>
+  );
+}
+
+export default function DataPanel({
+  view,
+  activeSite,
+  activeReplicateId,
+  replicateData,
+  sampleTypeFilter,
+  productFilter,
+  onReplicateClick,
+  onBackToSite,
+  onClose,
+  loading,
+  onItemClick,
+  selectedItemId,
+}) {
+  const activeReplicate = activeSite?.replicates?.find(r => r.id === activeReplicateId);
 
   return (
     <div className="overlay-chart data-panel">
       <button className="data-panel-close" onClick={onClose}>&times;</button>
       <div className="data-panel-content">
-        {loading ? (
-          <p>Loading...</p>
-        ) : (
+        {view === 'site' && activeSite && (() => {
+          const total = activeSite.replicates.length;
+          const matching = activeSite.replicates.filter(r => {
+            if (sampleTypeFilter !== 'All' && r.sample_type !== sampleTypeFilter) return false;
+            if (productFilter !== 'All') {
+              const key = productFilter.toLowerCase();
+              if (key === 'samples') {
+                if (!(r.samples || []).some(s => s.is_available)) return false;
+              } else if (((r[key] || []).length) === 0) return false;
+            }
+            return true;
+          }).length;
+          const filterActive = sampleTypeFilter !== 'All' || productFilter !== 'All';
+          return (
+            <>
+              <div className="data-panel-heading">
+                <h3>{activeSite.name}</h3>
+                <span className="data-panel-subtle">
+                  {filterActive
+                    ? `${matching} matching / ${total} total`
+                    : `${total} replicate${total === 1 ? '' : 's'}`}
+                </span>
+              </div>
+              <div className="data-panel-body">
+                <SiteReplicateList
+                  site={activeSite}
+                  sampleTypeFilter={sampleTypeFilter}
+                  productFilter={productFilter}
+                  onReplicateClick={onReplicateClick}
+                />
+              </div>
+            </>
+          );
+        })()}
+
+        {view === 'replicate' && (
           <>
-            <div className="data-panel-tabs">
-              {tabs.map((tab) => {
-                const count = (replicateData?.[tab.key] || []).length;
-                return (
-                  <button
-                    key={tab.key}
-                    className={`data-panel-tab ${activeTab === tab.key ? 'active' : ''}`}
-                    onClick={() => setActiveTab(tab.key)}
-                  >
-                    {tab.label} <span className="data-panel-count-badge">{count}</span>
-                  </button>
-                );
-              })}
-            </div>
-            {renderTabHeader()}
-            <div className="data-panel-body">
-              {items.length === 0 ? (
-                <p className="data-panel-empty">No {activeTabDef?.label.toLowerCase()}</p>
-              ) : (
-                <table className="data-panel-table">
-                  <thead>
-                    <tr>
-                      {activeTabDef.columns.map((col) => (
-                        <th key={col}>{col}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {items.map((item) => activeTabDef.row(item, onItemClick, selectedItemId))}
-                  </tbody>
-                </table>
+            <div className="data-panel-heading">
+              <button className="data-panel-back" onClick={onBackToSite}>
+                ← {activeSite?.name || 'site'}
+              </button>
+              <h3>{activeReplicate?.name || 'Replicate'}</h3>
+              {activeReplicate?.sampling_date && (
+                <span className="data-panel-subtle">{activeReplicate.sampling_date}</span>
               )}
             </div>
+            {loading ? (
+              <p>Loading...</p>
+            ) : (
+              <ReplicateProducts
+                replicateData={replicateData}
+                onItemClick={onItemClick}
+                selectedItemId={selectedItemId}
+              />
+            )}
           </>
         )}
       </div>

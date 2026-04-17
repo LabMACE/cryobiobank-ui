@@ -9,7 +9,6 @@ import {
     SectionCard,
     FieldRow,
     PrivacyToggle,
-    SampleTypeChip,
     PhotoCard,
     ShowActions,
     ShowTitle,
@@ -41,12 +40,16 @@ const ShowContent = () => {
             <SectionCard>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, flexWrap: 'wrap' }}>
                     <Typography variant="h5" fontWeight={600}>{record.name}</Typography>
-                    <SampleTypeChip type={record.sample_type} />
                     {isAdmin && <PrivacyToggle resource="isolates" id={record.id} isPrivate={record.is_private} />}
                 </Box>
                 {record.taxonomy && (
                     <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic', mb: 1 }}>
                         {record.taxonomy}
+                    </Typography>
+                )}
+                {record.description && (
+                    <Typography variant="body2" sx={{ mb: 1 }}>
+                        {record.description}
                     </Typography>
                 )}
                 {record.genome_url && (

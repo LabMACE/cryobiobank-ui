@@ -35,6 +35,7 @@ services:
       - cryobiobank-db
     volumes:
       - ../cryobiobank-api/src:/app/src
+      - ../cryobiobank-api/migration:/app/migration
       - cryobiobank-api-build-data:/app/target # Store builds in docker volume
       - ../cryobiobank-api/Cargo.toml:/app/Cargo.toml
       - ../cryobiobank-api/Cargo.lock:/app/Cargo.lock

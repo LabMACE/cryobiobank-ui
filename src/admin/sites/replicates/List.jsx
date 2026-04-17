@@ -6,6 +6,7 @@ import {
     ReferenceField,
     ReferenceManyCount,
     FunctionField,
+    SelectInput,
     useRecordContext,
     usePermissions,
     Loading,
@@ -24,6 +25,15 @@ const PrivacyField = () => {
     );
 };
 
+const sampleTypeChoices = [
+    { id: 'Snow', name: 'Snow' },
+    { id: 'Soil', name: 'Soil' },
+];
+
+const replicateFilters = [
+    <SelectInput source="sample_type" label="Sample Type" choices={sampleTypeChoices} alwaysOn />,
+];
+
 const ListComponent = () => {
     const { permissions, isLoading } = usePermissions();
     if (isLoading) return <Loading />;
@@ -34,15 +44,18 @@ const ListComponent = () => {
             sort={{ field: 'sampling_date', order: 'DESC' }}
             actions={<ListActionsByPermission />}
             empty={<CustomEmptyPage/>}
+            filters={replicateFilters}
         >
             <Datagrid rowClick="show" bulkActionButtons={permissions === 'admin' ? true : false}>
                 <TextField source="name" />
                 <DateField source="sampling_date" label="Sampling Date" />
+                <TextField source="sample_type" label="Type" />
                 <ReferenceField source="site_id" reference="sites" link="show" label="Site">
                     <TextField source="name" />
                 </ReferenceField>
                 <ReferenceManyCount reference="isolates" target="site_replicate_id" label="Isolates" />
                 <ReferenceManyCount reference="samples" target="site_replicate_id" label="Samples" />
+                <ReferenceManyCount reference="dna" target="site_replicate_id" label="DNA" />
                 {permissions === 'admin' && (
                     <FunctionField label="Privacy" render={() => <PrivacyField />} />
                 )}

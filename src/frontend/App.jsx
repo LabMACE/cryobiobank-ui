@@ -11,6 +11,9 @@ export default function FrontendApp() {
   const [areas, setAreas] = useState([]);
   const [replicates, setReplicates] = useState([]);
   const [sampleTypeFilter, setSampleTypeFilter] = useState('All');
+  const [productFilter, setProductFilter] = useState('All');
+  const [view, setView] = useState(null);
+  const [activeSiteId, setActiveSiteId] = useState(null);
   const [activeReplicateId, setActiveReplicateId] = useState(null);
   const [activeAreaId, setActiveAreaId] = useState(null);
   const [replicateData, setReplicateData] = useState(null);
@@ -22,57 +25,71 @@ export default function FrontendApp() {
   const [selectedItem, setSelectedItem] = useState(null);
   const sectionsRef = useRef([]);
 
-  // Compute area stats from already-fetched sites and replicates data
-  const areaStats = useMemo(() => {
-    return areas.map(area => {
-      const areaSites = sites
-        .filter(s => s.area_id === area.id)
-        .map(site => {
-          const siteReps = replicates.filter(r => r.site_id === site.id);
-          const siteSampleTypes = new Set(siteReps.flatMap(r => [
-            ...(r.samples || []).map(s => s.sample_type),
-            ...(r.isolates || []).map(i => i.sample_type),
-          ]));
-          return {
-            ...site,
-            sample_types: [...siteSampleTypes],
-            replicate_ids: siteReps.map(r => r.id),
-          };
-        });
-      const areaSiteIds = new Set(areaSites.map(s => s.id));
-      const areaReps = replicates.filter(r => areaSiteIds.has(r.site_id));
-      const sampleTypes = new Set(areaReps.flatMap(r => [
-        ...(r.samples || []).map(s => s.sample_type),
-        ...(r.isolates || []).map(i => i.sample_type),
-      ]));
-      return {
-        ...area,
-        siteCount: areaSites.length,
-        replicateCount: areaReps.length,
-        sampleTypes: [...sampleTypes],
-        sites: areaSites,
-      };
-    });
-  }, [areas, sites, replicates]);
+  // Enrich sites with replicate list, aggregated sample types, and child counts.
+  // Drop sites with no replicates (per "no empty data" rule).
+  const enrichedSites = useMemo(() => {
+    return sites
+      .map(site => {
+        const siteReps = replicates.filter(r => r.site_id === site.id);
+        const sampleTypes = [...new Set(siteReps.map(r => r.sample_type).filter(Boolean))];
+        return {
+          ...site,
+          replicates: siteReps,
+          sample_types: sampleTypes,
+          replicate_count: siteReps.length,
+        };
+      })
+      .filter(s => s.replicate_count > 0);
+  }, [sites, replicates]);
 
-  // Enrich replicates with parent site info and derive sample_types from joined children
-  const enrichedReplicates = useMemo(() => {
-    return replicates.map(rep => {
-      const site = sites.find(s => s.id === rep.site_id);
-      const types = new Set([
-        ...(rep.samples || []).map(s => s.sample_type),
-        ...(rep.isolates || []).map(i => i.sample_type),
-      ]);
-      return {
-        ...rep,
-        latitude_4326: site?.latitude_4326,
-        longitude_4326: site?.longitude_4326,
-        site_name: site?.name,
-        sample_types: [...types],
-        elevation_metres: site?.elevation_metres,
-      };
-    }).filter(rep => rep.latitude_4326 != null && rep.longitude_4326 != null);
-  }, [replicates, sites]);
+  // Apply Snow/Soil and Product filters, recomputing per-type counts so downstream
+  // views (sidebar badges, panel header) reflect exactly what's visible.
+  const filteredSites = useMemo(() => {
+    return enrichedSites
+      .map(s => {
+        const matchingReps = sampleTypeFilter === 'All'
+          ? s.replicates
+          : s.replicates.filter(r => r.sample_type === sampleTypeFilter);
+        const product_counts = matchingReps.reduce(
+          (acc, r) => ({
+            isolates: acc.isolates + (r.isolates?.length || 0),
+            samples: acc.samples + (r.samples?.filter(x => x.is_available).length || 0),
+            dna: acc.dna + (r.dna?.length || 0),
+          }),
+          { isolates: 0, samples: 0, dna: 0 }
+        );
+        return {
+          ...s,
+          matching_replicate_count: matchingReps.length,
+          product_counts,
+        };
+      })
+      .filter(s => {
+        if (s.matching_replicate_count === 0) return false;
+        if (productFilter !== 'All') {
+          const key = productFilter.toLowerCase();
+          if ((s.product_counts[key] || 0) === 0) return false;
+        }
+        return true;
+      });
+  }, [enrichedSites, sampleTypeFilter, productFilter]);
+
+  // Area stats derived from filtered sites
+  const areaStats = useMemo(() => {
+    return areas
+      .map(area => {
+        const areaSites = filteredSites.filter(s => s.area_id === area.id);
+        const sampleTypes = [...new Set(areaSites.flatMap(s => s.sample_types))];
+        return {
+          ...area,
+          siteCount: areaSites.length,
+          replicateCount: areaSites.reduce((sum, s) => sum + s.matching_replicate_count, 0),
+          sampleTypes,
+          sites: areaSites,
+        };
+      })
+      .filter(a => a.siteCount > 0);
+  }, [areas, filteredSites]);
 
   // Fetch sites, areas, and replicates on mount
   useEffect(() => {
@@ -89,7 +106,7 @@ export default function FrontendApp() {
       .catch(console.error);
   }, []);
 
-  // Fetch isolates/samples when a replicate is selected
+  // Fetch a selected replicate's children when drilling in
   useEffect(() => {
     if (!activeReplicateId) {
       setReplicateData(null);
@@ -126,28 +143,42 @@ export default function FrontendApp() {
     fetchReplicateData();
   }, [activeReplicateId, replicates]);
 
+  const handleSiteClick = (siteId) => {
+    setActiveSiteId(siteId);
+    setActiveReplicateId(null);
+    setReplicateData(null);
+    setSelectedItem(null);
+    setView('site');
+    setZoomToSiteId(siteId);
+  };
+
   const handleReplicateClick = (replicateId) => {
     setActiveReplicateId(replicateId);
     setSelectedItem(null);
+    setView('replicate');
   };
 
-  const handleSiteClick = (siteId) => {
-    // Zoom to site but don't select a replicate
+  const handleBackToSite = () => {
     setActiveReplicateId(null);
     setReplicateData(null);
-    setZoomToSiteId(siteId);
+    setSelectedItem(null);
+    setView('site');
   };
 
   const handleAreaClick = (areaId) => {
     setActiveAreaId(areaId);
+    setActiveSiteId(null);
     setActiveReplicateId(null);
     setReplicateData(null);
+    setView(null);
   };
 
   const handleClosePanel = () => {
+    setActiveSiteId(null);
     setActiveReplicateId(null);
     setReplicateData(null);
     setSelectedItem(null);
+    setView(null);
   };
 
   const handleItemClick = (type, id) => {
@@ -162,8 +193,15 @@ export default function FrontendApp() {
   // snap-scroll.
   useEffect(() => {
     const handleWheel = (event) => {
+      // Stop page snap-scroll when wheeling over map chrome. For the data
+      // and detail panels we only stop propagation (not preventDefault) so
+      // their internal content can still scroll natively.
+      if (event.target.closest('.data-panel, .detail-side-panel')) {
+        event.stopPropagation();
+        return;
+      }
       if (event.target.closest(
-        '.leaflet-popup, .leaflet-control, .leaflet-tooltip, .map-legend, .data-panel, .detail-side-panel'
+        '.leaflet-popup, .leaflet-control, .leaflet-tooltip, .map-legend'
       )) {
         event.preventDefault();
         event.stopPropagation();
@@ -177,6 +215,8 @@ export default function FrontendApp() {
     };
   }, []);
 
+  const activeSite = view ? filteredSites.find(s => s.id === activeSiteId) : null;
+
   return (
     <div className="App">
       <SideBar
@@ -187,25 +227,30 @@ export default function FrontendApp() {
         setActiveSection={setActiveSection}
         sampleTypeFilter={sampleTypeFilter}
         setSampleTypeFilter={setSampleTypeFilter}
+        productFilter={productFilter}
+        setProductFilter={setProductFilter}
         areaStats={areaStats}
         activeAreaId={activeAreaId}
         setActiveAreaId={setActiveAreaId}
         onSiteClick={handleSiteClick}
-        sites={sites}
       />
 
       <main className="sections">
         <Cover sectionsRef={sectionsRef} />
         <MapSection
-          sites={sites}
+          sites={filteredSites}
           areas={areas}
-          replicates={enrichedReplicates}
-          activeReplicateId={activeReplicateId}
+          activeSiteId={activeSiteId}
           activeAreaId={activeAreaId}
-          onReplicateClick={handleReplicateClick}
           onSiteClick={handleSiteClick}
           onAreaClick={handleAreaClick}
+          view={view}
+          activeSite={activeSite}
+          activeReplicateId={activeReplicateId}
+          onReplicateClick={handleReplicateClick}
+          onBackToSite={handleBackToSite}
           sampleTypeFilter={sampleTypeFilter}
+          productFilter={productFilter}
           replicateData={replicateData}
           onClosePanel={handleClosePanel}
           loading={loading}

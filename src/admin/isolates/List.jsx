@@ -4,7 +4,6 @@ import {
     TextField,
     FunctionField,
     ReferenceField,
-    SelectInput,
     useRecordContext,
     usePermissions,
     Loading,
@@ -23,30 +22,19 @@ const PrivacyField = () => {
     );
 };
 
-const sampleTypeChoices = [
-    { id: 'Snow', name: 'Snow' },
-    { id: 'Soil', name: 'Soil' },
-];
-
-const isolateFilters = [
-    <SelectInput source="sample_type" label="Sample Type" choices={sampleTypeChoices} alwaysOn />,
-];
-
 const ListComponent = () => {
     const { permissions, isLoading } = usePermissions();
     if (isLoading) return <Loading />;
-    
+
     return (
         <List disableSyncWithLocation
             perPage={25}
             sort={{ field: 'name', order: 'ASC' }}
             actions={<ListActionsByPermission />}
             empty={<CustomEmptyPage/>}
-            filters={isolateFilters}
         >
             <Datagrid rowClick="show" bulkActionButtons={permissions === 'admin' ? true : false}>
                 <TextField source="name" />
-                <TextField source="sample_type" label="Sample Type" />
                 <ReferenceField source="site_replicate_id" reference="site_replicates" link={false} label="Site">
                     <ReferenceField source="site_id" reference="sites" link="show">
                         <TextField source="name" />

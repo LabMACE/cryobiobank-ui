@@ -1,6 +1,7 @@
 import {
     Show,
     TextField,
+    BooleanField,
     usePermissions,
     useRecordContext,
     useCreatePath,
@@ -22,6 +23,7 @@ import {
     SectionCard,
     FieldRow,
     PrivacyToggle,
+    SampleTypeChip,
     ShowActions,
     ShowTitle,
 } from '../../custom/ShowComponents';
@@ -77,6 +79,7 @@ const ShowContent = () => {
             <SectionCard>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, flexWrap: 'wrap' }}>
                     <Typography variant="h5" fontWeight={600}>{record.name}</Typography>
+                    <SampleTypeChip type={record.sample_type} />
                     {isAdmin && <PrivacyToggle resource="site_replicates" id={record.id} isPrivate={record.is_private} />}
                 </Box>
                 {record.sampling_date && (
@@ -196,7 +199,6 @@ const ShowContent = () => {
                         <Datagrid bulkActionButtons={false} rowClick="show">
                             <TextField source="name" />
                             <TextField source="taxonomy" emptyText="—" />
-                            <TextField source="sample_type" label="Type" emptyText="—" />
                             <TextField source="storage_location" emptyText="—" />
                         </Datagrid>
                     </ReferenceManyField>
@@ -210,7 +212,7 @@ const ShowContent = () => {
                     <ReferenceManyField reference="samples" target="site_replicate_id" label={false}>
                         <Datagrid bulkActionButtons={false} rowClick="show">
                             <TextField source="name" />
-                            <TextField source="sample_type" label="Type" emptyText="—" />
+                            <BooleanField source="is_available" label="Available" />
                             <TextField source="storage_location" emptyText="—" />
                         </Datagrid>
                     </ReferenceManyField>

@@ -12,6 +12,11 @@ import {
 import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
+const sampleTypeChoices = [
+    { id: 'Snow', name: 'Snow' },
+    { id: 'Soil', name: 'Soil' },
+];
+
 const SiteReplicateCreate = (props) => {
     return (
         <Create {...props} redirect="show">
@@ -28,6 +33,14 @@ const SiteReplicateCreate = (props) => {
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <TextInput source="name" label="Name" validate={[required()]} />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <SelectInput
+                            source="sample_type"
+                            label="Sample Type"
+                            choices={sampleTypeChoices}
+                            validate={[required()]}
+                        />
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <DateInput source="sampling_date" label="Sampling Date" validate={[required()]}/>

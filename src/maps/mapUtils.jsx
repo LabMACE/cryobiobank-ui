@@ -23,70 +23,44 @@ export const createSplitIcon = () => L.divIcon({
 export const snowIcon = createCircleIcon(SNOW_COLOR);
 export const soilIcon = createCircleIcon(SOIL_COLOR);
 export const bothIcon = createSplitIcon();
-export const defaultIcon = createCircleIcon('#888');
 
 export function getMarkerIcon(sampleTypes) {
   const types = sampleTypes || [];
-  if (types.length === 0) return defaultIcon;
   const hasSnow = types.includes('Snow');
   const hasSoil = types.includes('Soil');
   if (hasSnow && hasSoil) return bothIcon;
-  if (hasSnow) return snowIcon;
   if (hasSoil) return soilIcon;
-  return defaultIcon;
+  return snowIcon;
 }
 
 export function clusterIconCreate(cluster) {
   const children = cluster.getAllChildMarkers();
-  const total = children.length;
   let snow = 0;
   let soil = 0;
-  let noData = 0;
   for (const m of children) {
     const types = m.options.sampleTypes || [];
-    const hasSnow = types.includes('Snow');
-    const hasSoil = types.includes('Soil');
-    if (hasSnow) snow++;
-    if (hasSoil) soil++;
-    if (!hasSnow && !hasSoil) noData++;
+    if (types.includes('Snow')) snow++;
+    if (types.includes('Soil')) soil++;
   }
-
+  const total = snow + soil;
   const size = total < 10 ? 36 : total < 50 ? 44 : 52;
 
-  const segments = [];
-  if (snow > 0) segments.push({ color: SNOW_COLOR, count: snow });
-  if (soil > 0) segments.push({ color: SOIL_COLOR, count: soil });
-  if (noData > 0) segments.push({ color: '#888', count: noData });
-
-  let bg;
-  if (segments.length <= 1) {
-    bg = segments.length === 1 ? segments[0].color : '#888';
-  } else {
-    const sum = segments.reduce((s, seg) => s + seg.count, 0);
-    const stops = [];
-    let cursor = 0;
-    for (const seg of segments) {
-      const pct = Math.round((seg.count / sum) * 100);
-      stops.push(`${seg.color} ${cursor}% ${cursor + pct}%`);
-      cursor += pct;
-    }
-    bg = `conic-gradient(${stops.join(', ')})`;
+  if (snow > 0 && soil > 0) {
+    const bg = `linear-gradient(90deg, ${SNOW_COLOR} 50%, ${SOIL_COLOR} 50%)`;
+    const label = `<span class="cluster-half">${snow}</span><span class="cluster-half">${soil}</span>`;
+    return L.divIcon({
+      className: '',
+      html: `<div class="cluster-icon cluster-icon-split" style="width:${size}px;height:${size}px;background:${bg}">${label}</div>`,
+      iconSize: [size, size],
+      iconAnchor: [size / 2, size / 2],
+    });
   }
 
-  let label;
-  if (segments.length <= 1) {
-    label = `${total}`;
-  } else {
-    const parts = [];
-    if (snow > 0) parts.push(`<span style="color:#b0d4f1">${snow}</span>`);
-    if (soil > 0) parts.push(`<span style="color:#d4b86a">${soil}</span>`);
-    if (noData > 0) parts.push(`<span style="color:#ccc">${noData}</span>`);
-    label = parts.join('/');
-  }
-
+  const bg = snow > 0 ? SNOW_COLOR : SOIL_COLOR;
+  const count = snow > 0 ? snow : soil;
   return L.divIcon({
     className: '',
-    html: `<div class="cluster-icon" style="width:${size}px;height:${size}px;background:${bg}">${label}</div>`,
+    html: `<div class="cluster-icon" style="width:${size}px;height:${size}px;background:${bg}">${count}</div>`,
     iconSize: [size, size],
     iconAnchor: [size / 2, size / 2],
   });
@@ -216,10 +190,6 @@ export function MapLegend() {
           <div style="display:flex;align-items:center;gap:8px">
             <div style="background:${SOIL_COLOR};width:16px;height:16px;border-radius:50%;border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,0.3);flex-shrink:0"></div>
             <span>Soil</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <div style="background:#888;width:16px;height:16px;border-radius:50%;border:2px solid white;box-shadow:0 1px 3px rgba(0,0,0,0.3);flex-shrink:0"></div>
-            <span>No data</span>
           </div>
         </div>
       `;

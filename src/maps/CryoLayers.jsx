@@ -5,28 +5,19 @@ import { BaseLayers } from './Layers';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import {
   getMarkerIcon,
-  defaultIcon,
   clusterIconCreate,
   FitBounds,
   ZoomablePolygon,
   MapLegend,
 } from './mapUtils.jsx';
 
-function formatValue(val, unit) {
-  if (val == null) return null;
-  return `${val}${unit}`;
-}
-
 export default function CryoLayers({
   sites,
   areas,
-  replicates,
-  activeReplicateId,
+  activeSiteId,
   activeAreaId,
-  onReplicateClick,
   onSiteClick,
   onAreaClick,
-  sampleTypeFilter,
   shouldRecenter,
   setShouldRecenter,
   zoomToSiteId,
@@ -43,14 +34,14 @@ export default function CryoLayers({
     }
   }, [shouldRecenter, sites, map, setShouldRecenter]);
 
-  // Fly to active replicate's site location
+  // Fly to active site
   useEffect(() => {
-    if (!activeReplicateId || !replicates) return;
-    const rep = replicates.find(r => r.id === activeReplicateId);
-    if (rep) {
-      map.flyTo([rep.latitude_4326, rep.longitude_4326], 16, { duration: 1 });
+    if (!activeSiteId) return;
+    const site = sites.find(s => s.id === activeSiteId);
+    if (site) {
+      map.flyTo([site.latitude_4326, site.longitude_4326], 15, { duration: 1 });
     }
-  }, [activeReplicateId, replicates, map]);
+  }, [activeSiteId, sites, map]);
 
   // Zoom to site when clicked from sidebar
   useEffect(() => {
@@ -78,25 +69,7 @@ export default function CryoLayers({
     }
   }, [activeAreaId, areas, map]);
 
-  // Filter replicates by sample type (inherited from parent site)
-  const filteredReplicates = sampleTypeFilter === 'All'
-    ? replicates
-    : replicates.filter(r => (r.sample_types || []).includes(sampleTypeFilter));
-
-  // Filter sites by checking if any of their replicates have the matching sample type
-  const filteredSites = sampleTypeFilter === 'All'
-    ? sites
-    : sites.filter(s => replicates.some(r =>
-        r.site_id === s.id && (r.sample_types || []).includes(sampleTypeFilter)
-      ));
-
-  const filteredAreas = sampleTypeFilter === 'All'
-    ? areas
-    : areas.filter(a => filteredSites.some(s => s.area_id === a.id));
-
-  // Sites that have no visible replicate markers — show as gray dots
-  const replicateSiteIds = new Set(filteredReplicates.map(r => r.site_id));
-  const sitesWithoutMarkers = filteredSites.filter(s => !replicateSiteIds.has(s.id));
+  const filteredAreas = areas.filter(a => sites.some(s => s.area_id === a.id));
 
   return (
     <>
@@ -108,67 +81,31 @@ export default function CryoLayers({
         maxClusterRadius={40}
         chunkedLoading
         iconCreateFunction={clusterIconCreate}
-        spiderfyOnMaxZoom={true}
+        spiderfyOnMaxZoom={false}
+        zoomToBoundsOnClick={true}
       >
-        {filteredReplicates.map((rep) => {
-          const envLines = [
-            formatValue(rep.air_temperature_celsius, ' °C') && `Air: ${rep.air_temperature_celsius} °C`,
-            formatValue(rep.snow_temperature_celsius, ' °C') && `Snow: ${rep.snow_temperature_celsius} °C`,
-            formatValue(rep.snow_depth_cm, ' cm') && `Snow depth: ${rep.snow_depth_cm} cm`,
-            formatValue(rep.sample_depth_cm, ' cm') && `Sample depth: ${rep.sample_depth_cm} cm`,
-          ].filter(Boolean);
-
-          return (
-            <Marker
-              key={rep.id}
-              position={[rep.latitude_4326, rep.longitude_4326]}
-              icon={getMarkerIcon(rep.sample_types)}
-              sampleTypes={rep.sample_types}
-              eventHandlers={{
-                click: () => onReplicateClick(rep.id),
-              }}
-            >
-              <Tooltip>
-                <strong>{rep.site_name}</strong>
-                <br />
-                <span style={{ fontSize: '0.85em', opacity: 0.85 }}>
-                  {rep.name}{rep.sampling_date ? ` · ${rep.sampling_date}` : ''}
-                </span>
-              </Tooltip>
-              <Popup>
-                <strong>{rep.site_name}</strong>
-                <br />
-                <span style={{ fontWeight: 500 }}>{rep.name}</span>
-                {rep.sampling_date && <><br />Date: {rep.sampling_date}</>}
-                {rep.elevation_metres != null && <><br />Elevation: {rep.elevation_metres} m</>}
-                {envLines.length > 0 && (
-                  <>
-                    <br /><br />
-                    {envLines.map((line, i) => (
-                      <span key={i}>{line}<br /></span>
-                    ))}
-                  </>
-                )}
-              </Popup>
-            </Marker>
-          );
-        })}
-        {sitesWithoutMarkers.map((site) => (
+        {sites.map((site) => (
           <Marker
-            key={`site-${site.id}`}
+            key={site.id}
             position={[site.latitude_4326, site.longitude_4326]}
-            icon={defaultIcon}
-            sampleTypes={[]}
+            icon={getMarkerIcon(site.sample_types)}
+            sampleTypes={site.sample_types}
+            eventHandlers={{
+              click: () => onSiteClick(site.id),
+            }}
           >
             <Tooltip>
               <strong>{site.name}</strong>
               <br />
-              <span style={{ fontSize: '0.85em', opacity: 0.85 }}>No replicates</span>
+              <span style={{ fontSize: '0.85em', opacity: 0.85 }}>
+                {site.matching_replicate_count ?? site.replicate_count} replicate{(site.matching_replicate_count ?? site.replicate_count) === 1 ? '' : 's'}
+              </span>
             </Tooltip>
             <Popup>
               <strong>{site.name}</strong>
               {site.elevation_metres != null && <><br />Elevation: {site.elevation_metres} m</>}
-              <br /><em>No replicates yet</em>
+              <br />
+              {site.replicate_count} replicate{site.replicate_count === 1 ? '' : 's'}
             </Popup>
           </Marker>
         ))}

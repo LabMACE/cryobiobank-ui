@@ -4,6 +4,7 @@ import {
     TextField,
     ArrayField,
     Datagrid,
+    FunctionField,
     useRecordContext,
     usePermissions,
     useCreatePath,
@@ -96,9 +97,10 @@ const ShowContent = () => {
                             <Datagrid bulkActionButtons={false} rowClick={objectClick}>
                                 <TextField source="name" />
                                 <DateField source="sampling_date" label="Date" />
-                                <TextField source="sample_depth_cm" label="Sample depth (cm)" />
-                                <TextField source="snow_depth_cm" label="Snow depth (cm)" />
-                                <TextField source="air_temperature_celsius" label="Air temp (°C)" />
+                                <TextField source="sample_type" label="Type" />
+                                <FunctionField label="Isolates" render={rec => rec?.isolates?.length ?? 0} />
+                                <FunctionField label="Samples" render={rec => rec?.samples?.length ?? 0} />
+                                <FunctionField label="DNA" render={rec => rec?.dna?.length ?? 0} />
                             </Datagrid>
                         </ArrayField>
                     </SectionCard>

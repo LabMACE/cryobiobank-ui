@@ -157,6 +157,7 @@ const SiteAside = () => {
                                     <TableRow>
                                         <TableCell>Name</TableCell>
                                         <TableCell>Date</TableCell>
+                                        <TableCell>Type</TableCell>
                                         <TableCell align="right">Isolates</TableCell>
                                         <TableCell align="right">Samples</TableCell>
                                         <TableCell align="right">DNA</TableCell>
@@ -172,6 +173,7 @@ const SiteAside = () => {
                                         >
                                             <TableCell>{rep.name}</TableCell>
                                             <TableCell>{rep.sampling_date}</TableCell>
+                                            <TableCell>{rep.sample_type}</TableCell>
                                             <TableCell align="right">{rep.isolates?.length ?? 0}</TableCell>
                                             <TableCell align="right">{rep.samples?.length ?? 0}</TableCell>
                                             <TableCell align="right">{rep.dna?.length ?? 0}</TableCell>

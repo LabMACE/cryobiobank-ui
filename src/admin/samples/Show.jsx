@@ -8,7 +8,7 @@ import {
     SectionCard,
     FieldRow,
     PrivacyToggle,
-    SampleTypeChip,
+    AvailabilityChip,
     ShowActions,
     ShowTitle,
     useBreadcrumbChain,
@@ -39,7 +39,7 @@ const ShowContent = () => {
             <SectionCard>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, flexWrap: 'wrap' }}>
                     <Typography variant="h5" fontWeight={600}>{record.name}</Typography>
-                    <SampleTypeChip type={record.sample_type} />
+                    <AvailabilityChip isAvailable={record.is_available} />
                     {isAdmin && <PrivacyToggle resource="samples" id={record.id} isPrivate={record.is_private} />}
                 </Box>
                 {record.storage_location && (
