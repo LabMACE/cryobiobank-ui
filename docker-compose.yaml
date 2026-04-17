@@ -16,6 +16,7 @@ services:
     build:
       context: ../cryobiobank-api
       dockerfile: Dockerfile.dev
+    restart: unless-stopped
     environment:
       - DB_HOST=cryobiobank-db
       - DB_PORT=5432
@@ -43,10 +44,11 @@ services:
       - "traefik.http.routers.cryobiobank-api.rule=Host(`cryobiobank`) && PathPrefix(`/api`)"
       - "traefik.http.services.cryobiobank-api.loadbalancer.server.port=3000"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/healthz"]
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/healthz || kill 1"]
       interval: 5s
       timeout: 5s
       retries: 3
+      start_period: 120s
 
   cryobiobank:
     build:
