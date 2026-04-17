@@ -13,6 +13,7 @@ import { CssBaseline, Typography } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEarthAmericas } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
+import SearchBar from './components/SearchBar';
 
 const DeploymentContext = createContext(undefined);
 
@@ -52,6 +53,7 @@ const MyAppBar = () => {
     return (
         <AppBar color="primary">
             <TitlePortal />
+            <SearchBar />
             <Typography
                 variant="h6"
                 color="#FF69B4"
