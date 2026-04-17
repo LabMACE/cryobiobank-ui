@@ -204,7 +204,7 @@ export function MapLegend() {
   useEffect(() => {
     if (legendRef.current) return;
 
-    const legend = L.control({ position: 'bottomright' });
+    const legend = L.control({ position: 'topright' });
     legend.onAdd = () => {
       const div = L.DomUtil.create('div', 'map-legend');
       div.innerHTML = `

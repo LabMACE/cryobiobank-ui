@@ -163,8 +163,6 @@ const dataProvider = (
 
     update: async (resource, params) => {
         params = await handleBinaryUpload(resource, params);
-        console.log("Resource", resource);
-        console.log("update", params);
         return httpClient(`${apiUrl}/${resource}/${params.id}`, {
             method: 'PUT',
             body: JSON.stringify(params.data),
@@ -212,33 +210,6 @@ const dataProvider = (
             }).then(({ json }) => ({ data: json }));
         }
     },
-
-
-    getStatus: () => {
-        const url = `${apiUrl}/status`;
-        // Return the promise with the JSON array
-        return httpClient(url).then(({ json }) => ({ data: json })).catch((error) => {
-            console.error("Error in getStatus", error);
-            return { data: {} };
-        });
-    },
-    executeKubernetesJob: (id) => {
-        const url = `${apiUrl}/submissions/${id}`;
-        // Return the promise with the JSON array
-        return httpClient(url, { method: "POST" }).then(({ json }) => ({ data: json }));
-    },
-    downloadFile: (url) => {
-        // Get the signed URL from the API, then point the browser to it
-        return httpClient(url)
-            .then(({ json }) => ({ data: json }))
-            .then(function (signed) {
-                window.location = signed.data.url;
-            });
-    },
-    deleteKubernetesJob: (id) => {
-        const url = `${apiUrl}/submissions/kubernetes/jobs/${id}`;
-        return httpClient(url, { method: "DELETE" }).then(({ json }) => ({ data: json }));
-    }
 });
 
 

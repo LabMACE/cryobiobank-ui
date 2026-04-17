@@ -100,7 +100,7 @@ export default function CryoLayers({
 
   return (
     <>
-      <BaseLayers />
+      <BaseLayers defaultLayer="SwissTopo Aerial" />
       <FitBounds sites={sites} areas={areas} />
       <MapLegend />
 

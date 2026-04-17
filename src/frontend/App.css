@@ -710,12 +710,6 @@ body,
   text-decoration: underline;
 }
 
-/* Push legend up when data panel is open */
-.map-with-chart:has(.overlay-chart) .leaflet-bottom.leaflet-right {
-  transition: bottom 0.2s;
-  bottom: 260px;
-}
-
 /* ABOUT */
 .about-section {
   flex-direction: column;

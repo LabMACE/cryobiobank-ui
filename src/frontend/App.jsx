@@ -25,7 +25,20 @@ export default function FrontendApp() {
   // Compute area stats from already-fetched sites and replicates data
   const areaStats = useMemo(() => {
     return areas.map(area => {
-      const areaSites = sites.filter(s => s.area_id === area.id);
+      const areaSites = sites
+        .filter(s => s.area_id === area.id)
+        .map(site => {
+          const siteReps = replicates.filter(r => r.site_id === site.id);
+          const siteSampleTypes = new Set(siteReps.flatMap(r => [
+            ...(r.samples || []).map(s => s.sample_type),
+            ...(r.isolates || []).map(i => i.sample_type),
+          ]));
+          return {
+            ...site,
+            sample_types: [...siteSampleTypes],
+            replicate_ids: siteReps.map(r => r.id),
+          };
+        });
       const areaSiteIds = new Set(areaSites.map(s => s.id));
       const areaReps = replicates.filter(r => areaSiteIds.has(r.site_id));
       const sampleTypes = new Set(areaReps.flatMap(r => [
