@@ -91,7 +91,7 @@ export function FitBounds({ sites, areas }) {
       : siteBounds || areaBounds;
 
     if (combined) {
-      map.fitBounds(combined);
+      map.fitBounds(combined.pad(0.1));
       fittedRef.current = true;
     }
   }, [sites, areas, map]);
