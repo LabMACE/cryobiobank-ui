@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import './App.css';
 import 'leaflet/dist/leaflet.css';
 import Cover from './Cover';
 import MapSection from './MapSection';
+import IsolatesSection from './isolates/IsolatesSection';
 import About from './About';
 import SideBar from './SideBar';
 
@@ -24,6 +26,9 @@ export default function FrontendApp() {
   const [loading, setLoading] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const sectionsRef = useRef([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [cameFromIsolates, setCameFromIsolates] = useState(false);
+  const pendingIsolateSelectRef = useRef(null);
 
   // Enrich sites with replicate list, aggregated sample types, and child counts.
   // Drop sites with no replicates (per "no empty data" rule).
@@ -194,6 +199,71 @@ export default function FrontendApp() {
     setSelectedItem(null);
   };
 
+  // Respond to ?focus_site=<id>[&replicate=<id>&isolate=<id>&from=isolates] —
+  // zoom to the site, optionally drill into a replicate and pre-select an
+  // isolate, then scroll to map. Strip params afterwards.
+  useEffect(() => {
+    const focusSite = searchParams.get('focus_site');
+    if (!focusSite) return;
+    if (sites.length === 0) return;
+    const replicateId = searchParams.get('replicate');
+    const isolateId = searchParams.get('isolate');
+    const from = searchParams.get('from');
+
+    setActiveSiteId(focusSite);
+    setReplicateData(null);
+    setSelectedItem(null);
+    setZoomToSiteId(focusSite);
+    setCameFromIsolates(from === 'isolates');
+
+    if (replicateId) {
+      setActiveReplicateId(replicateId);
+      setView('replicate');
+      pendingIsolateSelectRef.current = isolateId
+        ? { type: 'isolates', id: isolateId, replicateId }
+        : null;
+    } else {
+      setActiveReplicateId(null);
+      setView('site');
+      pendingIsolateSelectRef.current = null;
+    }
+
+    sectionsRef.current[1]?.scrollIntoView({ behavior: 'smooth' });
+
+    const next = new URLSearchParams(searchParams);
+    next.delete('focus_site');
+    next.delete('replicate');
+    next.delete('isolate');
+    next.delete('from');
+    setSearchParams(next, { replace: true });
+  }, [sites, searchParams, setSearchParams]);
+
+  // Once replicate data has loaded for a pending deep-link, open the isolate
+  // detail side panel.
+  useEffect(() => {
+    const pending = pendingIsolateSelectRef.current;
+    if (!pending) return;
+    if (!replicateData) return;
+    if (activeReplicateId !== pending.replicateId) return;
+    setSelectedItem({ type: pending.type, id: pending.id });
+    pendingIsolateSelectRef.current = null;
+  }, [replicateData, activeReplicateId]);
+
+  // Respond to ?section=<cover|map|isolates|about> — scroll to that section on
+  // mount, then strip the param. Used when landing from the /isolates alias.
+  useEffect(() => {
+    const section = searchParams.get('section');
+    if (!section) return;
+    const index = { cover: 0, map: 1, isolates: 2, about: 3 }[section];
+    if (index == null) return;
+    const target = sectionsRef.current[index];
+    if (!target) return;
+    target.scrollIntoView({ behavior: 'smooth' });
+    const next = new URLSearchParams(searchParams);
+    next.delete('section');
+    setSearchParams(next, { replace: true });
+  }, [searchParams, setSearchParams]);
+
   // Prevent scroll events on map overlay elements from triggering section
   // snap-scroll.
   useEffect(() => {
@@ -269,7 +339,21 @@ export default function FrontendApp() {
           setZoomToSiteId={setZoomToSiteId}
           sectionsRef={sectionsRef}
         />
+        <IsolatesSection sectionsRef={sectionsRef} index={2} />
         <About sectionsRef={sectionsRef} />
+
+        {cameFromIsolates && (
+          <button
+            type="button"
+            className="back-to-isolates"
+            onClick={() => {
+              sectionsRef.current[2]?.scrollIntoView({ behavior: 'smooth' });
+              setCameFromIsolates(false);
+            }}
+          >
+            ← Back to isolates
+          </button>
+        )}
       </main>
     </div>
   );

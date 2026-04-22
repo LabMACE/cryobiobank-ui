@@ -12,6 +12,7 @@ import { ListActionsByPermission } from '../custom/Toolbars';
 import CustomEmptyPage from '../Empty';
 import LockIcon from '@mui/icons-material/Lock';
 import PublicIcon from '@mui/icons-material/Public';
+import PhotoHoverField from './PhotoHoverField';
 
 const PrivacyField = () => {
     const record = useRecordContext();
@@ -46,6 +47,7 @@ const ListComponent = () => {
                 <TextField source="taxonomy" />
                 <TextField source="storage_location" />
                 <TextField source="media_used_for_isolation" />
+                <FunctionField label="Photo" render={() => <PhotoHoverField />} />
                 {permissions === 'admin' && (
                     <FunctionField label="Privacy" render={() => <PrivacyField />} />
                 )}

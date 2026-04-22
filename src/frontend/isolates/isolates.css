@@ -1,0 +1,794 @@
+/* Isolate Directory — integrated section, harmonised with App.css */
+
+.section.isolates-section {
+  /* override .section's center alignment — we fill top-down */
+  align-items: stretch;
+  justify-content: flex-start;
+  padding: 0;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+/* DetailSidePanel overrides for this section — no reserved space for a bottom
+   data panel (unlike on the map page), and bounded to the section's height. */
+.isolates-section .detail-side-panel {
+  top: 0.75rem;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  width: min(380px, 34vw);
+  max-height: calc(100% - 1.5rem);
+}
+
+.isolates-section .isodir-main {
+  flex: 1 1 auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #1b3a57;
+  color: #fff;
+  font-family: 'Barlow', 'Roboto', sans-serif;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+/* HEADER — narrow navy strip, title + stats */
+.isodir-header {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: baseline;
+  gap: 2rem;
+  padding: 1.25rem 2rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.isodir-title {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #fff;
+}
+.isodir-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin: 0;
+  padding: 0;
+}
+.isodir-stat {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+.isodir-stat dd {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+.isodir-stat dt {
+  margin: 0;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* TOOLBAR — fixed-height controls area on navy */
+.isodir-toolbar {
+  flex: 0 0 auto;
+  padding: 0.75rem 2rem 0.5rem;
+  background: #1b3a57;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.isodir-discovery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+}
+.isodir-discovery-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.7rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.85);
+  font-family: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.isodir-discovery-btn:hover {
+  background: rgba(46, 125, 135, 0.35);
+  border-color: #2E7D87;
+  color: #fff;
+}
+.isodir-discovery-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(46, 125, 135, 0.5);
+}
+
+.isodir-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+.isodir-search {
+  position: relative;
+  flex: 1 1 280px;
+  min-width: 200px;
+}
+.isodir-search-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  transition: background 0.15s, border-color 0.15s;
+}
+.isodir-search-input::placeholder { color: rgba(255, 255, 255, 0.5); }
+.isodir-search-input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.14);
+  border-color: #2E7D87;
+}
+.isodir-autocomplete {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 0.3rem 0;
+  list-style: none;
+  background: #fff;
+  border: 1px solid #d0d8d9;
+  border-radius: 4px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+  max-height: 280px;
+  overflow-y: auto;
+  z-index: 50;
+  color: #333;
+}
+.isodir-autocomplete-group {
+  padding: 0.3rem 0.85rem 0.15rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #888;
+  font-weight: 600;
+}
+.isodir-autocomplete-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.35rem 0.85rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.isodir-autocomplete-item.is-active,
+.isodir-autocomplete-item:hover {
+  background: rgba(46, 125, 135, 0.1);
+}
+.isodir-autocomplete-count {
+  color: #888;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8rem;
+}
+
+.isodir-sort-chips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  align-items: center;
+}
+
+.isodir-control-divider {
+  display: inline-block;
+  width: 1px;
+  height: 1.4rem;
+  background: rgba(255, 255, 255, 0.18);
+  margin: 0 0.25rem;
+  align-self: center;
+}
+
+/* Pushed to the right side of the controls row. */
+.isodir-view-chips {
+  display: inline-flex;
+  gap: 0.3rem;
+  align-items: center;
+  margin-left: auto;
+}
+
+/* Reuse existing .mode-switch / .mode-btn */
+.isodir-view-switch,
+.isodir-toolbar .mode-switch {
+  background: rgba(255, 255, 255, 0.08);
+}
+.isodir-toolbar .mode-btn {
+  color: rgba(255, 255, 255, 0.75);
+}
+.isodir-toolbar .mode-btn.active {
+  background: #2E7D87;
+  color: #fff;
+  border-radius: 999px;
+}
+.isodir-filter-btn {
+  padding: 0.3rem 0.75rem !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 4px !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-size: 0.85rem !important;
+}
+.isodir-filter-btn.active {
+  background: #2E7D87 !important;
+  border-color: #2E7D87 !important;
+  color: #fff !important;
+}
+
+/* FILTER PANEL */
+.isodir-filter-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.25s ease;
+  margin-top: 0.5rem;
+}
+.isodir-filter-panel.is-open { grid-template-rows: 1fr; }
+.isodir-filter-panel-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+.isodir-filter-panel.is-open .isodir-filter-panel-inner {
+  padding: 0.5rem 0.75rem 0.75rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+}
+.isodir-filter-group {
+  padding: 0.4rem 0;
+}
+.isodir-filter-group + .isodir-filter-group {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  margin-top: 0.2rem;
+  padding-top: 0.5rem;
+}
+.isodir-filter-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+.isodir-range-current {
+  text-transform: none;
+  letter-spacing: 0;
+  color: rgba(255, 255, 255, 0.8);
+  font-variant-numeric: tabular-nums;
+  font-weight: 400;
+}
+.isodir-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+.isodir-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.6rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.85);
+  font-family: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+.isodir-chip input[type="checkbox"] { display: none; }
+.isodir-chip:hover { background: rgba(46, 125, 135, 0.25); border-color: #2E7D87; }
+.isodir-chip.is-active {
+  background: #2E7D87;
+  border-color: #2E7D87;
+  color: #fff;
+}
+.isodir-chip.is-active .isodir-count { background: rgba(255, 255, 255, 0.22); color: #fff; }
+.isodir-count {
+  display: inline-flex;
+  min-width: 1.2rem;
+  padding: 0 0.3rem;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.7);
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+}
+.isodir-chip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.isodir-range {
+  position: relative;
+  padding: 0.5rem 0 0.25rem;
+}
+.isodir-range-track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 2px;
+  transform: translateY(-50%);
+}
+.isodir-range-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: #2E7D87;
+  border-radius: 2px;
+}
+.isodir-range input[type="range"] {
+  position: absolute;
+  left: 0;
+  right: 0;
+  width: 100%;
+  margin: 0;
+  pointer-events: none;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  height: 20px;
+}
+.isodir-range input[type="range"]::-webkit-slider-runnable-track { background: transparent; height: 3px; }
+.isodir-range input[type="range"]::-moz-range-track { background: transparent; height: 3px; }
+.isodir-range input[type="range"]::-webkit-slider-thumb {
+  pointer-events: auto;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #2E7D87;
+  cursor: pointer;
+  margin-top: -5px;
+}
+.isodir-range input[type="range"]::-moz-range-thumb {
+  pointer-events: auto;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #2E7D87;
+  cursor: pointer;
+}
+
+.isodir-filter-actions {
+  padding-top: 0.4rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.isodir-link-btn {
+  background: none;
+  border: none;
+  color: #7BB8C4;
+  font-family: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  text-decoration: underline;
+}
+.isodir-link-btn:hover { color: #fff; }
+
+/* ACTIVE CHIPS */
+.isodir-active {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+}
+.isodir-active-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.5rem 0.2rem 0.6rem;
+  background: rgba(46, 125, 135, 0.3);
+  border: 1px solid #2E7D87;
+  color: #fff;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+.isodir-active-chip:hover { background: #2E7D87; }
+
+/* BODY — fixed-height results area (page size is computed to fit). */
+.isodir-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  padding: 1rem 2rem 1.5rem;
+  background: #1b3a57;
+  display: flex;
+  flex-direction: column;
+}
+.isodir-results { flex: 1 1 auto; min-height: 0; }
+.isodir-results-cards { display: flex; flex-direction: column; min-height: 0; }
+.isodir-results-cards .isodir-card-grid { flex: 0 0 auto; }
+.isodir-results-cards .isodir-pager { margin-top: auto; }
+.isodir-results-table { display: flex; flex-direction: column; min-height: 0; }
+.isodir-results-table .isodir-table-wrap { flex: 1 1 auto; min-height: 0; overflow: auto; }
+.isodir-results-table .isodir-pager { margin-top: 0.75rem; }
+
+.isodir-error {
+  padding: 0.65rem 1rem;
+  background: rgba(220, 90, 90, 0.18);
+  border: 1px solid rgba(220, 90, 90, 0.5);
+  border-radius: 4px;
+  color: #ffd4d4;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+/* CARD GRID */
+.isodir-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 0.75rem;
+}
+.isodir-card {
+  background: #162d45;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 0.75rem 0.85rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: background 0.12s, border-color 0.12s;
+  position: relative;
+  color: #f0f0f0;
+}
+.isodir-card:hover,
+.isodir-card:focus-visible {
+  background: #1e3851;
+  border-color: #2E7D87;
+  outline: none;
+}
+.isodir-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #2E7D87;
+  border-radius: 6px 0 0 6px;
+}
+.isodir-card.habitat-snow::before { background: #7BB8C4; }
+.isodir-card.habitat-soil::before { background: #a97a3c; }
+
+.isodir-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+.isodir-card-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #fff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.isodir-card-habitat {
+  flex: 0 0 auto;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.6);
+}
+.isodir-card-tax {
+  font-style: italic;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.isodir-card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin: 0;
+}
+.isodir-meta-row {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+.isodir-meta-row dt {
+  flex: 0 0 2.5rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 600;
+  padding-top: 0.1rem;
+}
+.isodir-meta-row dd {
+  flex: 1 1 auto;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.isodir-card-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.35rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+.isodir-card-flags {
+  display: flex;
+  gap: 0.3rem;
+}
+.isodir-flag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3rem 0.45rem;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+  border-radius: 4px;
+  text-decoration: none;
+  line-height: 0;
+}
+.isodir-flag.is-link:hover { background: #2E7D87; color: #fff; }
+.isodir-card-mapbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  color: #7BB8C4;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background 0.12s, color 0.12s;
+}
+.isodir-card-mapbtn:hover { background: rgba(46, 125, 135, 0.25); color: #fff; }
+
+.isodir-muted { color: rgba(255, 255, 255, 0.5); }
+
+/* Photo hover preview — matches the card aesthetic (navy surface, teal accent). */
+.isodir-photo-hover {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.isodir-photo-hover-pop {
+  position: fixed;
+  z-index: 1050;
+  pointer-events: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  background: #162d45;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 6px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  line-height: 0;
+  min-width: 40px;
+  min-height: 40px;
+}
+.isodir-photo-hover-pop img {
+  display: block;
+  max-width: 220px;
+  max-height: 220px;
+  border-radius: 3px;
+}
+.isodir-photo-hover-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #7BB8C4;
+  border-radius: 50%;
+  animation: isodir-spin 0.7s linear infinite;
+}
+@keyframes isodir-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* PAGER */
+.isodir-pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-bottom: 0.5rem;
+}
+.isodir-pager-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.85);
+  padding: 0.35rem 0.85rem;
+  font-family: inherit;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}
+.isodir-pager-btn:hover:not(:disabled) {
+  background: #2E7D87;
+  border-color: #2E7D87;
+  color: #fff;
+}
+.isodir-pager-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.isodir-pager-info {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.65);
+  font-variant-numeric: tabular-nums;
+}
+.isodir-btn-primary {
+  background: #2E7D87;
+  color: #fff;
+  border: none;
+  padding: 0.45rem 1rem;
+  font-family: inherit;
+  font-size: 0.85rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.isodir-btn-primary:hover { background: #245f68; }
+
+/* TABLE */
+.isodir-table-wrap {
+  background: #162d45;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  overflow: auto;
+}
+.isodir-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.85rem;
+  color: #f0f0f0;
+}
+/* Fixed widths require overflow handling so long strings don't blow out. */
+.isodir-table td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.isodir-table thead th {
+  text-align: left;
+  padding: 0.4rem 0.7rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-weight: 600;
+}
+.isodir-table thead th.is-sorted { color: #7BB8C4; }
+.isodir-table-sort {
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  padding: 0;
+  cursor: pointer;
+}
+.isodir-table-sort:hover { color: #7BB8C4; }
+.isodir-table tbody tr {
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.isodir-table tbody tr:hover { background: rgba(255, 255, 255, 0.04); }
+.isodir-table tbody tr:focus-visible {
+  outline: none;
+  background: rgba(46, 125, 135, 0.15);
+}
+.isodir-table td {
+  padding: 0.35rem 0.7rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  vertical-align: middle;
+  line-height: 1.3;
+}
+.isodir-table tbody tr:last-child td { border-bottom: none; }
+.isodir-table-name { font-weight: 600; color: #fff; }
+.isodir-table-tax { font-style: italic; }
+.isodir-table-flags {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.75);
+}
+/* Tighter flag padding inside the table so icon-only badges don't stretch the
+   row. Cards keep the roomier default. */
+.isodir-table-flags .isodir-flag {
+  padding: 0.15rem 0.3rem;
+}
+.isodir-table-flags a { color: inherit; }
+.isodir-table-mapbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  color: #7BB8C4;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background 0.12s, color 0.12s;
+}
+.isodir-table-mapbtn:hover {
+  background: rgba(46, 125, 135, 0.25);
+  color: #fff;
+}
+
+/* EMPTY STATE */
+.isodir-empty {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+}
+.isodir-empty p {
+  margin: 0 0 1rem;
+}
+.isodir-reset-btn {
+  padding: 0.35rem 0.9rem !important;
+  background: #2E7D87 !important;
+  color: #fff !important;
+  border-radius: 4px !important;
+}
+
+/* MOBILE — follow existing sidebar pattern in App.css */
+@media (max-width: 600px) {
+  .isodir-main { height: 100vh; }
+  .isodir-header { flex-wrap: wrap; gap: 1rem; padding: 1rem; }
+  .isodir-title { font-size: 1.3rem; }
+  .isodir-toolbar { padding: 0.6rem 1rem 0.4rem; }
+  .isodir-body { padding: 0.75rem 1rem 5rem; }
+  .isodir-controls { flex-direction: column; align-items: stretch; }
+  .isodir-controls > * { width: 100%; }
+}

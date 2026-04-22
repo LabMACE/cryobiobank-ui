@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef, useLayoutEffect } from 'react';
-import { Link } from 'react-router-dom';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -25,6 +24,7 @@ export default function SideBar({
   const menuItems = [
     { key: 'cover', label: 'Home' },
     { key: 'map', label: 'Map' },
+    { key: 'isolates', label: 'Isolates' },
     { key: 'about', label: 'About' },
   ];
 
@@ -121,11 +121,6 @@ export default function SideBar({
               </button>
             </li>
           ))}
-          <li>
-            <Link to="/isolates" className="menu-btn menu-btn-link">
-              Isolates
-            </Link>
-          </li>
 
           {/* Data section — visible when on map */}
           {activeSection === 'map' && (

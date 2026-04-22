@@ -1,5 +1,5 @@
 export default function Cover({ sectionsRef }) {
-  const sectionOrder = ['cover', 'map', 'about'];
+  const sectionOrder = ['cover', 'map', 'isolates', 'about'];
 
   const scrollTo = (key) => {
     const idx = sectionOrder.indexOf(key);

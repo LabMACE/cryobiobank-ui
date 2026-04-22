@@ -11,7 +11,7 @@ export default function About({ sectionsRef }) {
     <section
       className="section about-section"
       data-section="about"
-      ref={(el) => (sectionsRef.current[2] = el)}
+      ref={(el) => (sectionsRef.current[3] = el)}
     >
       <div className="about-card distinct-about-card">
         <div className="about-body">
@@ -50,7 +50,7 @@ export default function About({ sectionsRef }) {
                 rel="noopener noreferrer"
                 sx={{ ml: 0.5 }}
               >
-                <GitHubIcon sx={{ fontSize: '1rem', color: '#90caf9' }} />
+                <GitHubIcon sx={{ fontSize: '1rem', color: '#7BB8C4' }} />
               </Link>
               <Link
                 href="https://www.linkedin.com/in/evanjt"
@@ -58,7 +58,7 @@ export default function About({ sectionsRef }) {
                 rel="noopener noreferrer"
                 sx={{ ml: 0.5 }}
               >
-                <LinkedInIcon sx={{ fontSize: '1rem', color: '#90caf9' }} />
+                <LinkedInIcon sx={{ fontSize: '1rem', color: '#7BB8C4' }} />
               </Link>
               <Link
                 href="https://evanjt.com"
@@ -66,7 +66,7 @@ export default function About({ sectionsRef }) {
                 rel="noopener noreferrer"
                 sx={{ ml: 0.5 }}
               >
-                <LanguageIcon sx={{ fontSize: '1rem', color: '#90caf9' }} />
+                <LanguageIcon sx={{ fontSize: '1rem', color: '#7BB8C4' }} />
               </Link>
             </ListItem>
           </List>

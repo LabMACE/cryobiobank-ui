@@ -2,9 +2,8 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import AdminApp from './admin/App';
 import FrontendApp from './frontend/App';
-import IsolatesPage from './frontend/IsolatesPage';
 import './index.css';
-import { RouterProvider, Routes, Route, createBrowserRouter } from 'react-router-dom';
+import { Navigate, RouterProvider, Routes, Route, createBrowserRouter } from 'react-router-dom';
 
 export const App = () => {
     const router = createBrowserRouter(
@@ -14,7 +13,7 @@ export const App = () => {
                 element: (
                     <Routes>
                         <Route path="/" element={<FrontendApp />} />
-                        <Route path="/isolates" element={<IsolatesPage />} />
+                        <Route path="/isolates" element={<Navigate to="/?section=isolates" replace />} />
                         <Route path="/admin/*" element={<AdminApp />} />
                     </Routes>
                 ),

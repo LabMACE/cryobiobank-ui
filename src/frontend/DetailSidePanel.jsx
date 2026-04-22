@@ -1,10 +1,14 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 const fieldConfigs = {
   isolates: {
     label: 'Isolate',
     fields: [
       { key: 'taxonomy', label: 'Taxonomy', italic: true },
+      { key: 'site_name', label: 'Site' },
+      { key: 'area_name', label: 'Area' },
+      { key: 'elevation_metres', label: 'Elevation', render: (v) => `${Math.round(v)} m` },
       { key: 'temperature_of_isolation', label: 'Temperature', suffix: ' °C' },
       { key: 'media_used_for_isolation', label: 'Media' },
       { key: 'description', label: 'Description' },
@@ -147,9 +151,10 @@ export default function DetailSidePanel({ type, itemId, onClose, contextSampleTy
     section.fields.some((f) => data[f.key] != null && data[f.key] !== '');
 
   const showBack = parentReplicate && type !== 'replicates';
+  const habitat = (displayType || 'unknown').toLowerCase();
 
   return (
-    <div className="detail-side-panel">
+    <div className={`detail-side-panel habitat-${habitat}`}>
       {showBack ? (
         <button className="detail-side-panel-back" onClick={onBack}>
           ← Back to Site Replicate {parentReplicate.name}
@@ -194,10 +199,29 @@ export default function DetailSidePanel({ type, itemId, onClose, contextSampleTy
               <img src={data.photo} alt={data.name} />
             </div>
           )}
+          {type === 'isolates' && data.site_id && (
+            <div className="detail-side-panel-foot">
+              <Link
+                to={buildIsolateMapLink(data)}
+                className="detail-side-panel-mapbtn"
+              >
+                Map →
+              </Link>
+            </div>
+          )}
         </>
       ) : (
         <p className="detail-side-panel-loading">Not found</p>
       )}
     </div>
   );
+}
+
+function buildIsolateMapLink(iso) {
+  const q = new URLSearchParams();
+  q.set('focus_site', iso.site_id);
+  if (iso.site_replicate_id) q.set('replicate', iso.site_replicate_id);
+  q.set('isolate', iso.id);
+  q.set('from', 'isolates');
+  return `/?${q.toString()}`;
 }
