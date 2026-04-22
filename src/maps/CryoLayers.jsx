@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useMap, Marker, Popup, Tooltip } from 'react-leaflet';
+import { useMap, Marker, Tooltip } from 'react-leaflet';
 import * as L from 'leaflet';
 import { BaseLayers } from './Layers';
 import MarkerClusterGroup from 'react-leaflet-cluster';
@@ -101,12 +101,6 @@ export default function CryoLayers({
                 {site.matching_replicate_count ?? site.replicate_count} replicate{(site.matching_replicate_count ?? site.replicate_count) === 1 ? '' : 's'}
               </span>
             </Tooltip>
-            <Popup>
-              <strong>{site.name}</strong>
-              {site.elevation_metres != null && <><br />Elevation: {site.elevation_metres} m</>}
-              <br />
-              {site.replicate_count} replicate{site.replicate_count === 1 ? '' : 's'}
-            </Popup>
           </Marker>
         ))}
       </MarkerClusterGroup>

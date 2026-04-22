@@ -21,6 +21,7 @@ export default function MapSection({
   onClosePanel,
   loading,
   onItemClick,
+  onReplicateInfo,
   selectedItem,
   onCloseDetail,
   shouldRecenter,
@@ -60,13 +61,19 @@ export default function MapSection({
               setZoomToSiteId={setZoomToSiteId}
             />
           </MapContainer>
-          {selectedItem && (
-            <DetailSidePanel
-              type={selectedItem.type}
-              itemId={selectedItem.id}
-              onClose={onCloseDetail}
-            />
-          )}
+          {selectedItem && (() => {
+            const activeReplicate = activeSite?.replicates?.find(r => r.id === activeReplicateId);
+            return (
+              <DetailSidePanel
+                type={selectedItem.type}
+                itemId={selectedItem.id}
+                onClose={onCloseDetail}
+                contextSampleType={replicateData?.sample_type}
+                parentReplicate={activeReplicate || null}
+                onBack={() => activeReplicate && onReplicateInfo(activeReplicate.id)}
+              />
+            );
+          })()}
           {view && (
             <DataPanel
               view={view}
@@ -76,6 +83,7 @@ export default function MapSection({
               sampleTypeFilter={sampleTypeFilter}
               productFilter={productFilter}
               onReplicateClick={onReplicateClick}
+              onReplicateInfo={onReplicateInfo}
               onBackToSite={onBackToSite}
               onClose={onClosePanel}
               loading={loading}

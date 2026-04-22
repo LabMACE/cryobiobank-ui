@@ -131,6 +131,7 @@ export default function FrontendApp() {
           samples,
           dna,
           metagenome_url: activeRep?.metagenome_url ?? null,
+          sample_type: activeRep?.sample_type ?? null,
         });
       } catch (err) {
         console.error('Error fetching replicate data:', err);
@@ -183,6 +184,10 @@ export default function FrontendApp() {
 
   const handleItemClick = (type, id) => {
     setSelectedItem({ type, id });
+  };
+
+  const handleReplicateInfo = (id) => {
+    setSelectedItem({ type: 'replicates', id });
   };
 
   const handleCloseDetail = () => {
@@ -255,6 +260,7 @@ export default function FrontendApp() {
           onClosePanel={handleClosePanel}
           loading={loading}
           onItemClick={handleItemClick}
+          onReplicateInfo={handleReplicateInfo}
           selectedItem={selectedItem}
           onCloseDetail={handleCloseDetail}
           shouldRecenter={shouldRecenter}

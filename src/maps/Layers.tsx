@@ -7,7 +7,7 @@ type BaseLayersProps = {
 export const BaseLayers = ({ defaultLayer = 'SwissTopo' }: BaseLayersProps) => {
     const { BaseLayer } = LayersControl;
     return (
-        <LayersControl collapsed={false}>
+        <LayersControl collapsed={false} position="topleft">
             <BaseLayer checked={defaultLayer === 'SwissTopo'} name="SwissTopo">
                 <TileLayer
                     attribution='&copy; <a href="https://www.swisstopo.admin.ch/">SwissTopo</a>'

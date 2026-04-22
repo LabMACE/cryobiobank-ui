@@ -4,12 +4,14 @@ const productTabs = [
   {
     key: 'isolates',
     label: 'Isolates',
-    columns: ['Name', 'Taxonomy', 'Storage', 'Genome'],
-    row: (item, onItemClick, selectedItemId) => (
+    columns: ['Name', 'Taxonomy', 'Type', 'Temp (°C)', 'Media', 'Genome'],
+    row: (item, onItemClick, selectedItemId, contextType) => (
       <tr key={item.id} onClick={() => onItemClick?.('isolates', item.id)} className={item.id === selectedItemId ? 'selected' : ''}>
         <td>{item.name}</td>
-        <td>{item.taxonomy || '—'}</td>
-        <td>{item.storage_location || '—'}</td>
+        <td className="taxonomy">{item.taxonomy || '—'}</td>
+        <td>{contextType || '—'}</td>
+        <td>{item.temperature_of_isolation ?? '—'}</td>
+        <td>{item.media_used_for_isolation || '—'}</td>
         <td>
           {item.genome_url ? (
             <a href={item.genome_url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>Link</a>
@@ -21,10 +23,11 @@ const productTabs = [
   {
     key: 'samples',
     label: 'Samples',
-    columns: ['Name', 'Availability'],
-    row: (item, onItemClick, selectedItemId) => (
+    columns: ['Name', 'Type', 'Availability'],
+    row: (item, onItemClick, selectedItemId, contextType) => (
       <tr key={item.id} onClick={() => onItemClick?.('samples', item.id)} className={item.id === selectedItemId ? 'selected' : ''}>
         <td>{item.name}</td>
+        <td>{contextType || '—'}</td>
         <td>{item.is_available ? 'In stock' : 'Depleted'}</td>
       </tr>
     ),
@@ -32,10 +35,11 @@ const productTabs = [
   {
     key: 'dna',
     label: 'DNA',
-    columns: ['Name', 'Description'],
-    row: (item, onItemClick, selectedItemId) => (
+    columns: ['Name', 'Type', 'Description'],
+    row: (item, onItemClick, selectedItemId, contextType) => (
       <tr key={item.id} onClick={() => onItemClick?.('dna', item.id)} className={item.id === selectedItemId ? 'selected' : ''}>
         <td>{item.name}</td>
+        <td>{contextType || '—'}</td>
         <td>{item.description || '—'}</td>
       </tr>
     ),
@@ -56,7 +60,7 @@ function byDateDesc(a, b) {
   return db.localeCompare(da);
 }
 
-function SiteReplicateList({ site, sampleTypeFilter, productFilter, onReplicateClick }) {
+function SiteReplicateList({ site, sampleTypeFilter, productFilter, onReplicateClick, onReplicateInfo }) {
   const typeActive = sampleTypeFilter !== 'All';
   const productActive = productFilter !== 'All';
   const productKey = productActive ? productFilter.toLowerCase() : null;
@@ -94,7 +98,6 @@ function SiteReplicateList({ site, sampleTypeFilter, productFilter, onReplicateC
           <th>Name</th>
           <th>Date</th>
           <th className={colType}>Type</th>
-          <th>Air (°C)</th>
           <th className={colIso}>Isolates</th>
           <th className={colSam}>Samples</th>
           <th className={colDna}>DNA</th>
@@ -108,13 +111,15 @@ function SiteReplicateList({ site, sampleTypeFilter, productFilter, onReplicateC
           return (
             <tr
               key={rep.id}
-              onClick={() => onReplicateClick(rep.id)}
+              onClick={() => {
+                onReplicateClick(rep.id);
+                onReplicateInfo?.(rep.id);
+              }}
               className={dim ? 'dim' : ''}
             >
               <td>{rep.name}</td>
               <td>{rep.sampling_date || '—'}</td>
               <td className={colType}>{rep.sample_type || '—'}</td>
-              <td>{rep.air_temperature_celsius ?? '—'}</td>
               <td className={colIso}>{(rep.isolates || []).length}</td>
               <td className={colSam}>
                 {(rep.samples || []).filter(s => s.is_available).length}
@@ -167,7 +172,7 @@ function ReplicateProducts({ replicateData, onItemClick, selectedItemId }) {
       )}
       <div className="data-panel-body">
         {items.length === 0 ? (
-          <p className="data-panel-empty">No {activeTabDef?.label.toLowerCase()}</p>
+          <p className="data-panel-empty">No {activeTabDef?.key === 'dna' ? 'DNA' : activeTabDef?.label.toLowerCase()}</p>
         ) : (
           <table className="data-panel-table">
             <thead>
@@ -176,7 +181,7 @@ function ReplicateProducts({ replicateData, onItemClick, selectedItemId }) {
               </tr>
             </thead>
             <tbody>
-              {items.map((item) => activeTabDef.row(item, onItemClick, selectedItemId))}
+              {items.map((item) => activeTabDef.row(item, onItemClick, selectedItemId, replicateData?.sample_type))}
             </tbody>
           </table>
         )}
@@ -193,6 +198,7 @@ export default function DataPanel({
   sampleTypeFilter,
   productFilter,
   onReplicateClick,
+  onReplicateInfo,
   onBackToSite,
   onClose,
   loading,
@@ -234,6 +240,7 @@ export default function DataPanel({
                   sampleTypeFilter={sampleTypeFilter}
                   productFilter={productFilter}
                   onReplicateClick={onReplicateClick}
+                  onReplicateInfo={onReplicateInfo}
                 />
               </div>
             </>
