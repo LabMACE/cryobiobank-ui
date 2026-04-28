@@ -28,15 +28,15 @@ import {
     ShowTitle,
 } from '../custom/ShowComponents';
 
-const AddSiteReplicateButton = () => {
+const AddFieldRecordButton = () => {
     const record = useRecordContext();
     const redirect = useRedirect();
     if (!record) return null;
     const handleClick = () => {
-        redirect('create', 'site_replicates', null, {}, { record: { site_id: record.id } });
+        redirect('create', 'field_records', null, {}, { record: { site_id: record.id } });
     };
     return (
-        <Button onClick={handleClick} label="Add Site Replicate" startIcon={<AddIcon />} />
+        <Button onClick={handleClick} label="Add Field Record" startIcon={<AddIcon />} />
     );
 };
 
@@ -49,7 +49,7 @@ const ShowContent = () => {
         { id: record?.area_id }, { enabled: !!record?.area_id });
 
     const objectClick = (id, resource, rec) =>
-        createPath({ resource: 'site_replicates', type: 'show', id: rec.id });
+        createPath({ resource: 'field_records', type: 'show', id: rec.id });
 
     if (!record) return null;
 
@@ -63,7 +63,7 @@ const ShowContent = () => {
                 { resource: 'areas', id: areaData?.id, label: areaData?.name, type: 'Area', isPrivate: areaData?.is_private },
                 { label: record.name, type: 'Site', isPrivate: record.is_private },
             ]}>
-                <AddSiteReplicateButton />
+                <AddFieldRecordButton />
             </ShowActions>
 
             {/* Header */}
@@ -92,7 +92,7 @@ const ShowContent = () => {
             {/* Two column: replicates + map */}
             <Grid container spacing={2}>
                 <Grid item xs={12} md={6}>
-                    <SectionCard title="Site Replicates" icon={<PlaceIcon fontSize="small" color="action" />}>
+                    <SectionCard title="Field Records" icon={<PlaceIcon fontSize="small" color="action" />}>
                         <ArrayField source="replicates">
                             <Datagrid bulkActionButtons={false} rowClick={objectClick}>
                                 <TextField source="name" />

@@ -31,7 +31,7 @@ const ShowContent = () => {
             <ShowActions breadcrumbItems={[
                 { resource: 'areas', id: area?.id, label: area?.name, type: 'Area', isPrivate: area?.is_private },
                 { resource: 'sites', id: site?.id, label: site?.name, type: 'Site', isPrivate: site?.is_private },
-                { resource: 'site_replicates', id: replicate?.id, label: replicate?.name, type: 'Replicate', isPrivate: replicate?.is_private },
+                { resource: 'field_records', id: replicate?.id, label: replicate?.name, type: 'Field Record', isPrivate: replicate?.is_private },
                 { label: record.name, type: 'Sample', isPrivate: record.is_private },
             ]} />
 

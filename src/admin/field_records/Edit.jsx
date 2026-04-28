@@ -1,6 +1,5 @@
-import React from 'react';
 import {
-    Create,
+    Edit,
     SimpleForm,
     ReferenceInput,
     SelectInput,
@@ -17,11 +16,14 @@ const sampleTypeChoices = [
     { id: 'Soil', name: 'Soil' },
 ];
 
-const SiteReplicateCreate = (props) => {
+const FieldRecordEdit = (props) => {
     return (
-        <Create {...props} redirect="show">
-            <SimpleForm>
+        <Edit {...props} mutationMode="pessimistic" redirect="show">
+            <SimpleForm >
                 <Grid container spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                        <TextInput source="id" disabled label="ID" />
+                    </Grid>
                     <Grid item xs={12} sm={6}>
                         <ReferenceInput
                             source="site_id"
@@ -52,16 +54,10 @@ const SiteReplicateCreate = (props) => {
                         <NumberInput source="snow_depth_cm" label="Snow Depth (cm)" />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                        <NumberInput
-                            source="air_temperature_celsius"
-                            label="Air Temperature (°C)"
-                        />
+                        <NumberInput source="air_temperature_celsius" label="Air Temperature (°C)" />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                        <NumberInput
-                            source="snow_temperature_celsius"
-                            label="Snow Temperature (°C)"
-                        />
+                        <NumberInput source="snow_temperature_celsius" label="Snow Temperature (°C)" />
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <NumberInput
@@ -168,8 +164,8 @@ const SiteReplicateCreate = (props) => {
                     </AccordionDetails>
                 </Accordion>
             </SimpleForm>
-        </Create>
+        </Edit>
     );
 };
 
-export default SiteReplicateCreate;
+export default FieldRecordEdit;

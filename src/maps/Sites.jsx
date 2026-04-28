@@ -37,13 +37,13 @@ export const SitesMap = ({
     const record = useRecordContext();
     const { data: sites, isPending: isPendingSites } = useGetList('sites', { pagination: ALL_PAGES });
     const { data: areas, isPending: isPendingAreas } = useGetList('areas', { pagination: ALL_PAGES });
-    const { data: siteReplicates, isPending: isPendingReplicates } = useGetList('site_replicates', { pagination: ALL_PAGES });
+    const { data: fieldRecords, isPending: isPendingFieldRecords } = useGetList('field_records', { pagination: ALL_PAGES });
 
     // Union of replicate sample_types per site (sample_type lives on the replicate after Phase A)
     const siteTypesMap = useMemo(() => {
         const map = new Map();
-        if (!siteReplicates) return map;
-        for (const rep of siteReplicates) {
+        if (!fieldRecords) return map;
+        for (const rep of fieldRecords) {
             if (!rep.sample_type) continue;
             const existing = map.get(rep.site_id) || new Set();
             existing.add(rep.sample_type);
@@ -53,14 +53,14 @@ export const SitesMap = ({
             map.set(key, [...val]);
         }
         return map;
-    }, [siteReplicates]);
+    }, [fieldRecords]);
 
     // Per-site counts: replicates + aggregated isolate/sample/DNA totals.
     // Admin view uses unfiltered raw totals (unlike public which filters by is_available).
     const siteCountsMap = useMemo(() => {
         const map = new Map();
-        if (!siteReplicates) return map;
-        for (const rep of siteReplicates) {
+        if (!fieldRecords) return map;
+        for (const rep of fieldRecords) {
             const cur = map.get(rep.site_id) || { replicates: 0, isolates: 0, samples: 0, dna: 0 };
             cur.replicates += 1;
             cur.isolates += (rep.isolates || []).length;
@@ -69,9 +69,9 @@ export const SitesMap = ({
             map.set(rep.site_id, cur);
         }
         return map;
-    }, [siteReplicates]);
+    }, [fieldRecords]);
 
-    if (isPendingSites || isPendingAreas || isPendingReplicates) {
+    if (isPendingSites || isPendingAreas || isPendingFieldRecords) {
         return <Loading />;
     }
 
@@ -148,7 +148,7 @@ export const SitesMap = ({
                                 <br />
                                 Elevation: {site.elevation_metres} m
                                 <br />
-                                Replicates: {counts.replicates}
+                                Field Records: {counts.replicates}
                                 <br />
                                 Isolates: {counts.isolates} · Samples: {counts.samples} · DNA: {counts.dna}
                                 <br /><br />

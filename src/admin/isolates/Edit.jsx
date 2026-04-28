@@ -41,9 +41,9 @@ const IsolateEdit = (props) => {
                     <ImageField source="src" title="title" />
                 </ImageInput>
                 <ReferenceInput
-                    source="site_replicate_id"
-                    reference="site_replicates"
-                    label="Site Replicate"
+                    source="field_record_id"
+                    reference="field_records"
+                    label="Field Record"
                 >
                     <AutocompleteInput
                         optionText={choice => choice ? `${choice.name} (${choice.sampling_date})` : ''}

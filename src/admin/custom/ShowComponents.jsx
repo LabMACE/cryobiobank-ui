@@ -269,8 +269,8 @@ export const ShowActions = ({ breadcrumbItems, deleteProps, children }) => {
 };
 
 export const useBreadcrumbChain = (record, { needsReplicate, needsSite, needsArea } = {}) => {
-    const replicateId = record?.site_replicate_id;
-    const { data: replicate } = useGetOne('site_replicates',
+    const replicateId = record?.field_record_id;
+    const { data: replicate } = useGetOne('field_records',
         { id: replicateId }, { enabled: needsReplicate && !!replicateId });
 
     const siteIdDirect = record?.site_id;

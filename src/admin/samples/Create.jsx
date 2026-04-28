@@ -13,9 +13,9 @@ const SampleCreate = (props) => {
         <Create {...props} redirect="show">
             <SimpleForm defaultValues={{ is_available: true }}>
                 <ReferenceInput
-                    source="site_replicate_id"
-                    reference="site_replicates"
-                    label="Site Replicate"
+                    source="field_record_id"
+                    reference="field_records"
+                    label="Field Record"
                 >
                     <SelectInput optionText="name" validate={[required()]} resettable/>
                 </ReferenceInput>

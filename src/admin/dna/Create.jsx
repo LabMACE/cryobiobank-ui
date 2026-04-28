@@ -11,7 +11,7 @@ const DNACreate = (props) => {
     return (
         <Create {...props} redirect="show">
             <SimpleForm>
-                <ReferenceInput source="site_replicate_id" reference="site_replicates" label="Site Replicate">
+                <ReferenceInput source="field_record_id" reference="field_records" label="Field Record">
                     <AutocompleteInput
                         optionText={choice => choice ? `${choice.name} (${choice.sampling_date})` : ''}
                         validate={[required()]}

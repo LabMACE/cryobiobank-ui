@@ -24,7 +24,7 @@ import { fetchUtils, useRedirect } from 'react-admin';
 const categories = {
     areas: { label: 'Area', icon: <MapIcon fontSize="small" />, path: 'areas' },
     sites: { label: 'Site', icon: <PlaceIcon fontSize="small" />, path: 'sites' },
-    site_replicates: { label: 'Replicate', icon: <PlaceIcon fontSize="small" />, path: 'site_replicates' },
+    field_records: { label: 'Field Record', icon: <PlaceIcon fontSize="small" />, path: 'field_records' },
     isolates: { label: 'Isolate', icon: <BiotechIcon fontSize="small" />, path: 'isolates' },
     samples: { label: 'Sample', icon: <ScienceIcon fontSize="small" />, path: 'samples' },
     dna: { label: 'DNA', icon: <ScienceIcon fontSize="small" />, path: 'dna' },

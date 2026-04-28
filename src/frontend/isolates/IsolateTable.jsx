@@ -51,7 +51,7 @@ export default function IsolateTable({ isolates, enrichment, onOpen, sortField, 
         </thead>
         <tbody>
           {isolates.map(iso => {
-            const rep = enrichment.replicates[iso.site_replicate_id];
+            const rep = enrichment.replicates[iso.field_record_id];
             const site = rep ? enrichment.sites[rep.site_id] : null;
             const area = site?.area_id ? enrichment.areas[site.area_id] : null;
             return (

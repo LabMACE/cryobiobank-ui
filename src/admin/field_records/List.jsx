@@ -11,8 +11,8 @@ import {
     usePermissions,
     Loading,
 } from "react-admin";
-import { ListActionsByPermission } from '../../custom/Toolbars';
-import CustomEmptyPage from '../../Empty';
+import { ListActionsByPermission } from '../custom/Toolbars';
+import CustomEmptyPage from '../Empty';
 import LockIcon from '@mui/icons-material/Lock';
 import PublicIcon from '@mui/icons-material/Public';
 
@@ -53,9 +53,9 @@ const ListComponent = () => {
                 <ReferenceField source="site_id" reference="sites" link="show" label="Site">
                     <TextField source="name" />
                 </ReferenceField>
-                <ReferenceManyCount reference="isolates" target="site_replicate_id" label="Isolates" />
-                <ReferenceManyCount reference="samples" target="site_replicate_id" label="Samples" />
-                <ReferenceManyCount reference="dna" target="site_replicate_id" label="DNA" />
+                <ReferenceManyCount reference="isolates" target="field_record_id" label="Isolates" />
+                <ReferenceManyCount reference="samples" target="field_record_id" label="Samples" />
+                <ReferenceManyCount reference="dna" target="field_record_id" label="DNA" />
                 {permissions === 'admin' && (
                     <FunctionField label="Privacy" render={() => <PrivacyField />} />
                 )}

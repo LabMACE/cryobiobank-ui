@@ -209,7 +209,7 @@ export default function SideBar({
                       <div className="area-drilldown-stats">
                         {selectedArea.siteCount} site{selectedArea.siteCount !== 1 ? 's' : ''}
                         {' · '}
-                        {selectedArea.replicateCount} replicate{selectedArea.replicateCount !== 1 ? 's' : ''}
+                        {selectedArea.replicateCount} field record{selectedArea.replicateCount !== 1 ? 's' : ''}
                       </div>
                       <div className="area-sites-list">
                         {areaSites.map((site) => (
