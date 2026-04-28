@@ -209,7 +209,7 @@ export default function SideBar({
                       <div className="area-drilldown-stats">
                         {selectedArea.siteCount} site{selectedArea.siteCount !== 1 ? 's' : ''}
                         {' · '}
-                        {selectedArea.replicateCount} field record{selectedArea.replicateCount !== 1 ? 's' : ''}
+                        {selectedArea.fieldRecordCount} field record{selectedArea.fieldRecordCount !== 1 ? 's' : ''}
                       </div>
                       <div className="area-sites-list">
                         {areaSites.map((site) => (
@@ -223,7 +223,7 @@ export default function SideBar({
                               {(site.sample_types || []).join(', ')}
                             </span>
                             <span className="area-item-badge">
-                              {site.matching_replicate_count ?? site.replicate_count ?? 0}
+                              {site.matching_field_record_count ?? site.field_record_count ?? 0}
                             </span>
                           </button>
                         ))}

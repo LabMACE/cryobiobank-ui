@@ -268,14 +268,14 @@ export const ShowActions = ({ breadcrumbItems, deleteProps, children }) => {
     );
 };
 
-export const useBreadcrumbChain = (record, { needsReplicate, needsSite, needsArea } = {}) => {
-    const replicateId = record?.field_record_id;
-    const { data: replicate } = useGetOne('field_records',
-        { id: replicateId }, { enabled: needsReplicate && !!replicateId });
+export const useBreadcrumbChain = (record, { needsFieldRecord, needsSite, needsArea } = {}) => {
+    const fieldRecordId = record?.field_record_id;
+    const { data: fieldRecord } = useGetOne('field_records',
+        { id: fieldRecordId }, { enabled: needsFieldRecord && !!fieldRecordId });
 
     const siteIdDirect = record?.site_id;
-    const siteIdFromReplicate = replicate?.site_id;
-    const siteId = siteIdDirect || siteIdFromReplicate;
+    const siteIdFromFieldRecord = fieldRecord?.site_id;
+    const siteId = siteIdDirect || siteIdFromFieldRecord;
     const { data: site } = useGetOne('sites',
         { id: siteId }, { enabled: needsSite && !!siteId });
 
@@ -283,5 +283,5 @@ export const useBreadcrumbChain = (record, { needsReplicate, needsSite, needsAre
     const { data: area } = useGetOne('areas',
         { id: areaIdFromSite }, { enabled: needsArea && !!areaIdFromSite });
 
-    return { replicate, site, area };
+    return { fieldRecord, site, area };
 };

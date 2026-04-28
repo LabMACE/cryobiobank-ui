@@ -86,7 +86,7 @@ const SiteAside = () => {
     }
 
     const record = fullSite || selectedSite;
-    const replicates = [...(record.replicates || [])].sort(
+    const fieldRecords = [...(record.field_records || [])].sort(
         (a, b) => new Date(a.sampling_date) - new Date(b.sampling_date)
     );
 
@@ -141,12 +141,12 @@ const SiteAside = () => {
                         )}
                     </Box>
 
-                    {/* Replicates table */}
+                    {/* Field records table */}
                     <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>
-                        Field Records ({replicates.length})
+                        Field Records ({fieldRecords.length})
                     </Typography>
 
-                    {replicates.length === 0 ? (
+                    {fieldRecords.length === 0 ? (
                         <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
                             No field records recorded for this site.
                         </Typography>
@@ -158,13 +158,10 @@ const SiteAside = () => {
                                         <TableCell>Name</TableCell>
                                         <TableCell>Date</TableCell>
                                         <TableCell>Type</TableCell>
-                                        <TableCell align="right">Isolates</TableCell>
-                                        <TableCell align="right">Samples</TableCell>
-                                        <TableCell align="right">DNA</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {replicates.map((rep) => (
+                                    {fieldRecords.map((rep) => (
                                         <TableRow
                                             key={rep.id}
                                             hover
@@ -174,9 +171,6 @@ const SiteAside = () => {
                                             <TableCell>{rep.name}</TableCell>
                                             <TableCell>{rep.sampling_date}</TableCell>
                                             <TableCell>{rep.sample_type}</TableCell>
-                                            <TableCell align="right">{rep.isolates?.length ?? 0}</TableCell>
-                                            <TableCell align="right">{rep.samples?.length ?? 0}</TableCell>
-                                            <TableCell align="right">{rep.dna?.length ?? 0}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
@@ -219,7 +213,7 @@ const ListComponent = () => {
                         <TextField source="name" />
                     </ReferenceField>
                     <TextField source="elevation_metres" label="Elev (m)" />
-                    <FunctionField label="Field Records" render={record => record?.replicates?.length ?? 0} />
+                    <FunctionField label="Field Records" render={record => record?.field_records?.length ?? 0} />
                     {permissions === 'admin' && (
                         <FunctionField label="" render={() => <PrivacyField />} />
                     )}

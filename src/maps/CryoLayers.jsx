@@ -98,7 +98,7 @@ export default function CryoLayers({
               <strong>{site.name}</strong>
               <br />
               <span style={{ fontSize: '0.85em', opacity: 0.85 }}>
-                {site.matching_replicate_count ?? site.replicate_count} field record{(site.matching_replicate_count ?? site.replicate_count) === 1 ? '' : 's'}
+                {site.matching_field_record_count ?? site.field_record_count} field record{(site.matching_field_record_count ?? site.field_record_count) === 1 ? '' : 's'}
               </span>
             </Tooltip>
           </Marker>

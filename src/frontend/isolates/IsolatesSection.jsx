@@ -75,15 +75,15 @@ export default function IsolatesSection({ sectionsRef, index }) {
   const enrichment = useEnrichmentLookups();
 
   // Translate habitat chip → server-side `field_record_id IN (…)` filter via
-  // the loaded replicates lookup. Hold off on the list fetch until lookups land
+  // the loaded field records lookup. Hold off on the list fetch until lookups land
   // to avoid a flash of unfiltered results when the user arrives with
   // ?habitat=Snow in the URL.
-  const replicateIds = useMemo(() => {
+  const fieldRecordIds = useMemo(() => {
     if (state.habitat === 'All') return undefined;
-    return Object.values(enrichment.replicates)
+    return Object.values(enrichment.fieldRecords)
       .filter(r => r.sample_type === state.habitat)
       .map(r => r.id);
-  }, [state.habitat, enrichment.replicates]);
+  }, [state.habitat, enrichment.fieldRecords]);
 
   const waitingForHabitat = state.habitat !== 'All' && !enrichment.loaded;
 
@@ -92,7 +92,7 @@ export default function IsolatesSection({ sectionsRef, index }) {
     sort: [state.sortField, state.sortOrder],
     page: state.page,
     pageSize,
-    replicateIds,
+    fieldRecordIds,
     skip: waitingForHabitat,
   });
 
@@ -103,7 +103,7 @@ export default function IsolatesSection({ sectionsRef, index }) {
     () => (focus ? items.find(i => i.id === focus) : null),
     [focus, items]
   );
-  const focusedHabitat = focused && enrichment.replicates[focused.field_record_id]?.sample_type;
+  const focusedHabitat = focused && enrichment.fieldRecords[focused.field_record_id]?.sample_type;
 
   return (
     <section

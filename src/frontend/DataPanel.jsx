@@ -60,13 +60,13 @@ function byDateDesc(a, b) {
   return db.localeCompare(da);
 }
 
-function FieldRecordList({ site, sampleTypeFilter, productFilter, onReplicateClick, onReplicateInfo }) {
+function FieldRecordList({ site, sampleTypeFilter, productFilter, onFieldRecordClick, onFieldRecordInfo }) {
   const typeActive = sampleTypeFilter !== 'All';
   const productActive = productFilter !== 'All';
   const productKey = productActive ? productFilter.toLowerCase() : null;
 
-  const replicates = useMemo(() => {
-    const reps = [...(site?.replicates || [])];
+  const fieldRecords = useMemo(() => {
+    const reps = [...(site?.field_records || [])];
     return reps.sort((a, b) => {
       // Type match wins first when sample_type filter is active
       if (typeActive) {
@@ -84,7 +84,7 @@ function FieldRecordList({ site, sampleTypeFilter, productFilter, onReplicateCli
     });
   }, [site, sampleTypeFilter, productFilter, typeActive, productActive, productKey]);
 
-  if (!replicates.length) return <p className="data-panel-empty">No field records.</p>;
+  if (!fieldRecords.length) return <p className="data-panel-empty">No field records.</p>;
 
   const colType = typeActive ? 'highlight' : '';
   const colIso = productKey === 'isolates' ? 'highlight' : '';
@@ -104,7 +104,7 @@ function FieldRecordList({ site, sampleTypeFilter, productFilter, onReplicateCli
         </tr>
       </thead>
       <tbody>
-        {replicates.map(rep => {
+        {fieldRecords.map(rep => {
           const typeMismatch = typeActive && rep.sample_type !== sampleTypeFilter;
           const productMismatch = productActive && productCount(rep, productKey) === 0;
           const dim = typeMismatch || productMismatch;
@@ -112,8 +112,8 @@ function FieldRecordList({ site, sampleTypeFilter, productFilter, onReplicateCli
             <tr
               key={rep.id}
               onClick={() => {
-                onReplicateClick(rep.id);
-                onReplicateInfo?.(rep.id);
+                onFieldRecordClick(rep.id);
+                onFieldRecordInfo?.(rep.id);
               }}
               className={dim ? 'dim' : ''}
             >
@@ -133,24 +133,24 @@ function FieldRecordList({ site, sampleTypeFilter, productFilter, onReplicateCli
   );
 }
 
-function ReplicateProducts({ replicateData, onItemClick, selectedItemId }) {
+function FieldRecordProducts({ fieldRecordData, onItemClick, selectedItemId }) {
   const [activeTab, setActiveTab] = useState('isolates');
 
   useEffect(() => {
-    if (!replicateData) return;
-    const firstWithData = productTabs.find(t => (replicateData[t.key] || []).length > 0);
+    if (!fieldRecordData) return;
+    const firstWithData = productTabs.find(t => (fieldRecordData[t.key] || []).length > 0);
     setActiveTab(firstWithData ? firstWithData.key : 'isolates');
-  }, [replicateData]);
+  }, [fieldRecordData]);
 
   const activeTabDef = productTabs.find(t => t.key === activeTab);
-  const items = replicateData?.[activeTab] || [];
-  const metagenomeUrl = replicateData?.metagenome_url;
+  const items = fieldRecordData?.[activeTab] || [];
+  const metagenomeUrl = fieldRecordData?.metagenome_url;
 
   return (
     <>
       <div className="data-panel-tabs">
         {productTabs.map((tab) => {
-          const count = (replicateData?.[tab.key] || []).length;
+          const count = (fieldRecordData?.[tab.key] || []).length;
           return (
             <button
               key={tab.key}
@@ -181,7 +181,7 @@ function ReplicateProducts({ replicateData, onItemClick, selectedItemId }) {
               </tr>
             </thead>
             <tbody>
-              {items.map((item) => activeTabDef.row(item, onItemClick, selectedItemId, replicateData?.sample_type))}
+              {items.map((item) => activeTabDef.row(item, onItemClick, selectedItemId, fieldRecordData?.sample_type))}
             </tbody>
           </table>
         )}
@@ -193,27 +193,27 @@ function ReplicateProducts({ replicateData, onItemClick, selectedItemId }) {
 export default function DataPanel({
   view,
   activeSite,
-  activeReplicateId,
-  replicateData,
+  activeFieldRecordId,
+  fieldRecordData,
   sampleTypeFilter,
   productFilter,
-  onReplicateClick,
-  onReplicateInfo,
+  onFieldRecordClick,
+  onFieldRecordInfo,
   onBackToSite,
   onClose,
   loading,
   onItemClick,
   selectedItemId,
 }) {
-  const activeReplicate = activeSite?.replicates?.find(r => r.id === activeReplicateId);
+  const activeFieldRecord = activeSite?.field_records?.find(r => r.id === activeFieldRecordId);
 
   return (
     <div className="overlay-chart data-panel">
       <button className="data-panel-close" onClick={onClose}>&times;</button>
       <div className="data-panel-content">
         {view === 'site' && activeSite && (() => {
-          const total = activeSite.replicates.length;
-          const matching = activeSite.replicates.filter(r => {
+          const total = activeSite.field_records.length;
+          const matching = activeSite.field_records.filter(r => {
             if (sampleTypeFilter !== 'All' && r.sample_type !== sampleTypeFilter) return false;
             if (productFilter !== 'All') {
               const key = productFilter.toLowerCase();
@@ -239,30 +239,30 @@ export default function DataPanel({
                   site={activeSite}
                   sampleTypeFilter={sampleTypeFilter}
                   productFilter={productFilter}
-                  onReplicateClick={onReplicateClick}
-                  onReplicateInfo={onReplicateInfo}
+                  onFieldRecordClick={onFieldRecordClick}
+                  onFieldRecordInfo={onFieldRecordInfo}
                 />
               </div>
             </>
           );
         })()}
 
-        {view === 'replicate' && (
+        {view === 'field_record' && (
           <>
             <div className="data-panel-heading">
               <button className="data-panel-back" onClick={onBackToSite}>
                 ← {activeSite?.name || 'site'}
               </button>
-              <h3>{activeReplicate?.name || 'Field Record'}</h3>
-              {activeReplicate?.sampling_date && (
-                <span className="data-panel-subtle">{activeReplicate.sampling_date}</span>
+              <h3>{activeFieldRecord?.name || 'Field Record'}</h3>
+              {activeFieldRecord?.sampling_date && (
+                <span className="data-panel-subtle">{activeFieldRecord.sampling_date}</span>
               )}
             </div>
             {loading ? (
               <p>Loading...</p>
             ) : (
-              <ReplicateProducts
-                replicateData={replicateData}
+              <FieldRecordProducts
+                fieldRecordData={fieldRecordData}
                 onItemClick={onItemClick}
                 selectedItemId={selectedItemId}
               />

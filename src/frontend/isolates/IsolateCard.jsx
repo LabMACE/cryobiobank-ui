@@ -3,7 +3,7 @@ import { DnaIcon, MapIcon } from './illustrations';
 import PhotoHoverIcon from './PhotoHoverIcon';
 
 export default function IsolateCard({ isolate, enrichment, onOpen }) {
-  const rep = enrichment.replicates[isolate.field_record_id];
+  const rep = enrichment.fieldRecords[isolate.field_record_id];
   const site = rep ? enrichment.sites[rep.site_id] : null;
   const area = site?.area_id ? enrichment.areas[site.area_id] : null;
   const habitat = (rep?.sample_type || 'unknown').toLowerCase();
@@ -56,7 +56,7 @@ export default function IsolateCard({ isolate, enrichment, onOpen }) {
         </div>
         {site?.id && (
           <Link
-            to={`/?focus_site=${site.id}&replicate=${rep.id}&isolate=${isolate.id}&from=isolates`}
+            to={`/?focus_site=${site.id}&field_record=${rep.id}&isolate=${isolate.id}&from=isolates`}
             className="isodir-card-mapbtn"
             onClick={(e) => e.stopPropagation()}
             title="View on map"

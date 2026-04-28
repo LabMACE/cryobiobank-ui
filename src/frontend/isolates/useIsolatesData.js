@@ -3,9 +3,9 @@ import { useEffect, useRef, useState } from 'react';
 // Lookup tables for client-side enrichment (site name, area name, map link
 // target). Fetched once on mount from the existing crudcrate endpoints.
 // The Snow/Soil filter resolves to a server-side `field_record_id IN (…)`
-// filter using these replicates — crudcrate handles the pagination natively.
+// filter using these field records — crudcrate handles the pagination natively.
 export function useEnrichmentLookups() {
-  const [replicates, setReplicates] = useState({});
+  const [fieldRecords, setFieldRecords] = useState({});
   const [sites, setSites] = useState({});
   const [areas, setAreas] = useState({});
   const [loaded, setLoaded] = useState(false);
@@ -17,7 +17,7 @@ export function useEnrichmentLookups() {
       fetch('/api/areas?range=[0,9999]').then(r => r.ok ? r.json() : []),
     ])
       .then(([rep, site, area]) => {
-        setReplicates(Object.fromEntries((rep || []).map(r => [r.id, r])));
+        setFieldRecords(Object.fromEntries((rep || []).map(r => [r.id, r])));
         setSites(Object.fromEntries((site || []).map(s => [s.id, s])));
         setAreas(Object.fromEntries((area || []).map(a => [a.id, a])));
       })
@@ -25,7 +25,7 @@ export function useEnrichmentLookups() {
       .finally(() => setLoaded(true));
   }, []);
 
-  return { replicates, sites, areas, loaded };
+  return { fieldRecords, sites, areas, loaded };
 }
 
 // Parse "isolates 0-23/456" → 456.
@@ -37,14 +37,14 @@ function parseContentRange(header) {
 }
 
 // Build the crudcrate-native query string (range=, sort=, filter=).
-function buildQueryString({ q, sort, page, pageSize, replicateIds }) {
+function buildQueryString({ q, sort, page, pageSize, fieldRecordIds }) {
   const start = Math.max(0, (page - 1) * pageSize);
   const end = start + pageSize - 1;
 
   const filter = {};
   if (q) filter.q = q;
-  if (replicateIds && replicateIds.length > 0) {
-    filter.field_record_id = replicateIds;
+  if (fieldRecordIds && fieldRecordIds.length > 0) {
+    filter.field_record_id = fieldRecordIds;
   }
 
   const params = new URLSearchParams({
@@ -55,14 +55,14 @@ function buildQueryString({ q, sort, page, pageSize, replicateIds }) {
   return params.toString();
 }
 
-export function useIsolatesList({ q, sort, page, pageSize, replicateIds, skip }) {
+export function useIsolatesList({ q, sort, page, pageSize, fieldRecordIds, skip }) {
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const abortRef = useRef(null);
 
-  const queryKey = buildQueryString({ q, sort, page, pageSize, replicateIds });
+  const queryKey = buildQueryString({ q, sort, page, pageSize, fieldRecordIds });
   // crudcrate omits the Content-Range header when no Range request header is
   // provided; pass it explicitly so we get a usable total.
   const rangeHeader = `isolates=${(page - 1) * pageSize}-${(page - 1) * pageSize + pageSize - 1}`;

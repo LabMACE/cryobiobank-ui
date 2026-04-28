@@ -39,7 +39,7 @@ export const SitesMap = ({
     const { data: areas, isPending: isPendingAreas } = useGetList('areas', { pagination: ALL_PAGES });
     const { data: fieldRecords, isPending: isPendingFieldRecords } = useGetList('field_records', { pagination: ALL_PAGES });
 
-    // Union of replicate sample_types per site (sample_type lives on the replicate after Phase A)
+    // Union of field record sample_types per site
     const siteTypesMap = useMemo(() => {
         const map = new Map();
         if (!fieldRecords) return map;
@@ -55,14 +55,14 @@ export const SitesMap = ({
         return map;
     }, [fieldRecords]);
 
-    // Per-site counts: replicates + aggregated isolate/sample/DNA totals.
+    // Per-site counts: field records + aggregated isolate/sample/DNA totals.
     // Admin view uses unfiltered raw totals (unlike public which filters by is_available).
     const siteCountsMap = useMemo(() => {
         const map = new Map();
         if (!fieldRecords) return map;
         for (const rep of fieldRecords) {
-            const cur = map.get(rep.site_id) || { replicates: 0, isolates: 0, samples: 0, dna: 0 };
-            cur.replicates += 1;
+            const cur = map.get(rep.site_id) || { field_records: 0, isolates: 0, samples: 0, dna: 0 };
+            cur.field_records += 1;
             cur.isolates += (rep.isolates || []).length;
             cur.samples += (rep.samples || []).length;
             cur.dna += (rep.dna || []).length;
@@ -132,7 +132,7 @@ export const SitesMap = ({
             >
                 {visibleSites.map(site => {
                     const siteTypes = siteTypesMap.get(site.id) || [];
-                    const counts = siteCountsMap.get(site.id) || { replicates: 0, isolates: 0, samples: 0, dna: 0 };
+                    const counts = siteCountsMap.get(site.id) || { field_records: 0, isolates: 0, samples: 0, dna: 0 };
                     const opacity = !record ? 1 : (site.id === record.id ? 1.0 : 0.6);
                     return (
                         <Marker
@@ -148,7 +148,7 @@ export const SitesMap = ({
                                 <br />
                                 Elevation: {site.elevation_metres} m
                                 <br />
-                                Field Records: {counts.replicates}
+                                Field Records: {counts.field_records}
                                 <br />
                                 Isolates: {counts.isolates} · Samples: {counts.samples} · DNA: {counts.dna}
                                 <br /><br />

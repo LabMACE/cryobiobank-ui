@@ -51,7 +51,7 @@ export default function IsolateTable({ isolates, enrichment, onOpen, sortField, 
         </thead>
         <tbody>
           {isolates.map(iso => {
-            const rep = enrichment.replicates[iso.field_record_id];
+            const rep = enrichment.fieldRecords[iso.field_record_id];
             const site = rep ? enrichment.sites[rep.site_id] : null;
             const area = site?.area_id ? enrichment.areas[site.area_id] : null;
             return (
@@ -85,7 +85,7 @@ export default function IsolateTable({ isolates, enrichment, onOpen, sortField, 
                   )}
                   {site?.id && (
                     <Link
-                      to={`/?focus_site=${site.id}&replicate=${rep.id}&isolate=${iso.id}&from=isolates`}
+                      to={`/?focus_site=${site.id}&field_record=${rep.id}&isolate=${iso.id}&from=isolates`}
                       className="isodir-table-mapbtn"
                       onClick={(e) => e.stopPropagation()}
                       title="View on map"

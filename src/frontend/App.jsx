@@ -11,14 +11,14 @@ import SideBar from './SideBar';
 export default function FrontendApp() {
   const [sites, setSites] = useState([]);
   const [areas, setAreas] = useState([]);
-  const [replicates, setReplicates] = useState([]);
+  const [fieldRecords, setFieldRecords] = useState([]);
   const [sampleTypeFilter, setSampleTypeFilter] = useState('All');
   const [productFilter, setProductFilter] = useState('All');
   const [view, setView] = useState(null);
   const [activeSiteId, setActiveSiteId] = useState(null);
-  const [activeReplicateId, setActiveReplicateId] = useState(null);
+  const [activeFieldRecordId, setActiveFieldRecordId] = useState(null);
   const [activeAreaId, setActiveAreaId] = useState(null);
-  const [replicateData, setReplicateData] = useState(null);
+  const [fieldRecordData, setFieldRecordData] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('cover');
   const [shouldRecenter, setShouldRecenter] = useState(false);
@@ -30,22 +30,22 @@ export default function FrontendApp() {
   const [cameFromIsolates, setCameFromIsolates] = useState(false);
   const pendingIsolateSelectRef = useRef(null);
 
-  // Enrich sites with replicate list, aggregated sample types, and child counts.
-  // Drop sites with no replicates (per "no empty data" rule).
+  // Enrich sites with field record list, aggregated sample types, and child counts.
+  // Drop sites with no field records (per "no empty data" rule).
   const enrichedSites = useMemo(() => {
     return sites
       .map(site => {
-        const siteReps = replicates.filter(r => r.site_id === site.id);
-        const sampleTypes = [...new Set(siteReps.map(r => r.sample_type).filter(Boolean))];
+        const siteFRs = fieldRecords.filter(r => r.site_id === site.id);
+        const sampleTypes = [...new Set(siteFRs.map(r => r.sample_type).filter(Boolean))];
         return {
           ...site,
-          replicates: siteReps,
+          field_records: siteFRs,
           sample_types: sampleTypes,
-          replicate_count: siteReps.length,
+          field_record_count: siteFRs.length,
         };
       })
-      .filter(s => s.replicate_count > 0);
-  }, [sites, replicates]);
+      .filter(s => s.field_record_count > 0);
+  }, [sites, fieldRecords]);
 
   // Apply Snow/Soil and Product filters, recomputing per-type counts so downstream
   // views (sidebar badges, panel header) reflect exactly what's visible.
@@ -53,8 +53,8 @@ export default function FrontendApp() {
     return enrichedSites
       .map(s => {
         const matchingReps = sampleTypeFilter === 'All'
-          ? s.replicates
-          : s.replicates.filter(r => r.sample_type === sampleTypeFilter);
+          ? s.field_records
+          : s.field_records.filter(r => r.sample_type === sampleTypeFilter);
         const product_counts = matchingReps.reduce(
           (acc, r) => ({
             isolates: acc.isolates + (r.isolates?.length || 0),
@@ -65,12 +65,12 @@ export default function FrontendApp() {
         );
         return {
           ...s,
-          matching_replicate_count: matchingReps.length,
+          matching_field_record_count: matchingReps.length,
           product_counts,
         };
       })
       .filter(s => {
-        if (s.matching_replicate_count === 0) return false;
+        if (s.matching_field_record_count === 0) return false;
         if (productFilter !== 'All') {
           const key = productFilter.toLowerCase();
           if ((s.product_counts[key] || 0) === 0) return false;
@@ -88,7 +88,7 @@ export default function FrontendApp() {
         return {
           ...area,
           siteCount: areaSites.length,
-          replicateCount: areaSites.reduce((sum, s) => sum + s.matching_replicate_count, 0),
+          fieldRecordCount: areaSites.reduce((sum, s) => sum + s.matching_field_record_count, 0),
           sampleTypes,
           sites: areaSites,
         };
@@ -96,77 +96,77 @@ export default function FrontendApp() {
       .filter(a => a.siteCount > 0);
   }, [areas, filteredSites]);
 
-  // Fetch sites, areas, and replicates on mount
+  // Fetch sites, areas, and field records on mount
   useEffect(() => {
     Promise.all([
       fetch('/api/sites?range=[0,9999]').then(r => r.ok ? r.json() : Promise.reject(r.status)),
       fetch('/api/areas?range=[0,9999]').then(r => r.ok ? r.json() : Promise.reject(r.status)),
       fetch('/api/field_records?range=[0,9999]').then(r => r.ok ? r.json() : Promise.reject(r.status)),
     ])
-      .then(([sitesData, areasData, replicatesData]) => {
+      .then(([sitesData, areasData, fieldRecordsData]) => {
         setSites(Array.isArray(sitesData) ? sitesData : []);
         setAreas(Array.isArray(areasData) ? areasData : []);
-        setReplicates(Array.isArray(replicatesData) ? replicatesData : []);
+        setFieldRecords(Array.isArray(fieldRecordsData) ? fieldRecordsData : []);
       })
       .catch(console.error);
   }, []);
 
-  // Fetch a selected replicate's children when drilling in
+  // Fetch a selected field record's children when drilling in
   useEffect(() => {
-    if (!activeReplicateId) {
-      setReplicateData(null);
+    if (!activeFieldRecordId) {
+      setFieldRecordData(null);
       return;
     }
 
-    const fetchReplicateData = async () => {
+    const fetchFieldRecordData = async () => {
       setLoading(true);
       try {
         const [isolates, samples, dna] = await Promise.all(
           ['isolates', 'samples', 'dna'].map(async (entity) => {
             const res = await fetch(
-              `/api/${entity}?filter=${encodeURIComponent(JSON.stringify({ field_record_id: activeReplicateId }))}&range=[0,9999]`
+              `/api/${entity}?filter=${encodeURIComponent(JSON.stringify({ field_record_id: activeFieldRecordId }))}&range=[0,9999]`
             );
             if (res.ok) return res.json();
             return [];
           })
         );
-        const activeRep = replicates.find(r => r.id === activeReplicateId);
-        setReplicateData({
+        const activeFR = fieldRecords.find(r => r.id === activeFieldRecordId);
+        setFieldRecordData({
           isolates,
           samples,
           dna,
-          metagenome_url: activeRep?.metagenome_url ?? null,
-          sample_type: activeRep?.sample_type ?? null,
+          metagenome_url: activeFR?.metagenome_url ?? null,
+          sample_type: activeFR?.sample_type ?? null,
         });
       } catch (err) {
-        console.error('Error fetching replicate data:', err);
-        setReplicateData({ isolates: [], samples: [], dna: [], metagenome_url: null });
+        console.error('Error fetching field record data:', err);
+        setFieldRecordData({ isolates: [], samples: [], dna: [], metagenome_url: null });
       } finally {
         setLoading(false);
       }
     };
 
-    fetchReplicateData();
-  }, [activeReplicateId, replicates]);
+    fetchFieldRecordData();
+  }, [activeFieldRecordId, fieldRecords]);
 
   const handleSiteClick = (siteId) => {
     setActiveSiteId(siteId);
-    setActiveReplicateId(null);
-    setReplicateData(null);
+    setActiveFieldRecordId(null);
+    setFieldRecordData(null);
     setSelectedItem(null);
     setView('site');
     setZoomToSiteId(siteId);
   };
 
-  const handleReplicateClick = (replicateId) => {
-    setActiveReplicateId(replicateId);
+  const handleFieldRecordClick = (fieldRecordId) => {
+    setActiveFieldRecordId(fieldRecordId);
     setSelectedItem(null);
-    setView('replicate');
+    setView('field_record');
   };
 
   const handleBackToSite = () => {
-    setActiveReplicateId(null);
-    setReplicateData(null);
+    setActiveFieldRecordId(null);
+    setFieldRecordData(null);
     setSelectedItem(null);
     setView('site');
   };
@@ -174,15 +174,15 @@ export default function FrontendApp() {
   const handleAreaClick = (areaId) => {
     setActiveAreaId(areaId);
     setActiveSiteId(null);
-    setActiveReplicateId(null);
-    setReplicateData(null);
+    setActiveFieldRecordId(null);
+    setFieldRecordData(null);
     setView(null);
   };
 
   const handleClosePanel = () => {
     setActiveSiteId(null);
-    setActiveReplicateId(null);
-    setReplicateData(null);
+    setActiveFieldRecordId(null);
+    setFieldRecordData(null);
     setSelectedItem(null);
     setView(null);
   };
@@ -191,39 +191,39 @@ export default function FrontendApp() {
     setSelectedItem({ type, id });
   };
 
-  const handleReplicateInfo = (id) => {
-    setSelectedItem({ type: 'replicates', id });
+  const handleFieldRecordInfo = (id) => {
+    setSelectedItem({ type: 'field_records', id });
   };
 
   const handleCloseDetail = () => {
     setSelectedItem(null);
   };
 
-  // Respond to ?focus_site=<id>[&replicate=<id>&isolate=<id>&from=isolates] —
-  // zoom to the site, optionally drill into a replicate and pre-select an
+  // Respond to ?focus_site=<id>[&field_record=<id>&isolate=<id>&from=isolates] —
+  // zoom to the site, optionally drill into a field record and pre-select an
   // isolate, then scroll to map. Strip params afterwards.
   useEffect(() => {
     const focusSite = searchParams.get('focus_site');
     if (!focusSite) return;
     if (sites.length === 0) return;
-    const replicateId = searchParams.get('replicate');
+    const fieldRecordId = searchParams.get('field_record') || searchParams.get('replicate');
     const isolateId = searchParams.get('isolate');
     const from = searchParams.get('from');
 
     setActiveSiteId(focusSite);
-    setReplicateData(null);
+    setFieldRecordData(null);
     setSelectedItem(null);
     setZoomToSiteId(focusSite);
     setCameFromIsolates(from === 'isolates');
 
-    if (replicateId) {
-      setActiveReplicateId(replicateId);
-      setView('replicate');
+    if (fieldRecordId) {
+      setActiveFieldRecordId(fieldRecordId);
+      setView('field_record');
       pendingIsolateSelectRef.current = isolateId
-        ? { type: 'isolates', id: isolateId, replicateId }
+        ? { type: 'isolates', id: isolateId, fieldRecordId }
         : null;
     } else {
-      setActiveReplicateId(null);
+      setActiveFieldRecordId(null);
       setView('site');
       pendingIsolateSelectRef.current = null;
     }
@@ -232,22 +232,23 @@ export default function FrontendApp() {
 
     const next = new URLSearchParams(searchParams);
     next.delete('focus_site');
+    next.delete('field_record');
     next.delete('replicate');
     next.delete('isolate');
     next.delete('from');
     setSearchParams(next, { replace: true });
   }, [sites, searchParams, setSearchParams]);
 
-  // Once replicate data has loaded for a pending deep-link, open the isolate
+  // Once field record data has loaded for a pending deep-link, open the isolate
   // detail side panel.
   useEffect(() => {
     const pending = pendingIsolateSelectRef.current;
     if (!pending) return;
-    if (!replicateData) return;
-    if (activeReplicateId !== pending.replicateId) return;
+    if (!fieldRecordData) return;
+    if (activeFieldRecordId !== pending.fieldRecordId) return;
     setSelectedItem({ type: pending.type, id: pending.id });
     pendingIsolateSelectRef.current = null;
-  }, [replicateData, activeReplicateId]);
+  }, [fieldRecordData, activeFieldRecordId]);
 
   // Respond to ?section=<cover|map|isolates|about> — scroll to that section on
   // mount, then strip the param. Used when landing from the /isolates alias.
@@ -321,16 +322,16 @@ export default function FrontendApp() {
           onAreaClick={handleAreaClick}
           view={view}
           activeSite={activeSite}
-          activeReplicateId={activeReplicateId}
-          onReplicateClick={handleReplicateClick}
+          activeFieldRecordId={activeFieldRecordId}
+          onFieldRecordClick={handleFieldRecordClick}
           onBackToSite={handleBackToSite}
           sampleTypeFilter={sampleTypeFilter}
           productFilter={productFilter}
-          replicateData={replicateData}
+          fieldRecordData={fieldRecordData}
           onClosePanel={handleClosePanel}
           loading={loading}
           onItemClick={handleItemClick}
-          onReplicateInfo={handleReplicateInfo}
+          onFieldRecordInfo={handleFieldRecordInfo}
           selectedItem={selectedItem}
           onCloseDetail={handleCloseDetail}
           shouldRecenter={shouldRecenter}

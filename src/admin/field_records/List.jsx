@@ -30,7 +30,7 @@ const sampleTypeChoices = [
     { id: 'Soil', name: 'Soil' },
 ];
 
-const replicateFilters = [
+const fieldRecordFilters = [
     <SelectInput source="sample_type" label="Sample Type" choices={sampleTypeChoices} alwaysOn />,
 ];
 
@@ -44,7 +44,7 @@ const ListComponent = () => {
             sort={{ field: 'sampling_date', order: 'DESC' }}
             actions={<ListActionsByPermission />}
             empty={<CustomEmptyPage/>}
-            filters={replicateFilters}
+            filters={fieldRecordFilters}
         >
             <Datagrid rowClick="show" bulkActionButtons={permissions === 'admin' ? true : false}>
                 <TextField source="name" />

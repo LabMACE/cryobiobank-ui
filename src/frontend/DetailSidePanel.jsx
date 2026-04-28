@@ -29,7 +29,7 @@ const fieldConfigs = {
       { key: 'description', label: 'Description' },
     ],
   },
-  replicates: {
+  field_records: {
     label: 'Field record',
     sections: [
       {
@@ -89,15 +89,14 @@ const fieldConfigs = {
   },
 };
 
-// React key → REST resource path. Replicate view key differs from the API plural.
 const apiResource = {
   isolates: 'isolates',
   samples: 'samples',
   dna: 'dna',
-  replicates: 'field_records',
+  field_records: 'field_records',
 };
 
-export default function DetailSidePanel({ type, itemId, onClose, contextSampleType, parentReplicate, onBack }) {
+export default function DetailSidePanel({ type, itemId, onClose, contextSampleType, parentFieldRecord, onBack }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -119,8 +118,8 @@ export default function DetailSidePanel({ type, itemId, onClose, contextSampleTy
   if (!config) return null;
 
   // Isolates and samples don't carry Snow/Soil on the record itself — it's on the
-  // parent replicate, so the caller passes it in. Replicates have it on data directly.
-  const displayType = type === 'replicates' ? data?.sample_type : contextSampleType;
+  // parent field record, so the caller passes it in. Field records have it on data directly.
+  const displayType = type === 'field_records' ? data?.sample_type : contextSampleType;
 
   const renderField = (field) => {
     const value = data[field.key];
@@ -150,14 +149,14 @@ export default function DetailSidePanel({ type, itemId, onClose, contextSampleTy
   const hasSectionValues = (section) =>
     section.fields.some((f) => data[f.key] != null && data[f.key] !== '');
 
-  const showBack = parentReplicate && type !== 'replicates';
+  const showBack = parentFieldRecord && type !== 'field_records';
   const habitat = (displayType || 'unknown').toLowerCase();
 
   return (
     <div className={`detail-side-panel habitat-${habitat}`}>
       {showBack ? (
         <button className="detail-side-panel-back" onClick={onBack}>
-          ← Back to Field Record {parentReplicate.name}
+          ← Back to Field Record {parentFieldRecord.name}
         </button>
       ) : (
         <button className="detail-side-panel-close" onClick={onClose}>
@@ -220,7 +219,7 @@ export default function DetailSidePanel({ type, itemId, onClose, contextSampleTy
 function buildIsolateMapLink(iso) {
   const q = new URLSearchParams();
   q.set('focus_site', iso.site_id);
-  if (iso.field_record_id) q.set('replicate', iso.field_record_id);
+  if (iso.field_record_id) q.set('field_record', iso.field_record_id);
   q.set('isolate', iso.id);
   q.set('from', 'isolates');
   return `/?${q.toString()}`;

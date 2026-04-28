@@ -12,16 +12,16 @@ export default function MapSection({
   onAreaClick,
   view,
   activeSite,
-  activeReplicateId,
-  onReplicateClick,
+  activeFieldRecordId,
+  onFieldRecordClick,
   onBackToSite,
   sampleTypeFilter,
   productFilter,
-  replicateData,
+  fieldRecordData,
   onClosePanel,
   loading,
   onItemClick,
-  onReplicateInfo,
+  onFieldRecordInfo,
   selectedItem,
   onCloseDetail,
   shouldRecenter,
@@ -62,15 +62,15 @@ export default function MapSection({
             />
           </MapContainer>
           {selectedItem && (() => {
-            const activeReplicate = activeSite?.replicates?.find(r => r.id === activeReplicateId);
+            const activeFieldRecord = activeSite?.field_records?.find(r => r.id === activeFieldRecordId);
             return (
               <DetailSidePanel
                 type={selectedItem.type}
                 itemId={selectedItem.id}
                 onClose={onCloseDetail}
-                contextSampleType={replicateData?.sample_type}
-                parentReplicate={activeReplicate || null}
-                onBack={() => activeReplicate && onReplicateInfo(activeReplicate.id)}
+                contextSampleType={fieldRecordData?.sample_type}
+                parentFieldRecord={activeFieldRecord || null}
+                onBack={() => activeFieldRecord && onFieldRecordInfo(activeFieldRecord.id)}
               />
             );
           })()}
@@ -78,12 +78,12 @@ export default function MapSection({
             <DataPanel
               view={view}
               activeSite={activeSite}
-              activeReplicateId={activeReplicateId}
-              replicateData={replicateData}
+              activeFieldRecordId={activeFieldRecordId}
+              fieldRecordData={fieldRecordData}
               sampleTypeFilter={sampleTypeFilter}
               productFilter={productFilter}
-              onReplicateClick={onReplicateClick}
-              onReplicateInfo={onReplicateInfo}
+              onFieldRecordClick={onFieldRecordClick}
+              onFieldRecordInfo={onFieldRecordInfo}
               onBackToSite={onBackToSite}
               onClose={onClosePanel}
               loading={loading}

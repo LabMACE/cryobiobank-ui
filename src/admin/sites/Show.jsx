@@ -2,7 +2,7 @@ import {
     Show,
     DateField,
     TextField,
-    ArrayField,
+    ReferenceManyField,
     Datagrid,
     FunctionField,
     useRecordContext,
@@ -89,11 +89,11 @@ const ShowContent = () => {
                 </Typography>
             </SectionCard>
 
-            {/* Two column: replicates + map */}
+            {/* Two column: field records + map */}
             <Grid container spacing={2}>
                 <Grid item xs={12} md={6}>
                     <SectionCard title="Field Records" icon={<PlaceIcon fontSize="small" color="action" />}>
-                        <ArrayField source="replicates">
+                        <ReferenceManyField reference="field_records" target="site_id" sort={{ field: 'sampling_date', order: 'ASC' }}>
                             <Datagrid bulkActionButtons={false} rowClick={objectClick}>
                                 <TextField source="name" />
                                 <DateField source="sampling_date" label="Date" />
@@ -102,7 +102,7 @@ const ShowContent = () => {
                                 <FunctionField label="Samples" render={rec => rec?.samples?.length ?? 0} />
                                 <FunctionField label="DNA" render={rec => rec?.dna?.length ?? 0} />
                             </Datagrid>
-                        </ArrayField>
+                        </ReferenceManyField>
                     </SectionCard>
                 </Grid>
                 <Grid item xs={12} md={6}>

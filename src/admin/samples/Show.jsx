@@ -18,8 +18,8 @@ const ShowContent = () => {
     const record = useRecordContext();
     const { permissions } = usePermissions();
     const isAdmin = permissions === 'admin';
-    const { replicate, site, area } = useBreadcrumbChain(record, {
-        needsReplicate: true,
+    const { fieldRecord, site, area } = useBreadcrumbChain(record, {
+        needsFieldRecord: true,
         needsSite: true,
         needsArea: true,
     });
@@ -31,7 +31,7 @@ const ShowContent = () => {
             <ShowActions breadcrumbItems={[
                 { resource: 'areas', id: area?.id, label: area?.name, type: 'Area', isPrivate: area?.is_private },
                 { resource: 'sites', id: site?.id, label: site?.name, type: 'Site', isPrivate: site?.is_private },
-                { resource: 'field_records', id: replicate?.id, label: replicate?.name, type: 'Field Record', isPrivate: replicate?.is_private },
+                { resource: 'field_records', id: fieldRecord?.id, label: fieldRecord?.name, type: 'Field Record', isPrivate: fieldRecord?.is_private },
                 { label: record.name, type: 'Sample', isPrivate: record.is_private },
             ]} />
 
