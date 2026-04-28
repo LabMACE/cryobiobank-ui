@@ -4,12 +4,12 @@ import {
     ReferenceInput,
     SelectInput,
     TextInput,
-    DateInput,
     NumberInput,
     required
 } from 'react-admin';
 import { Grid, Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import SafeDateInput from '../components/SafeDateInput';
 
 const sampleTypeChoices = [
     { id: 'Snow', name: 'Snow' },
@@ -45,7 +45,7 @@ const FieldRecordEdit = (props) => {
                         />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                        <DateInput source="sampling_date" label="Sampling Date" validate={[required()]}/>
+                        <SafeDateInput source="sampling_date" label="Sampling Date" validate={[required()]}/>
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <NumberInput source="sample_depth_cm" label="Sample Depth (cm)" />

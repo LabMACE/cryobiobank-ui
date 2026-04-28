@@ -14,6 +14,8 @@ import areas from './areas';
 import axios from 'axios';
 import Dashboard from './Dashboard';
 import MyLayout from './Layout';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 const darkTheme = {
     ...defaultDarkTheme,
@@ -144,26 +146,28 @@ const App = () => {
         </div>
     );
     return (
-        <Admin
-            authProvider={authProvider.current}
-            dataProvider={dataProvider.current}
-            title="CryoBioBank"
-            dashboard={Dashboard}
-            layout={(props) => <MyLayout {...props} deployment={deployment} />}
-            mutationMode="pessimistic"
-            darkTheme={darkTheme}
-        >
-            {/* 
-                The resource mapping by permissions is done in the Menu 
-                component in the <MyLayout/> definition 
-            */}
-            <Resource name="areas" {...areas} recordRepresentation="name" />
-            <Resource name="sites" {...sites} recordRepresentation="name" />
-            <Resource name="field_records" {...field_records} recordRepresentation="name" />
-            <Resource name="isolates" {...isolates} recordRepresentation="name" />
-            <Resource name="samples" {...samples} recordRepresentation="name" />
-            <Resource name="dna" {...dna} recordRepresentation="name" />
-        </Admin>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <Admin
+                authProvider={authProvider.current}
+                dataProvider={dataProvider.current}
+                title="CryoBioBank"
+                dashboard={Dashboard}
+                layout={(props) => <MyLayout {...props} deployment={deployment} />}
+                mutationMode="pessimistic"
+                darkTheme={darkTheme}
+            >
+                {/*
+                    The resource mapping by permissions is done in the Menu
+                    component in the <MyLayout/> definition
+                */}
+                <Resource name="areas" {...areas} recordRepresentation="name" />
+                <Resource name="sites" {...sites} recordRepresentation="name" />
+                <Resource name="field_records" {...field_records} recordRepresentation="name" />
+                <Resource name="isolates" {...isolates} recordRepresentation="name" />
+                <Resource name="samples" {...samples} recordRepresentation="name" />
+                <Resource name="dna" {...dna} recordRepresentation="name" />
+            </Admin>
+        </LocalizationProvider>
     );
 };
 export default App;
