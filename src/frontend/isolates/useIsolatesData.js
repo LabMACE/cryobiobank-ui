@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 // Lookup tables for client-side enrichment (site name, area name, map link
 // target). Fetched once on mount from the existing crudcrate endpoints.
-// The Snow/Soil filter resolves to a server-side `site_replicate_id IN (…)`
+// The Snow/Soil filter resolves to a server-side `field_record_id IN (…)`
 // filter using these replicates — crudcrate handles the pagination natively.
 export function useEnrichmentLookups() {
   const [replicates, setReplicates] = useState({});
@@ -12,7 +12,7 @@ export function useEnrichmentLookups() {
 
   useEffect(() => {
     Promise.all([
-      fetch('/api/site_replicates?range=[0,9999]').then(r => r.ok ? r.json() : []),
+      fetch('/api/field_records?range=[0,9999]').then(r => r.ok ? r.json() : []),
       fetch('/api/sites?range=[0,9999]').then(r => r.ok ? r.json() : []),
       fetch('/api/areas?range=[0,9999]').then(r => r.ok ? r.json() : []),
     ])
@@ -44,7 +44,7 @@ function buildQueryString({ q, sort, page, pageSize, replicateIds }) {
   const filter = {};
   if (q) filter.q = q;
   if (replicateIds && replicateIds.length > 0) {
-    filter.site_replicate_id = replicateIds;
+    filter.field_record_id = replicateIds;
   }
 
   const params = new URLSearchParams({

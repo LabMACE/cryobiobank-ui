@@ -26,7 +26,7 @@ import {
     SampleTypeChip,
     ShowActions,
     ShowTitle,
-} from '../../custom/ShowComponents';
+} from '../custom/ShowComponents';
 
 const TabLabelWithCount = ({ label, reference, target }) => (
     <span>
@@ -40,7 +40,7 @@ const AddChildButton = ({ resource, label }) => {
     if (!record) return null;
     return (
         <Button
-            onClick={() => redirect('create', resource, null, {}, { record: { site_replicate_id: record.id } })}
+            onClick={() => redirect('create', resource, null, {}, { record: { field_record_id: record.id } })}
             label={label}
             startIcon={<AddIcon />}
         />
@@ -70,7 +70,7 @@ const ShowContent = () => {
                 breadcrumbItems={[
                     { resource: 'areas', id: area?.id, label: area?.name, type: 'Area', isPrivate: area?.is_private },
                     { resource: 'sites', id: site?.id, label: site?.name, type: 'Site', isPrivate: site?.is_private },
-                    { label: record.name, type: 'Replicate', isPrivate: record.is_private },
+                    { label: record.name, type: 'Field Record', isPrivate: record.is_private },
                 ]}
                 deleteProps={{ mutationMode: 'pessimistic', redirect: deleteRedirect }}
             />
@@ -80,7 +80,7 @@ const ShowContent = () => {
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, flexWrap: 'wrap' }}>
                     <Typography variant="h5" fontWeight={600}>{record.name}</Typography>
                     <SampleTypeChip type={record.sample_type} />
-                    {isAdmin && <PrivacyToggle resource="site_replicates" id={record.id} isPrivate={record.is_private} />}
+                    {isAdmin && <PrivacyToggle resource="field_records" id={record.id} isPrivate={record.is_private} />}
                 </Box>
                 {record.sampling_date && (
                     <Typography variant="body2" color="text.secondary">
@@ -191,11 +191,11 @@ const ShowContent = () => {
 
             <TabbedShowLayout syncWithLocation={false}>
                 <TabbedShowLayout.Tab
-                    label={<TabLabelWithCount label="Isolates" reference="isolates" target="site_replicate_id" />}
+                    label={<TabLabelWithCount label="Isolates" reference="isolates" target="field_record_id" />}
                     icon={<BiotechIcon />}
                 >
                     {isAdmin && <Box sx={{ mb: 1 }}><AddChildButton resource="isolates" label="Add Isolate" /></Box>}
-                    <ReferenceManyField reference="isolates" target="site_replicate_id" label={false}>
+                    <ReferenceManyField reference="isolates" target="field_record_id" label={false}>
                         <Datagrid bulkActionButtons={false} rowClick="show">
                             <TextField source="name" />
                             <TextField source="taxonomy" emptyText="—" />
@@ -205,11 +205,11 @@ const ShowContent = () => {
                 </TabbedShowLayout.Tab>
 
                 <TabbedShowLayout.Tab
-                    label={<TabLabelWithCount label="Samples" reference="samples" target="site_replicate_id" />}
+                    label={<TabLabelWithCount label="Samples" reference="samples" target="field_record_id" />}
                     icon={<ScienceIcon />}
                 >
                     {isAdmin && <Box sx={{ mb: 1 }}><AddChildButton resource="samples" label="Add Sample" /></Box>}
-                    <ReferenceManyField reference="samples" target="site_replicate_id" label={false}>
+                    <ReferenceManyField reference="samples" target="field_record_id" label={false}>
                         <Datagrid bulkActionButtons={false} rowClick="show">
                             <TextField source="name" />
                             <BooleanField source="is_available" label="Available" />
@@ -219,11 +219,11 @@ const ShowContent = () => {
                 </TabbedShowLayout.Tab>
 
                 <TabbedShowLayout.Tab
-                    label={<TabLabelWithCount label="DNA" reference="dna" target="site_replicate_id" />}
+                    label={<TabLabelWithCount label="DNA" reference="dna" target="field_record_id" />}
                     icon={<ScienceIcon />}
                 >
                     {isAdmin && <Box sx={{ mb: 1 }}><AddChildButton resource="dna" label="Add DNA" /></Box>}
-                    <ReferenceManyField reference="dna" target="site_replicate_id" label={false}>
+                    <ReferenceManyField reference="dna" target="field_record_id" label={false}>
                         <Datagrid bulkActionButtons={false} rowClick="show">
                             <TextField source="name" />
                             <TextField source="extraction_method" emptyText="—" />
@@ -235,10 +235,10 @@ const ShowContent = () => {
     );
 };
 
-const SiteReplicateShow = () => (
-    <Show actions={false} component="div" title={<ShowTitle label="Site replicate" />}>
+const FieldRecordShow = () => (
+    <Show actions={false} component="div" title={<ShowTitle label="Field record" />}>
         <ShowContent />
     </Show>
 );
 
-export default SiteReplicateShow;
+export default FieldRecordShow;

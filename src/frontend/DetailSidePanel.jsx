@@ -30,7 +30,7 @@ const fieldConfigs = {
     ],
   },
   replicates: {
-    label: 'Site replicate',
+    label: 'Field record',
     sections: [
       {
         title: 'Collection',
@@ -94,7 +94,7 @@ const apiResource = {
   isolates: 'isolates',
   samples: 'samples',
   dna: 'dna',
-  replicates: 'site_replicates',
+  replicates: 'field_records',
 };
 
 export default function DetailSidePanel({ type, itemId, onClose, contextSampleType, parentReplicate, onBack }) {
@@ -157,7 +157,7 @@ export default function DetailSidePanel({ type, itemId, onClose, contextSampleTy
     <div className={`detail-side-panel habitat-${habitat}`}>
       {showBack ? (
         <button className="detail-side-panel-back" onClick={onBack}>
-          ← Back to Site Replicate {parentReplicate.name}
+          ← Back to Field Record {parentReplicate.name}
         </button>
       ) : (
         <button className="detail-side-panel-close" onClick={onClose}>
@@ -220,7 +220,7 @@ export default function DetailSidePanel({ type, itemId, onClose, contextSampleTy
 function buildIsolateMapLink(iso) {
   const q = new URLSearchParams();
   q.set('focus_site', iso.site_id);
-  if (iso.site_replicate_id) q.set('replicate', iso.site_replicate_id);
+  if (iso.field_record_id) q.set('replicate', iso.field_record_id);
   q.set('isolate', iso.id);
   q.set('from', 'isolates');
   return `/?${q.toString()}`;

@@ -24,10 +24,10 @@ const ListComponent = () => {
             <Datagrid rowClick="show" bulkActionButtons={permissions === 'admin' ? true : false}>
                 <TextField source="name" />
                 <TextField source="extraction_method" />
-                <ReferenceField source="site_replicate_id" reference="site_replicates" label="Site Replicate">
+                <ReferenceField source="field_record_id" reference="field_records" label="Field Record">
                     <TextField source="name" />
                 </ReferenceField>
-                <ReferenceField source="site_replicate_id" reference="site_replicates" link={false} label="Site">
+                <ReferenceField source="field_record_id" reference="field_records" link={false} label="Site">
                     <ReferenceField source="site_id" reference="sites" link="show">
                         <TextField source="name" />
                     </ReferenceField>

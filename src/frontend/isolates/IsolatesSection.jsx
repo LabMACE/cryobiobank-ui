@@ -74,7 +74,7 @@ export default function IsolatesSection({ sectionsRef, index }) {
 
   const enrichment = useEnrichmentLookups();
 
-  // Translate habitat chip → server-side `site_replicate_id IN (…)` filter via
+  // Translate habitat chip → server-side `field_record_id IN (…)` filter via
   // the loaded replicates lookup. Hold off on the list fetch until lookups land
   // to avoid a flash of unfiltered results when the user arrives with
   // ?habitat=Snow in the URL.
@@ -103,7 +103,7 @@ export default function IsolatesSection({ sectionsRef, index }) {
     () => (focus ? items.find(i => i.id === focus) : null),
     [focus, items]
   );
-  const focusedHabitat = focused && enrichment.replicates[focused.site_replicate_id]?.sample_type;
+  const focusedHabitat = focused && enrichment.replicates[focused.field_record_id]?.sample_type;
 
   return (
     <section

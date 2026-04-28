@@ -60,7 +60,7 @@ function byDateDesc(a, b) {
   return db.localeCompare(da);
 }
 
-function SiteReplicateList({ site, sampleTypeFilter, productFilter, onReplicateClick, onReplicateInfo }) {
+function FieldRecordList({ site, sampleTypeFilter, productFilter, onReplicateClick, onReplicateInfo }) {
   const typeActive = sampleTypeFilter !== 'All';
   const productActive = productFilter !== 'All';
   const productKey = productActive ? productFilter.toLowerCase() : null;
@@ -84,7 +84,7 @@ function SiteReplicateList({ site, sampleTypeFilter, productFilter, onReplicateC
     });
   }, [site, sampleTypeFilter, productFilter, typeActive, productActive, productKey]);
 
-  if (!replicates.length) return <p className="data-panel-empty">No replicates.</p>;
+  if (!replicates.length) return <p className="data-panel-empty">No field records.</p>;
 
   const colType = typeActive ? 'highlight' : '';
   const colIso = productKey === 'isolates' ? 'highlight' : '';
@@ -231,11 +231,11 @@ export default function DataPanel({
                 <span className="data-panel-subtle">
                   {filterActive
                     ? `${matching} matching / ${total} total`
-                    : `${total} replicate${total === 1 ? '' : 's'}`}
+                    : `${total} field record${total === 1 ? '' : 's'}`}
                 </span>
               </div>
               <div className="data-panel-body">
-                <SiteReplicateList
+                <FieldRecordList
                   site={activeSite}
                   sampleTypeFilter={sampleTypeFilter}
                   productFilter={productFilter}
@@ -253,7 +253,7 @@ export default function DataPanel({
               <button className="data-panel-back" onClick={onBackToSite}>
                 ← {activeSite?.name || 'site'}
               </button>
-              <h3>{activeReplicate?.name || 'Replicate'}</h3>
+              <h3>{activeReplicate?.name || 'Field Record'}</h3>
               {activeReplicate?.sampling_date && (
                 <span className="data-panel-subtle">{activeReplicate.sampling_date}</span>
               )}

@@ -1,5 +1,6 @@
+import React from 'react';
 import {
-    Edit,
+    Create,
     SimpleForm,
     ReferenceInput,
     SelectInput,
@@ -16,14 +17,11 @@ const sampleTypeChoices = [
     { id: 'Soil', name: 'Soil' },
 ];
 
-const SiteReplicateEdit = (props) => {
+const FieldRecordCreate = (props) => {
     return (
-        <Edit {...props} mutationMode="pessimistic" redirect="show">
-            <SimpleForm >
+        <Create {...props} redirect="show">
+            <SimpleForm>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6}>
-                        <TextInput source="id" disabled label="ID" />
-                    </Grid>
                     <Grid item xs={12} sm={6}>
                         <ReferenceInput
                             source="site_id"
@@ -54,10 +52,16 @@ const SiteReplicateEdit = (props) => {
                         <NumberInput source="snow_depth_cm" label="Snow Depth (cm)" />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                        <NumberInput source="air_temperature_celsius" label="Air Temperature (°C)" />
+                        <NumberInput
+                            source="air_temperature_celsius"
+                            label="Air Temperature (°C)"
+                        />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                        <NumberInput source="snow_temperature_celsius" label="Snow Temperature (°C)" />
+                        <NumberInput
+                            source="snow_temperature_celsius"
+                            label="Snow Temperature (°C)"
+                        />
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <NumberInput
@@ -164,8 +168,8 @@ const SiteReplicateEdit = (props) => {
                     </AccordionDetails>
                 </Accordion>
             </SimpleForm>
-        </Edit>
+        </Create>
     );
 };
 
-export default SiteReplicateEdit;
+export default FieldRecordCreate;

@@ -11,6 +11,6 @@ export default {
     show: ShowComponent,
     icon: LandscapeIcon,
     options: {
-        label: 'Site Replicates',
+        label: 'Field Records',
     },
 };

@@ -89,7 +89,7 @@ const ShowContent = () => {
                         headerExtra={
                             <>
                                 <Chip size="small" variant="outlined" label={`${record.sites?.length ?? 0} sites`} />
-                                <Chip size="small" variant="outlined" icon={<ContentCopyIcon sx={{ fontSize: 14 }} />} label={`${record.sites?.reduce((sum, s) => sum + (s.replicates?.length || 0), 0) ?? 0} replicates`} />
+                                <Chip size="small" variant="outlined" icon={<ContentCopyIcon sx={{ fontSize: 14 }} />} label={`${record.sites?.reduce((sum, s) => sum + (s.replicates?.length || 0), 0) ?? 0} field records`} />
                             </>
                         }
                     >
@@ -97,7 +97,7 @@ const ShowContent = () => {
                             <Datagrid bulkActionButtons={false} rowClick={siteClick}>
                                 <TextField source="name" />
                                 <TextField source="elevation_metres" label="Elevation (m)" />
-                                <FunctionField label="Replicates" render={record => record?.replicates?.length ?? 0} />
+                                <FunctionField label="Field Records" render={record => record?.replicates?.length ?? 0} />
                             </Datagrid>
                         </ArrayField>
                     </SectionCard>

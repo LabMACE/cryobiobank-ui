@@ -101,7 +101,7 @@ export default function FrontendApp() {
     Promise.all([
       fetch('/api/sites?range=[0,9999]').then(r => r.ok ? r.json() : Promise.reject(r.status)),
       fetch('/api/areas?range=[0,9999]').then(r => r.ok ? r.json() : Promise.reject(r.status)),
-      fetch('/api/site_replicates?range=[0,9999]').then(r => r.ok ? r.json() : Promise.reject(r.status)),
+      fetch('/api/field_records?range=[0,9999]').then(r => r.ok ? r.json() : Promise.reject(r.status)),
     ])
       .then(([sitesData, areasData, replicatesData]) => {
         setSites(Array.isArray(sitesData) ? sitesData : []);
@@ -124,7 +124,7 @@ export default function FrontendApp() {
         const [isolates, samples, dna] = await Promise.all(
           ['isolates', 'samples', 'dna'].map(async (entity) => {
             const res = await fetch(
-              `/api/${entity}?filter=${encodeURIComponent(JSON.stringify({ site_replicate_id: activeReplicateId }))}&range=[0,9999]`
+              `/api/${entity}?filter=${encodeURIComponent(JSON.stringify({ field_record_id: activeReplicateId }))}&range=[0,9999]`
             );
             if (res.ok) return res.json();
             return [];

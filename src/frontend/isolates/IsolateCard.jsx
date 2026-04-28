@@ -3,7 +3,7 @@ import { DnaIcon, MapIcon } from './illustrations';
 import PhotoHoverIcon from './PhotoHoverIcon';
 
 export default function IsolateCard({ isolate, enrichment, onOpen }) {
-  const rep = enrichment.replicates[isolate.site_replicate_id];
+  const rep = enrichment.replicates[isolate.field_record_id];
   const site = rep ? enrichment.sites[rep.site_id] : null;
   const area = site?.area_id ? enrichment.areas[site.area_id] : null;
   const habitat = (rep?.sample_type || 'unknown').toLowerCase();

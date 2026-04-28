@@ -8,7 +8,7 @@ import { keycloakAuthProvider } from './authProvider';
 import sites from './sites';
 import isolates from './isolates';
 import samples from './samples';
-import site_replicates from './sites/replicates';
+import field_records from './field_records';
 import dna from './dna';
 import areas from './areas';
 import axios from 'axios';
@@ -159,7 +159,7 @@ const App = () => {
             */}
             <Resource name="areas" {...areas} recordRepresentation="name" />
             <Resource name="sites" {...sites} recordRepresentation="name" />
-            <Resource name="site_replicates" {...site_replicates} recordRepresentation="name" />
+            <Resource name="field_records" {...field_records} recordRepresentation="name" />
             <Resource name="isolates" {...isolates} recordRepresentation="name" />
             <Resource name="samples" {...samples} recordRepresentation="name" />
             <Resource name="dna" {...dna} recordRepresentation="name" />

@@ -77,7 +77,7 @@ const SiteAside = () => {
                     <CardContent sx={{ textAlign: 'center', py: 6 }}>
                         <PlaceIcon sx={{ fontSize: 48, color: 'text.disabled', mb: 1 }} />
                         <Typography color="text.secondary">
-                            Select a site to view its replicates
+                            Select a site to view its field records
                         </Typography>
                     </CardContent>
                 </Card>
@@ -133,8 +133,8 @@ const SiteAside = () => {
                         />
                         {isAdmin && (
                             <Button
-                                label="Add Replicate"
-                                onClick={() => redirect('create', 'site_replicates', null, {}, { record: { site_id: record.id } })}
+                                label="Add Field Record"
+                                onClick={() => redirect('create', 'field_records', null, {}, { record: { site_id: record.id } })}
                                 startIcon={<AddIcon />}
                                 size="small"
                             />
@@ -143,12 +143,12 @@ const SiteAside = () => {
 
                     {/* Replicates table */}
                     <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>
-                        Site Replicates ({replicates.length})
+                        Field Records ({replicates.length})
                     </Typography>
 
                     {replicates.length === 0 ? (
                         <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
-                            No replicates recorded for this site.
+                            No field records recorded for this site.
                         </Typography>
                     ) : (
                         <TableContainer>
@@ -169,7 +169,7 @@ const SiteAside = () => {
                                             key={rep.id}
                                             hover
                                             sx={{ cursor: 'pointer' }}
-                                            onClick={() => redirect('show', 'site_replicates', rep.id)}
+                                            onClick={() => redirect('show', 'field_records', rep.id)}
                                         >
                                             <TableCell>{rep.name}</TableCell>
                                             <TableCell>{rep.sampling_date}</TableCell>
@@ -219,7 +219,7 @@ const ListComponent = () => {
                         <TextField source="name" />
                     </ReferenceField>
                     <TextField source="elevation_metres" label="Elev (m)" />
-                    <FunctionField label="Replicates" render={record => record?.replicates?.length ?? 0} />
+                    <FunctionField label="Field Records" render={record => record?.replicates?.length ?? 0} />
                     {permissions === 'admin' && (
                         <FunctionField label="" render={() => <PrivacyField />} />
                     )}
