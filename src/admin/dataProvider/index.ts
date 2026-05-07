@@ -180,7 +180,8 @@ const dataProvider = (
             )
         ).then(responses => ({ data: responses.map(({ json }) => json.id) })),
 
-    create: (resource, params) => {
+    create: async (resource, params) => {
+        params = await handleBinaryUpload(resource, params);
         return httpClient(`${apiUrl}/${resource}`, {
             method: 'POST',
             body: JSON.stringify(params.data),

@@ -6,6 +6,8 @@ import {
     ReferenceInput,
     AutocompleteInput,
     required,
+    ImageInput,
+    ImageField,
 } from 'react-admin';
 
 const IsolateCreate = (props) => (
@@ -33,6 +35,14 @@ const IsolateCreate = (props) => (
             />
             <TextInput source="media_used_for_isolation" label="Media Used for Isolation" />
             <TextInput source="genome_url" label="Genome URL" />
+            <ImageInput
+                source="photo"
+                label="Photo"
+                accept="image/*"
+                multiple={false}
+            >
+                <ImageField source="src" title="title" />
+            </ImageInput>
         </SimpleForm>
     </Create>
 );
