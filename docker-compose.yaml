@@ -75,38 +75,85 @@ services:
     volumes:
       - cryobiobank-db-data:/var/lib/postgresql/data
 
-  # cryobiobank-test-db:
-  #   image: postgis/postgis:17-3.5
-  #   container_name: cryobiobank-test-db
-  #   environment:
-  #     - POSTGRES_USER=postgres
-  #     - POSTGRES_PASSWORD=psql
-  #     - POSTGRES_DB=postgres
-  #   ports:
-  #     - "5444:5432"
+  # --- E2E test stack: local Keycloak, throwaway tmpfs DB, bacon watcher ---
+  cryobiobank-keycloak:
+    image: quay.io/keycloak/keycloak:26.0
+    command: start-dev --import-realm
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_HOSTNAME_STRICT=false
+      - KC_HOSTNAME_STRICT_HTTPS=false
+    ports:
+      - "8180:8080"
+    volumes:
+      - ./keycloak-realm-e2e.json:/opt/keycloak/data/import/realm.json:ro
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/localhost/8080"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 30s
 
-  # cryobiobank-test-api:
-  #   build:
-  #     context: ../cryobiobank-api
-  #     dockerfile: Dockerfile.test
-  #   container_name: cryobiobank-test-api
-  #   depends_on:
-  #     - cryobiobank-test-db
-  #   environment:
-  #     - DB_HOST=cryobiobank-test-db
-  #     - DB_PORT=5432
-  #     - DB_USER=postgres
-  #     - DB_PASSWORD=psql
-  #     - DB_NAME=postgres
-  #     - DB_PREFIX=postgresql
-  #     - KEYCLOAK_URL=http://fake-url-for-tests
-  #     - KEYCLOAK_REALM=test
-  #     - KEYCLOAK_UI_ID=test
-  #     - APP_NAME=cryobiobank-api-tests
-  #     - DEPLOYMENT=test
-  #   volumes:
-  #     - ../cryobiobank-api:/app
+  cryobiobank-test-db:
+    image: postgis/postgis:17-3.5
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=psql
+      - POSTGRES_DB=postgres
+    ports:
+      - "5444:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    # Silence expected SQL errors from negative tests so output is just results.
+    command: ["postgres", "-c", "log_min_messages=fatal", "-c", "log_statement=none"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  cryobiobank-test-watcher:
+    build:
+      context: ../cryobiobank-api
+      dockerfile: Dockerfile.test
+    # Migrate the fresh test DB once, then watch + re-run on change.
+    entrypoint:
+      - sh
+      - -c
+      - "cargo run -p migration -- up && exec bacon --headless test-integration"
+    environment:
+      - DB_HOST=cryobiobank-test-db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=psql
+      - DB_NAME=postgres
+      - DB_PREFIX=postgresql
+      - DATABASE_URL=postgresql://postgres:psql@cryobiobank-test-db:5432/postgres
+      # Must match the TEST_KEYCLOAK_* below or the JWT issuer/JWKS check fails.
+      - KEYCLOAK_URL=http://cryobiobank-keycloak:8080/
+      - KEYCLOAK_REALM=cryobiobank-e2e
+      - KEYCLOAK_UI_ID=cryobiobank-ui-local
+      - APP_NAME=cryobiobank-api-tests
+      - DEPLOYMENT=test
+      # Where the test helper mints JWTs.
+      - TEST_KEYCLOAK_URL=http://cryobiobank-keycloak:8080/
+      - TEST_KEYCLOAK_REALM=cryobiobank-e2e
+      - TEST_KEYCLOAK_CLIENT_ID=cryobiobank-ui-local
+    depends_on:
+      cryobiobank-test-db:
+        condition: service_healthy
+      cryobiobank-keycloak:
+        condition: service_healthy
+    volumes:
+      - ../cryobiobank-api/src:/app/src
+      - ../cryobiobank-api/migration:/app/migration
+      - ../cryobiobank-api/Cargo.toml:/app/Cargo.toml
+      - ../cryobiobank-api/Cargo.lock:/app/Cargo.lock
+      - ../cryobiobank-api/bacon.toml:/app/bacon.toml
+      - cryobiobank-test-build-data:/app/target
 
 volumes:
   cryobiobank-db-data:
   cryobiobank-api-build-data:
+  cryobiobank-test-build-data:
