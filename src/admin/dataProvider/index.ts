@@ -196,6 +196,13 @@ const dataProvider = (
             }),
         }).then(({ json }) => ({ data: json })),
 
+    createMany: (resource, params) => {
+        return httpClient(`${apiUrl}/${resource}/batch?partial=true`, {
+            method: 'POST',
+            body: JSON.stringify(params.data),
+        }).then(({ json }) => ({ data: json }));
+    },
+
     // simple-rest doesn't handle filters on DELETE route, so we fallback to calling DELETE n times instead
     deleteMany: (resource, params) => {
         // Send a list of ids to delete

@@ -7,7 +7,8 @@
     "dev": "vite --host",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest run"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
@@ -22,6 +23,7 @@
     "leaflet-draw": "^1.0.4",
     "leaflet-tilelayer-swiss": "^2.3.0",
     "leaflet.awesome-markers": "^2.0.5",
+    "papaparse": "^5.5.3",
     "proj4": "^2.15.0",
     "proj4-fully-loaded": "^0.2.0",
     "ra-keycloak": "^1.0.1",
@@ -44,6 +46,7 @@
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
-    "vite": "^6.0.11"
+    "vite": "^6.0.11",
+    "vitest": "^3.2.0"
   }
 }

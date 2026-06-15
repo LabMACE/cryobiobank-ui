@@ -6,5 +6,8 @@ export default defineConfig({
   plugins: [react()],
   server: {
     allowedHosts: ['cryobiobank'],
-  }
+  },
+  test: {
+    environment: 'node',
+  },
 })
