@@ -6,12 +6,12 @@ import {
     ReferenceField,
     ReferenceManyCount,
     FunctionField,
-    SelectInput,
     useRecordContext,
     usePermissions,
     Loading,
 } from "react-admin";
 import { ListActionsByPermission } from '../custom/Toolbars';
+import { fieldRecordFilters } from './filters';
 import CustomEmptyPage from '../Empty';
 import LockIcon from '@mui/icons-material/Lock';
 import PublicIcon from '@mui/icons-material/Public';
@@ -25,15 +25,6 @@ const PrivacyField = () => {
     );
 };
 
-const sampleTypeChoices = [
-    { id: 'Snow', name: 'Snow' },
-    { id: 'Soil', name: 'Soil' },
-];
-
-const fieldRecordFilters = [
-    <SelectInput source="sample_type" label="Sample Type" choices={sampleTypeChoices} alwaysOn />,
-];
-
 const ListComponent = () => {
     const { permissions, isLoading } = usePermissions();
     if (isLoading) return <Loading />;
@@ -44,7 +35,7 @@ const ListComponent = () => {
             sort={{ field: 'sampling_date', order: 'DESC' }}
             actions={<ListActionsByPermission />}
             empty={<CustomEmptyPage/>}
-            filters={fieldRecordFilters}
+            filters={fieldRecordFilters(permissions)}
         >
             <Datagrid rowClick="show" bulkActionButtons={permissions === 'admin' ? true : false}>
                 <TextField source="name" />
