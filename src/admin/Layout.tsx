@@ -92,6 +92,7 @@ const MyMenu = () => {
             <Menu.DashboardItem primaryText="Map" leftIcon={<FontAwesomeIcon icon={faEarthAmericas} />} />
             <Menu.ResourceItem name="areas" />
             <Menu.ResourceItem name="sites" />
+            <Menu.ResourceItem name="field_records" />
             <Menu.ResourceItem name="isolates" />
             <Menu.ResourceItem name="samples" />
             <Menu.ResourceItem name="dna" />
