@@ -48,39 +48,79 @@ const FieldRecordEdit = (props) => {
                         <SafeDateInput source="sampling_date" label="Sampling Date" validate={[required()]}/>
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                        <NumberInput source="sample_depth_cm" label="Sample Depth (cm)" />
+                        <TextInput source="treatment" label="Treatment" />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                        <NumberInput source="snow_depth_cm" label="Snow Depth (cm)" />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <NumberInput source="air_temperature_celsius" label="Air Temperature (°C)" />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <NumberInput source="snow_temperature_celsius" label="Snow Temperature (°C)" />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <NumberInput
-                            source="photosynthetic_active_radiation"
-                            label="Photosynthetic Active Radiation"
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <NumberInput source="bacterial_abundance" label="Bacterial Abundance" />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <NumberInput source="cfu_count_r2a" label="CFU Count R2A" />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <NumberInput source="cfu_count_another" label="CFU Count Another" />
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <NumberInput source="ph" label="pH" />
+                        <TextInput source="campaign" label="Campaign" />
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <TextInput source="metagenome_url" label="Metagenome URL" />
                     </Grid>
                 </Grid>
+
+                {/* Physical properties */}
+                <Accordion defaultExpanded>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography>Physical properties</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} sm={6}>
+                                <NumberInput source="water_content" label="Water content (%)" />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <NumberInput source="sample_depth_cm" label="Sample Depth (cm)" />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <NumberInput source="snow_depth_cm" label="Snow Depth (cm)" />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <NumberInput source="air_temperature_celsius" label="Air Temperature (°C)" />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <NumberInput source="snow_temperature_celsius" label="Snow Temperature (°C)" />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <NumberInput
+                                    source="photosynthetic_active_radiation"
+                                    label="Photosynthetic Active Radiation"
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <NumberInput source="bacterial_abundance" label="Bacterial Abundance" />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <NumberInput source="cfu_count_r2a" label="CFU Count R2A" />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <NumberInput source="cfu_count_another" label="CFU Count Another" />
+                            </Grid>
+                        </Grid>
+                    </AccordionDetails>
+                </Accordion>
+
+                {/* Chemical properties: elemental content + pH */}
+                <Accordion defaultExpanded>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography>Chemical properties</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} sm={6}>
+                                <NumberInput source="total_carbon" label="Total carbon (g/kg)" />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <NumberInput source="total_organic_carbon" label="Total organic carbon (g/kg)" />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <NumberInput source="total_nitrogen" label="Total nitrogen (g/kg)" />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <NumberInput source="ph" label="pH" />
+                            </Grid>
+                        </Grid>
+                    </AccordionDetails>
+                </Accordion>
 
                 {/* Ions Accordion */}
                 <Accordion>

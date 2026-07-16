@@ -87,6 +87,16 @@ const ShowContent = () => {
                         Sampled: {new Date(record.sampling_date).toLocaleDateString()}
                     </Typography>
                 )}
+                {record.campaign && (
+                    <Typography variant="body2" color="text.secondary">
+                        Campaign: {record.campaign}
+                    </Typography>
+                )}
+                {record.treatment && (
+                    <Typography variant="body2" color="text.secondary">
+                        Treatment: {record.treatment}
+                    </Typography>
+                )}
                 {record.metagenome_url && (
                     <Typography variant="body2" color="text.secondary">
                         Metagenome: <a href={record.metagenome_url} target="_blank" rel="noopener noreferrer">
@@ -99,19 +109,19 @@ const ShowContent = () => {
             {(() => {
                 const groups = [
                     [
+                        ['Water content (%)', record.water_content],
                         ['Sample Depth (cm)', record.sample_depth_cm],
                         ['Snow Depth (cm)', record.snow_depth_cm],
                     ],
                     [
                         ['Air Temperature (°C)', record.air_temperature_celsius],
                         ['Snow Temperature (°C)', record.snow_temperature_celsius],
-                        ['pH', record.ph],
+                        ['PAR', record.photosynthetic_active_radiation],
                     ],
                     [
                         ['Bacterial Abundance', record.bacterial_abundance],
                         ['CFU Count R2A', record.cfu_count_r2a],
                         ['CFU Count Another', record.cfu_count_another],
-                        ['PAR', record.photosynthetic_active_radiation],
                     ],
                 ];
                 const hasAny = groups.some(g => g.some(([, v]) => v != null));
@@ -130,6 +140,27 @@ const ShowContent = () => {
                                     </Grid>
                                 );
                             })}
+                        </Grid>
+                    </SectionCard>
+                );
+            })()}
+
+            {(() => {
+                const chemical = [
+                    ['pH', record.ph],
+                    ['Total carbon (g/kg)', record.total_carbon],
+                    ['Total organic carbon (g/kg)', record.total_organic_carbon],
+                    ['Total nitrogen (g/kg)', record.total_nitrogen],
+                ].filter(([, value]) => value != null);
+
+                return chemical.length > 0 && (
+                    <SectionCard title="Chemical Properties" icon={<ScienceIcon fontSize="small" color="action" />}>
+                        <Grid container spacing={0} columnGap={2}>
+                            {chemical.map(([label, value]) => (
+                                <Grid item xs={12} sm={5} key={label}>
+                                    <FieldRow label={label}>{value}</FieldRow>
+                                </Grid>
+                            ))}
                         </Grid>
                     </SectionCard>
                 );
