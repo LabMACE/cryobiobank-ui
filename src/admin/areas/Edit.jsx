@@ -14,7 +14,7 @@ const SampleEdit = (props) => {
             <SimpleForm>
                 <TextInput source="name" label="Name" />
                 <TextInput source="description" label="Description" />
-                <ColorInput source="colour" defaultValue="#1565c0" validate={[required()]} />
+                <ColorInput source="colour" validate={[required()]} />
             </SimpleForm>
         </Edit>
     );
