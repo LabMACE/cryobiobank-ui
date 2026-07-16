@@ -38,7 +38,9 @@ import {
     applyMapping,
     isMappingComplete,
     countReferenceNames,
+    decodeCsvBytes,
 } from './csvImportConfig';
+import { resolveSiteElevations } from './resolveElevations';
 import { useResolveNames } from './useResolveNames';
 import { useBatchSubmit } from './useBatchSubmit';
 import { ColumnMappingStep } from './ColumnMappingStep';
@@ -138,13 +140,21 @@ export function CsvImportWizard({ open, onClose, resource }) {
         URL.revokeObjectURL(url);
     }
 
-    function handleFileUpload(e) {
+    async function handleFileUpload(e) {
         const file = e.target.files?.[0];
         if (!file) return;
 
         setUploadError(null);
 
-        Papa.parse(file, {
+        let text;
+        try {
+            text = decodeCsvBytes(await file.arrayBuffer());
+        } catch (err) {
+            setUploadError(err.message || 'Could not read the file.');
+            return;
+        }
+
+        Papa.parse(text, {
             header: true,
             skipEmptyLines: true,
             complete(results) {
@@ -192,6 +202,9 @@ export function CsvImportWizard({ open, onClose, resource }) {
             transformRow(row, config, lookups)
         );
         setStep(IMPORT_STEP);
+        if (resource === 'sites') {
+            await resolveSiteElevations(transformed);
+        }
         await submit(transformed);
     }
 

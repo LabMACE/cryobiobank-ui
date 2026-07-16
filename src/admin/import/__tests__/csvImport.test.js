@@ -15,10 +15,24 @@ import {
     buildReferenceTree,
     countReferenceNames,
     referenceResources,
+    decodeCsvBytes,
 } from '../csvImportConfig';
 
 const parseCsv = (text) =>
     Papa.parse(text, { header: true, skipEmptyLines: true });
+
+describe('decodeCsvBytes', () => {
+    it('decodes UTF-8 bytes with diacritics', () => {
+        const utf8 = new TextEncoder().encode('name\nZürich,Genève\n');
+        expect(decodeCsvBytes(utf8.buffer)).toBe('name\nZürich,Genève\n');
+    });
+
+    it('falls back to Windows-1252 when the bytes are not valid UTF-8', () => {
+        // "Zürich" encoded as Windows-1252 (ü = 0xFC), which is invalid UTF-8.
+        const win1252 = new Uint8Array([0x5a, 0xfc, 0x72, 0x69, 0x63, 0x68]);
+        expect(decodeCsvBytes(win1252.buffer)).toBe('Zürich');
+    });
+});
 
 describe('generateTemplate', () => {
     it('generates correct header row for each entity', () => {

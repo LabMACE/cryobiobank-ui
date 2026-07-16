@@ -36,7 +36,7 @@ export const IMPORT_CONFIGS = {
         label: 'Sites',
         templateFilename: 'sites_template.csv',
         instructions:
-            'Each row creates one collection site. Site names must be unique. Link to an area by typing the existing area name (optional).',
+            'Each row creates one collection site. Site names must be unique. Link to an area by typing the existing area name (optional). Leave elevation blank to fill it automatically from SwissTopo.',
         columns: [
             fk('area_name', 'Area Name', 'areas', 'area_id', false, {
                 synonyms: ['area'],
@@ -52,7 +52,7 @@ export const IMPORT_CONFIGS = {
                 max: 180,
                 synonyms: ['longitude', 'lon', 'lng', 'long'],
             }),
-            col('elevation_metres', 'Elevation (m)', 'number', true, {
+            col('elevation_metres', 'Elevation (m)', 'number', false, {
                 synonyms: ['elevation', 'elevation m', 'altitude'],
             }),
         ],
@@ -238,6 +238,18 @@ export const IMPORT_CONFIGS = {
 
 export function generateTemplate(config) {
     return config.columns.map((c) => c.key).join(',') + '\n';
+}
+
+// Excel on Windows exports CSVs as Windows-1252, not UTF-8, so characters with
+// diacritics (ä ö ü é) arrive as invalid UTF-8. Decode as UTF-8 first and fall
+// back to Windows-1252 when the bytes aren't valid UTF-8, so both encodings
+// import correctly. `buffer` is an ArrayBuffer of the raw file bytes.
+export function decodeCsvBytes(buffer) {
+    try {
+        return new TextDecoder('utf-8', { fatal: true }).decode(buffer);
+    } catch {
+        return new TextDecoder('windows-1252').decode(buffer);
+    }
 }
 
 // Lowercase and strip spaces/underscores/punctuation so "Field Record",
