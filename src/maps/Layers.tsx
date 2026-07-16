@@ -5,7 +5,7 @@ type BaseLayersProps = {
 };
 
 export const BaseLayers = ({ defaultLayer = 'SwissTopo' }: BaseLayersProps) => {
-    const { BaseLayer } = LayersControl;
+    const { BaseLayer, Overlay } = LayersControl;
     return (
         <LayersControl collapsed={false} position="topleft">
             <BaseLayer checked={defaultLayer === 'SwissTopo'} name="SwissTopo">
@@ -26,6 +26,13 @@ export const BaseLayers = ({ defaultLayer = 'SwissTopo' }: BaseLayersProps) => {
                     url="https://wmts20.geo.admin.ch/1.0.0/ch.swisstopo.swissalti3d-reliefschattierung/default/current/3857/{z}/{x}/{y}.png"
                 />
             </BaseLayer>
+            <Overlay name="Potential permafrost">
+                <TileLayer
+                    attribution='&copy; <a href="https://www.bafu.admin.ch/">BAFU</a>'
+                    url="https://wmts20.geo.admin.ch/1.0.0/ch.bafu.permafrost/default/current/3857/{z}/{x}/{y}.png"
+                    opacity={0.6}
+                />
+            </Overlay>
         </LayersControl>
     );
 };
