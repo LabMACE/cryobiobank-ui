@@ -2,6 +2,7 @@ import {
     Create,
     SimpleForm,
     TextInput,
+    NumberInput,
     ReferenceInput,
     AutocompleteInput,
     required,
@@ -21,6 +22,8 @@ const DNACreate = (props) => {
                 </ReferenceInput>
                 <TextInput source="name" label="Name" validate={[required()]} />
                 <TextInput source="extraction_method" label="Extraction Method" />
+                <NumberInput source="volume" label="Volume" />
+                <NumberInput source="concentration" label="Concentration" />
                 <TextInput source="description" label="Description" />
             </SimpleForm>
         </Create>

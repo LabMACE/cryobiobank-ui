@@ -4,8 +4,11 @@ import {
     usePermissions,
 } from 'react-admin';
 import { Box, Chip, Typography } from '@mui/material';
+import ScienceIcon from '@mui/icons-material/Science';
+import ArticleIcon from '@mui/icons-material/Article';
 import {
     SectionCard,
+    FieldRow,
     PrivacyToggle,
     ShowActions,
     ShowTitle,
@@ -48,6 +51,34 @@ const ShowContent = () => {
                     </Typography>
                 )}
             </SectionCard>
+
+            {(record.volume != null || record.concentration != null) && (
+                <SectionCard title="Properties" icon={<ScienceIcon fontSize="small" color="action" />}>
+                    {record.volume != null && <FieldRow label="Volume">{record.volume}</FieldRow>}
+                    {record.concentration != null && (
+                        <FieldRow label="Concentration">{record.concentration}</FieldRow>
+                    )}
+                </SectionCard>
+            )}
+
+            {/* Inherited from the parent field record: edited there, shown here read-only. */}
+            {fieldRecord && (
+                <SectionCard title="Field record" icon={<ArticleIcon fontSize="small" color="action" />}>
+                    <FieldRow label="Name">{fieldRecord.name}</FieldRow>
+                    <FieldRow label="Sampling date">
+                        {fieldRecord.sampling_date
+                            ? new Date(fieldRecord.sampling_date).toLocaleDateString()
+                            : null}
+                    </FieldRow>
+                    <FieldRow label="Metagenome">
+                        {fieldRecord.metagenome_url ? (
+                            <a href={fieldRecord.metagenome_url} target="_blank" rel="noopener noreferrer">
+                                {fieldRecord.metagenome_url}
+                            </a>
+                        ) : null}
+                    </FieldRow>
+                </SectionCard>
+            )}
         </Box>
     );
 };

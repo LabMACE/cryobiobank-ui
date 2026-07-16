@@ -2,6 +2,7 @@ import {
     Edit,
     SimpleForm,
     TextInput,
+    NumberInput,
     ReferenceInput,
     AutocompleteInput,
     required,
@@ -24,6 +25,8 @@ const DNAEdit = (props) => {
                 </ReferenceInput>
                 <TextInput source="name" label="Name" />
                 <TextInput source="extraction_method" label="Extraction Method" />
+                <NumberInput source="volume" label="Volume" />
+                <NumberInput source="concentration" label="Concentration" />
                 <TextInput source="description" label="Description" />
             </SimpleForm>
         </Edit>
