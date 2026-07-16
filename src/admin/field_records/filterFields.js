@@ -8,14 +8,18 @@ export const sampleTypeChoices = [
 // it carries no behaviour. Each entry expands to a `_gte`/`_lte` range pair, so a
 // new measurement field is a single line here.
 export const NUMERIC_FIELDS = [
+    { group: 'Physical', source: 'water_content', label: 'Water content (%)' },
     { group: 'Physical', source: 'sample_depth_cm', label: 'Sample depth (cm)' },
     { group: 'Physical', source: 'snow_depth_cm', label: 'Snow depth (cm)' },
     { group: 'Physical', source: 'air_temperature_celsius', label: 'Air temp (°C)' },
     { group: 'Physical', source: 'snow_temperature_celsius', label: 'Snow temp (°C)' },
     { group: 'Physical', source: 'photosynthetic_active_radiation', label: 'PAR' },
-    { group: 'Chemical', source: 'bacterial_abundance', label: 'Bacterial abundance' },
-    { group: 'Chemical', source: 'cfu_count_r2a', label: 'CFU count R2A' },
-    { group: 'Chemical', source: 'cfu_count_another', label: 'CFU count another' },
+    { group: 'Physical', source: 'bacterial_abundance', label: 'Bacterial abundance' },
+    { group: 'Physical', source: 'cfu_count_r2a', label: 'CFU count R2A' },
+    { group: 'Physical', source: 'cfu_count_another', label: 'CFU count another' },
+    { group: 'Chemical', source: 'total_carbon', label: 'Total carbon (g/kg)' },
+    { group: 'Chemical', source: 'total_organic_carbon', label: 'Total organic carbon (g/kg)' },
+    { group: 'Chemical', source: 'total_nitrogen', label: 'Total nitrogen (g/kg)' },
     { group: 'Chemical', source: 'ph', label: 'pH' },
     { group: 'Ions', source: 'ions_fluoride', label: 'Fluoride' },
     { group: 'Ions', source: 'ions_chloride', label: 'Chloride' },
