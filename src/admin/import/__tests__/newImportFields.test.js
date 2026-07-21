@@ -3,6 +3,7 @@ import {
     IMPORT_CONFIGS,
     validateRow,
     transformRow,
+    autoMatchColumns,
 } from '../csvImportConfig';
 
 // New field record and DNA import columns (July 2026).
@@ -33,6 +34,43 @@ describe('field_records import — new fields', () => {
         expect(keysOf(config)).toEqual(
             expect.arrayContaining(['ph', 'ions_chloride', 'organic_acids_acetate'])
         );
+    });
+
+    it('exposes Soil temperature and Flow Cytometry Cell Number, and drops Bacterial Abundance', () => {
+        const keys = keysOf(config);
+        expect(keys).toEqual(
+            expect.arrayContaining([
+                'soil_temperature_celsius',
+                'flow_cytometry_cell_number',
+            ])
+        );
+        expect(keys).not.toContain('bacterial_abundance');
+    });
+
+    it('does not auto-map a legacy "bacterial abundance" CSV header (fully replaced)', () => {
+        const mapping = autoMatchColumns(
+            ['bacterial_abundance', 'Bacterial Abundance', 'Flow Cytometry Cell Number'],
+            config
+        );
+        expect(mapping.bacterial_abundance).toBeNull();
+        expect(mapping['Bacterial Abundance']).toBeNull();
+        expect(mapping['Flow Cytometry Cell Number']).toBe('flow_cytometry_cell_number');
+    });
+
+    it('transforms soil temperature and flow cytometry cell number', () => {
+        const row = {
+            site_name: 'Seed Site',
+            name: 'FR-2',
+            sample_type: 'Soil',
+            sampling_date: '2026-06-01',
+            soil_temperature_celsius: '-3,5',
+            flow_cytometry_cell_number: '1500000',
+        };
+        const fkLookups = { sites: new Map([['seed site', 'site-uuid']]) };
+        expect(validateRow(row, config, fkLookups, new Set())).toEqual({});
+        const out = transformRow(row, config, fkLookups);
+        expect(out.soil_temperature_celsius).toBe(-3.5);
+        expect(out.flow_cytometry_cell_number).toBe(1500000);
     });
 
     it('transforms the new numeric fields, accepting a European decimal comma', () => {

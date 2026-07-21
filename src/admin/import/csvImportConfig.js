@@ -81,13 +81,14 @@ export const IMPORT_CONFIGS = {
             col('snow_depth_cm', 'Snow Depth (cm)', 'number', false),
             col('air_temperature_celsius', 'Air Temp (°C)', 'number', false),
             col('snow_temperature_celsius', 'Snow Temp (°C)', 'number', false),
+            col('soil_temperature_celsius', 'Soil Temp (°C)', 'number', false),
             col(
                 'photosynthetic_active_radiation',
                 'PAR',
                 'integer',
                 false
             ),
-            col('bacterial_abundance', 'Bacterial Abundance', 'integer', false),
+            col('flow_cytometry_cell_number', 'Flow Cytometry Cell Number', 'integer', false),
             col('cfu_count_r2a', 'CFU Count R2A', 'integer', false),
             col('cfu_count_another', 'CFU Count Another', 'integer', false),
             col('water_content', 'Water content (%)', 'number', false),

@@ -81,13 +81,27 @@ const FieldRecordEdit = (props) => {
                                 <NumberInput source="snow_temperature_celsius" label="Snow Temperature (°C)" />
                             </Grid>
                             <Grid item xs={12} sm={6}>
+                                <NumberInput source="soil_temperature_celsius" label="Soil temperature (°C)" />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
                                 <NumberInput
                                     source="photosynthetic_active_radiation"
                                     label="Photosynthetic Active Radiation"
                                 />
                             </Grid>
+                        </Grid>
+                    </AccordionDetails>
+                </Accordion>
+
+                {/* Cell Quantification */}
+                <Accordion defaultExpanded>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography>Cell Quantification</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
-                                <NumberInput source="bacterial_abundance" label="Bacterial Abundance" />
+                                <NumberInput source="flow_cytometry_cell_number" label="Flow Cytometry Cell Number" />
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <NumberInput source="cfu_count_r2a" label="CFU Count R2A" />

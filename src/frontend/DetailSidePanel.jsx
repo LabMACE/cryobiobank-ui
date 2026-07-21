@@ -46,11 +46,17 @@ const fieldConfigs = {
           { key: 'snow_depth_cm', label: 'Snow depth', suffix: ' cm' },
           { key: 'air_temperature_celsius', label: 'Air temp', suffix: ' °C' },
           { key: 'snow_temperature_celsius', label: 'Snow temp', suffix: ' °C' },
+          { key: 'soil_temperature_celsius', label: 'Soil temp', suffix: ' °C' },
           { key: 'ph', label: 'pH' },
-          { key: 'bacterial_abundance', label: 'Bacterial abundance' },
+          { key: 'photosynthetic_active_radiation', label: 'PAR' },
+        ],
+      },
+      {
+        title: 'Cell quantification',
+        fields: [
+          { key: 'flow_cytometry_cell_number', label: 'Flow cytometry cell number' },
           { key: 'cfu_count_r2a', label: 'CFU (R2A)' },
           { key: 'cfu_count_another', label: 'CFU (other)' },
-          { key: 'photosynthetic_active_radiation', label: 'PAR' },
         ],
       },
       {

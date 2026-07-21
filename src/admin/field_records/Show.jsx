@@ -116,12 +116,10 @@ const ShowContent = () => {
                     [
                         ['Air Temperature (°C)', record.air_temperature_celsius],
                         ['Snow Temperature (°C)', record.snow_temperature_celsius],
-                        ['PAR', record.photosynthetic_active_radiation],
+                        ['Soil temperature (°C)', record.soil_temperature_celsius],
                     ],
                     [
-                        ['Bacterial Abundance', record.bacterial_abundance],
-                        ['CFU Count R2A', record.cfu_count_r2a],
-                        ['CFU Count Another', record.cfu_count_another],
+                        ['PAR', record.photosynthetic_active_radiation],
                     ],
                 ];
                 const hasAny = groups.some(g => g.some(([, v]) => v != null));
@@ -140,6 +138,26 @@ const ShowContent = () => {
                                     </Grid>
                                 );
                             })}
+                        </Grid>
+                    </SectionCard>
+                );
+            })()}
+
+            {(() => {
+                const cells = [
+                    ['Flow Cytometry Cell Number', record.flow_cytometry_cell_number],
+                    ['CFU Count R2A', record.cfu_count_r2a],
+                    ['CFU Count Another', record.cfu_count_another],
+                ].filter(([, value]) => value != null);
+
+                return cells.length > 0 && (
+                    <SectionCard title="Cell Quantification" icon={<BiotechIcon fontSize="small" color="action" />}>
+                        <Grid container spacing={0} columnGap={2}>
+                            {cells.map(([label, value]) => (
+                                <Grid item xs={12} sm={5} key={label}>
+                                    <FieldRow label={label}>{value}</FieldRow>
+                                </Grid>
+                            ))}
                         </Grid>
                     </SectionCard>
                 );
