@@ -36,33 +36,33 @@ function parseContentRange(header) {
   return +match[3];
 }
 
-// Build the crudcrate-native query string (range=, sort=, filter=).
-function buildQueryString({ q, sort, page, pageSize, fieldRecordIds }) {
+// Build the crudcrate-native query string (range=, sort=, filter=). Habitat goes as a
+// `sample_type` param the API resolves against the parent field record — sending the
+// matching field record ids instead put the URL past the request header limit.
+function buildQueryString({ q, sort, page, pageSize, sampleType }) {
   const start = Math.max(0, (page - 1) * pageSize);
   const end = start + pageSize - 1;
 
   const filter = {};
   if (q) filter.q = q;
-  if (fieldRecordIds && fieldRecordIds.length > 0) {
-    filter.field_record_id = fieldRecordIds;
-  }
 
   const params = new URLSearchParams({
     filter: JSON.stringify(filter),
     range: JSON.stringify([start, end]),
     sort: JSON.stringify(sort),
   });
+  if (sampleType) params.set('sample_type', sampleType);
   return params.toString();
 }
 
-export function useIsolatesList({ q, sort, page, pageSize, fieldRecordIds, skip }) {
+export function useIsolatesList({ q, sort, page, pageSize, sampleType, skip }) {
   const [items, setItems] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const abortRef = useRef(null);
 
-  const queryKey = buildQueryString({ q, sort, page, pageSize, fieldRecordIds });
+  const queryKey = buildQueryString({ q, sort, page, pageSize, sampleType });
   // crudcrate omits the Content-Range header when no Range request header is
   // provided; pass it explicitly so we get a usable total.
   const rangeHeader = `isolates=${(page - 1) * pageSize}-${(page - 1) * pageSize + pageSize - 1}`;
