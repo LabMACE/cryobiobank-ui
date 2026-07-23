@@ -118,13 +118,13 @@ const FieldRecordCreate = (props) => {
                     <AccordionDetails>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
-                                <NumberInput source="total_carbon" label="Total carbon (g/kg)" />
+                                <NumberInput source="total_carbon" label="Total carbon (%)" />
                             </Grid>
                             <Grid item xs={12} sm={6}>
-                                <NumberInput source="total_organic_carbon" label="Total organic carbon (g/kg)" />
+                                <NumberInput source="total_organic_carbon" label="Total organic carbon (%)" />
                             </Grid>
                             <Grid item xs={12} sm={6}>
-                                <NumberInput source="total_nitrogen" label="Total nitrogen (g/kg)" />
+                                <NumberInput source="total_nitrogen" label="Total nitrogen (%)" />
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <NumberInput source="ph" label="pH" />

@@ -166,9 +166,9 @@ const ShowContent = () => {
             {(() => {
                 const chemical = [
                     ['pH', record.ph],
-                    ['Total carbon (g/kg)', record.total_carbon],
-                    ['Total organic carbon (g/kg)', record.total_organic_carbon],
-                    ['Total nitrogen (g/kg)', record.total_nitrogen],
+                    ['Total carbon (%)', record.total_carbon],
+                    ['Total organic carbon (%)', record.total_organic_carbon],
+                    ['Total nitrogen (%)', record.total_nitrogen],
                 ].filter(([, value]) => value != null);
 
                 return chemical.length > 0 && (
