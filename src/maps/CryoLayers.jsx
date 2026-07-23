@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useMap, Marker, Tooltip } from 'react-leaflet';
 import * as L from 'leaflet';
 import { BaseLayers } from './Layers';
@@ -10,6 +10,9 @@ import {
   ZoomablePolygon,
   MapLegend,
 } from './mapUtils.jsx';
+
+// Zoom level a site is brought to when it isn't already closer than this.
+const SITE_FOCUS_ZOOM = 15;
 
 export default function CryoLayers({
   sites,
@@ -34,24 +37,35 @@ export default function CryoLayers({
     }
   }, [shouldRecenter, sites, map, setShouldRecenter]);
 
+  // Bring a site into view without ever pulling the map back out: picking a site you
+  // already zoomed in on — one from a spiderfied cluster, say — should keep the detail
+  // you zoomed in for, and re-clustering it would put the sites back out of reach.
+  // Pan rather than fly once close enough, because flyTo animates the zoom even when
+  // the level doesn't change, and markercluster collapses a spiderfied cluster on any
+  // zoom event.
+  const focusSite = useCallback((site) => {
+    const target = [site.latitude_4326, site.longitude_4326];
+    if (map.getZoom() >= SITE_FOCUS_ZOOM) {
+      map.panTo(target, { duration: 1 });
+    } else {
+      map.flyTo(target, SITE_FOCUS_ZOOM, { duration: 1 });
+    }
+  }, [map]);
+
   // Fly to active site
   useEffect(() => {
     if (!activeSiteId) return;
     const site = sites.find(s => s.id === activeSiteId);
-    if (site) {
-      map.flyTo([site.latitude_4326, site.longitude_4326], 15, { duration: 1 });
-    }
-  }, [activeSiteId, sites, map]);
+    if (site) focusSite(site);
+  }, [activeSiteId, sites, focusSite]);
 
   // Zoom to site when clicked from sidebar
   useEffect(() => {
     if (!zoomToSiteId) return;
     const site = sites.find(s => s.id === zoomToSiteId);
-    if (site) {
-      map.flyTo([site.latitude_4326, site.longitude_4326], 15, { duration: 1 });
-    }
+    if (site) focusSite(site);
     setZoomToSiteId(null);
-  }, [zoomToSiteId, sites, map, setZoomToSiteId]);
+  }, [zoomToSiteId, sites, focusSite, setZoomToSiteId]);
 
   // Fly to active area polygon bounds
   useEffect(() => {
@@ -68,6 +82,15 @@ export default function CryoLayers({
       map.fitBounds(bounds, { padding: [20, 20] });
     }
   }, [activeAreaId, areas, map]);
+
+  // react-leaflet calls setLatLng whenever the position prop differs by reference, and
+  // markercluster treats a moved child as a re-cluster — which collapses an open
+  // spiderfy and rebuilds every marker. Hold one array per site so a re-render (opening
+  // a site panel, say) doesn't read as all the markers having moved.
+  const positions = useMemo(
+    () => new Map(sites.map(s => [s.id, [s.latitude_4326, s.longitude_4326]])),
+    [sites]
+  );
 
   const filteredAreas = areas.filter(a => sites.some(s => s.area_id === a.id));
 
@@ -90,7 +113,7 @@ export default function CryoLayers({
         {sites.map((site) => (
           <Marker
             key={site.id}
-            position={[site.latitude_4326, site.longitude_4326]}
+            position={positions.get(site.id)}
             icon={getMarkerIcon(site.sample_types)}
             sampleTypes={site.sample_types}
             eventHandlers={{
