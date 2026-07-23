@@ -2,15 +2,16 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 // Measurements arrive at full stored precision (water content 5.906593407, chloride
-// 0.030228869). Scale the decimals to the magnitude rather than fixing them, so trace
-// values keep their significant digits instead of rounding to 0.00, and whole numbers
-// stay bare.
+// 0.030228869) and trace ions run as low as 5e-05, so a fixed number of decimals would
+// print a real reading as "0". Round to decimals above 1 and to significant figures
+// below it, where the leading zeros carry no information. Whole numbers stay bare.
 function formatNumber(value) {
   if (typeof value !== 'number' || !Number.isFinite(value)) return value;
   if (Number.isInteger(value)) return String(value);
   const magnitude = Math.abs(value);
-  const decimals = magnitude >= 10 ? 1 : magnitude >= 1 ? 2 : 3;
-  return String(Number(value.toFixed(decimals)));
+  if (magnitude >= 10) return String(Number(value.toFixed(1)));
+  if (magnitude >= 1) return String(Number(value.toFixed(2)));
+  return String(Number(value.toPrecision(3)));
 }
 
 const fieldConfigs = {
