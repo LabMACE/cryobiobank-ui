@@ -1,18 +1,39 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
+// Measurements arrive at full stored precision (water content 5.906593407, chloride
+// 0.030228869). Scale the decimals to the magnitude rather than fixing them, so trace
+// values keep their significant digits instead of rounding to 0.00, and whole numbers
+// stay bare.
+function formatNumber(value) {
+  if (typeof value !== 'number' || !Number.isFinite(value)) return value;
+  if (Number.isInteger(value)) return String(value);
+  const magnitude = Math.abs(value);
+  const decimals = magnitude >= 10 ? 1 : magnitude >= 1 ? 2 : 3;
+  return String(Number(value.toFixed(decimals)));
+}
+
 const fieldConfigs = {
   isolates: {
     label: 'Isolate',
-    fields: [
-      { key: 'taxonomy', label: 'Taxonomy', italic: true },
-      { key: 'site_name', label: 'Site' },
-      { key: 'area_name', label: 'Area' },
-      { key: 'elevation_metres', label: 'Elevation', render: (v) => `${Math.round(v)} m` },
-      { key: 'temperature_of_isolation', label: 'Temperature', suffix: ' °C' },
-      { key: 'media_used_for_isolation', label: 'Media' },
-      { key: 'description', label: 'Description' },
-      { key: 'genome_url', label: 'Genome', link: true },
+    sections: [
+      {
+        title: 'Origin',
+        fields: [
+          { key: 'site_name', label: 'Site' },
+          { key: 'area_name', label: 'Area' },
+          { key: 'elevation_metres', label: 'Elevation', render: (v) => `${Math.round(v)} m` },
+        ],
+      },
+      {
+        title: 'Isolation',
+        fields: [
+          { key: 'taxonomy', label: 'Taxonomy', italic: true },
+          { key: 'temperature_of_isolation', label: 'Temperature', suffix: ' °C' },
+          { key: 'media_used_for_isolation', label: 'Media' },
+          { key: 'genome_url', label: 'Genome', link: true },
+        ],
+      },
     ],
   },
   samples: {
@@ -24,9 +45,22 @@ const fieldConfigs = {
   },
   dna: {
     label: 'DNA',
-    fields: [
-      { key: 'extraction_method', label: 'Extraction method' },
-      { key: 'description', label: 'Description' },
+    sections: [
+      {
+        title: 'Extraction',
+        fields: [
+          { key: 'extraction_method', label: 'Extraction method' },
+          { key: 'description', label: 'Description' },
+        ],
+      },
+      {
+        title: 'Quantity',
+        rows: true,
+        fields: [
+          { key: 'volume', label: 'Volume' },
+          { key: 'concentration', label: 'Concentration' },
+        ],
+      },
     ],
   },
   field_records: {
@@ -36,27 +70,41 @@ const fieldConfigs = {
         title: 'Collection',
         fields: [
           { key: 'sampling_date', label: 'Date' },
+          { key: 'campaign', label: 'Campaign', wrap: true },
+          { key: 'treatment', label: 'Treatment', chip: true },
           { key: 'metagenome_url', label: 'Metagenome', link: true },
         ],
       },
       {
-        title: 'Physical conditions',
+        title: 'Physical properties',
+        rows: true,
         fields: [
+          { key: 'water_content', label: 'Water content', suffix: ' %' },
           { key: 'sample_depth_cm', label: 'Sample depth', suffix: ' cm' },
           { key: 'snow_depth_cm', label: 'Snow depth', suffix: ' cm' },
           { key: 'air_temperature_celsius', label: 'Air temp', suffix: ' °C' },
           { key: 'snow_temperature_celsius', label: 'Snow temp', suffix: ' °C' },
           { key: 'soil_temperature_celsius', label: 'Soil temp', suffix: ' °C' },
-          { key: 'ph', label: 'pH' },
           { key: 'photosynthetic_active_radiation', label: 'PAR' },
         ],
       },
       {
         title: 'Cell quantification',
+        rows: true,
         fields: [
-          { key: 'flow_cytometry_cell_number', label: 'Flow cytometry cell number' },
+          { key: 'flow_cytometry_cell_number', label: 'Flow cytometry cells' },
           { key: 'cfu_count_r2a', label: 'CFU (R2A)' },
           { key: 'cfu_count_another', label: 'CFU (other)' },
+        ],
+      },
+      {
+        title: 'Chemical properties',
+        rows: true,
+        fields: [
+          { key: 'ph', label: 'pH' },
+          { key: 'total_carbon', label: 'Total carbon', suffix: ' %' },
+          { key: 'total_organic_carbon', label: 'Total organic carbon', suffix: ' %' },
+          { key: 'total_nitrogen', label: 'Total nitrogen', suffix: ' %' },
         ],
       },
       {
@@ -102,7 +150,7 @@ const apiResource = {
   field_records: 'field_records',
 };
 
-export default function DetailSidePanel({ type, itemId, onClose, contextSampleType, parentFieldRecord, onBack }) {
+export default function DetailSidePanel({ type, itemId, onClose, contextSampleType, parentFieldRecord, onBack, enrichment }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -127,25 +175,28 @@ export default function DetailSidePanel({ type, itemId, onClose, contextSampleTy
   // parent field record, so the caller passes it in. Field records have it on data directly.
   const displayType = type === 'field_records' ? data?.sample_type : contextSampleType;
 
+  // Site, area and elevation live on the parent chain, not on the isolate, so resolve
+  // them from the lookups the caller already loaded. Same walk as IsolateCard.
+  const record = data ? { ...data, ...resolveOrigin(data, enrichment) } : null;
+
   const renderField = (field) => {
-    const value = data[field.key];
+    const value = record[field.key];
     if (value == null || value === '') return null;
+    const display = field.render
+      ? field.render(value)
+      : `${formatNumber(value)}${field.suffix || ''}`;
     return (
       <div className="detail-field" key={field.key}>
         <span className="detail-field-label">{field.label}</span>
         <span
-          className={`detail-field-value${field.italic ? ' italic' : ''}${field.chip ? ' chip' : ''}`}
+          className={`detail-field-value${field.italic ? ' italic' : ''}${field.chip ? ' chip' : ''}${field.wrap ? ' wrap' : ''}`}
         >
           {field.link ? (
             <a href={value} target="_blank" rel="noopener noreferrer">
               Link
             </a>
-          ) : field.render ? (
-            field.render(value)
-          ) : field.suffix ? (
-            `${value}${field.suffix}`
           ) : (
-            value
+            display
           )}
         </span>
       </div>
@@ -153,7 +204,7 @@ export default function DetailSidePanel({ type, itemId, onClose, contextSampleTy
   };
 
   const hasSectionValues = (section) =>
-    section.fields.some((f) => data[f.key] != null && data[f.key] !== '');
+    section.fields.some((f) => record[f.key] != null && record[f.key] !== '');
 
   const showBack = parentFieldRecord && type !== 'field_records';
   const habitat = (displayType || 'unknown').toLowerCase();
@@ -171,11 +222,11 @@ export default function DetailSidePanel({ type, itemId, onClose, contextSampleTy
       )}
       {loading ? (
         <p className="detail-side-panel-loading">Loading...</p>
-      ) : data ? (
+      ) : record ? (
         <>
           <div className="detail-side-panel-header">
             <span className="detail-side-panel-type">{config.label}</span>
-            <h3 className="detail-side-panel-name">{data.name}</h3>
+            <h3 className="detail-side-panel-name">{record.name}</h3>
             {displayType && (
               <span className="detail-side-panel-chip">{displayType}</span>
             )}
@@ -185,7 +236,7 @@ export default function DetailSidePanel({ type, itemId, onClose, contextSampleTy
               hasSectionValues(section) ? (
                 <div
                   key={section.title}
-                  className={`detail-section${section.compact ? ' detail-section-compact' : ''}`}
+                  className={`detail-section${section.compact ? ' detail-section-compact' : ''}${section.rows ? ' detail-section-compact detail-section-rows' : ''}`}
                 >
                   <h4 className="detail-section-title">{section.title}</h4>
                   <div className="detail-side-panel-fields">
@@ -199,15 +250,15 @@ export default function DetailSidePanel({ type, itemId, onClose, contextSampleTy
               {config.fields.map(renderField)}
             </div>
           )}
-          {type === 'isolates' && data.photo && (
+          {type === 'isolates' && record.photo && (
             <div className="detail-side-panel-photo">
-              <img src={data.photo} alt={data.name} />
+              <img src={record.photo} alt={record.name} />
             </div>
           )}
-          {type === 'isolates' && data.site_id && (
+          {type === 'isolates' && record.site_id && (
             <div className="detail-side-panel-foot">
               <Link
-                to={buildIsolateMapLink(data)}
+                to={buildIsolateMapLink(record)}
                 className="detail-side-panel-mapbtn"
               >
                 Map →
@@ -220,6 +271,22 @@ export default function DetailSidePanel({ type, itemId, onClose, contextSampleTy
       )}
     </div>
   );
+}
+
+// The isolates endpoint returns field_record_id only, so walk field record -> site ->
+// area through the caller's lookups to recover the provenance the panel displays.
+function resolveOrigin(data, enrichment) {
+  if (!enrichment || !data?.field_record_id) return {};
+  const fieldRecord = enrichment.fieldRecords?.[data.field_record_id];
+  const site = fieldRecord ? enrichment.sites?.[fieldRecord.site_id] : null;
+  if (!site) return {};
+  const area = site.area_id ? enrichment.areas?.[site.area_id] : null;
+  return {
+    site_id: site.id,
+    site_name: site.name,
+    area_name: area?.name,
+    elevation_metres: site.elevation_metres,
+  };
 }
 
 function buildIsolateMapLink(iso) {

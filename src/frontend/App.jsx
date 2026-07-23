@@ -79,6 +79,15 @@ export default function FrontendApp() {
       });
   }, [enrichedSites, sampleTypeFilter, productFilter]);
 
+  // Keyed lookups so the detail panel can walk isolate -> field record -> site -> area
+  // for provenance the isolates endpoint doesn't carry. Same shape as
+  // useEnrichmentLookups, which serves the isolates browser.
+  const enrichment = useMemo(() => ({
+    fieldRecords: Object.fromEntries(fieldRecords.map(r => [r.id, r])),
+    sites: Object.fromEntries(sites.map(s => [s.id, s])),
+    areas: Object.fromEntries(areas.map(a => [a.id, a])),
+  }), [fieldRecords, sites, areas]);
+
   // Area stats derived from filtered sites
   const areaStats = useMemo(() => {
     return areas
@@ -334,6 +343,7 @@ export default function FrontendApp() {
           onFieldRecordInfo={handleFieldRecordInfo}
           selectedItem={selectedItem}
           onCloseDetail={handleCloseDetail}
+          enrichment={enrichment}
           shouldRecenter={shouldRecenter}
           setShouldRecenter={setShouldRecenter}
           zoomToSiteId={zoomToSiteId}

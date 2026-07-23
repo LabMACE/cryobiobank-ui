@@ -215,6 +215,13 @@ body,
   margin-bottom: 0.25rem;
 }
 
+.area-drilldown-description {
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: #666;
+  margin-bottom: 0.35rem;
+}
+
 .area-drilldown-stats {
   font-size: 0.8rem;
   color: #666;
@@ -805,6 +812,12 @@ body,
   font-style: italic;
 }
 
+/* Campaign names are long single tokens (european_alpine_permafrost_affected_soils)
+   with no break opportunity, so they need an explicit one to stay in the panel. */
+.detail-field-value.wrap {
+  overflow-wrap: anywhere;
+}
+
 .detail-field-value.chip {
   display: inline-block;
   background: rgba(255, 255, 255, 0.08);
@@ -853,6 +866,12 @@ body,
   grid-template-columns: 1fr 1fr;
   column-gap: 0.75rem;
   row-gap: 0;
+}
+
+/* Two columns suit the symbol-labelled ions and acids. Measurements with worded
+   labels ("Total organic carbon") need the full panel width to stay on one line. */
+.detail-section-rows .detail-side-panel-fields {
+  grid-template-columns: 1fr;
 }
 
 .detail-section-compact .detail-field {

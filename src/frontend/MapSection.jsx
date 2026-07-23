@@ -24,6 +24,7 @@ export default function MapSection({
   onFieldRecordInfo,
   selectedItem,
   onCloseDetail,
+  enrichment,
   shouldRecenter,
   setShouldRecenter,
   zoomToSiteId,
@@ -71,6 +72,7 @@ export default function MapSection({
                 contextSampleType={fieldRecordData?.sample_type}
                 parentFieldRecord={activeFieldRecord || null}
                 onBack={() => activeFieldRecord && onFieldRecordInfo(activeFieldRecord.id)}
+                enrichment={enrichment}
               />
             );
           })()}

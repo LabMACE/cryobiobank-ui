@@ -74,26 +74,14 @@ export default function IsolatesSection({ sectionsRef, index }) {
 
   const enrichment = useEnrichmentLookups();
 
-  // Translate habitat chip → server-side `field_record_id IN (…)` filter via
-  // the loaded field records lookup. Hold off on the list fetch until lookups land
-  // to avoid a flash of unfiltered results when the user arrives with
-  // ?habitat=Snow in the URL.
-  const fieldRecordIds = useMemo(() => {
-    if (state.habitat === 'All') return undefined;
-    return Object.values(enrichment.fieldRecords)
-      .filter(r => r.sample_type === state.habitat)
-      .map(r => r.id);
-  }, [state.habitat, enrichment.fieldRecords]);
-
-  const waitingForHabitat = state.habitat !== 'All' && !enrichment.loaded;
-
+  // The API resolves the habitat chip against the parent field record, so the list no
+  // longer waits on the enrichment lookups to express the filter.
   const { items, total, loading, error } = useIsolatesList({
     q: state.q,
     sort: [state.sortField, state.sortOrder],
     page: state.page,
     pageSize,
-    fieldRecordIds,
-    skip: waitingForHabitat,
+    sampleType: state.habitat === 'All' ? undefined : state.habitat,
   });
 
   const handleOpen = useCallback((iso) => setFocus(iso.id), [setFocus]);
@@ -169,6 +157,7 @@ export default function IsolatesSection({ sectionsRef, index }) {
           itemId={focus}
           contextSampleType={focusedHabitat}
           onClose={handleCloseDetail}
+          enrichment={enrichment}
         />
       )}
     </section>
