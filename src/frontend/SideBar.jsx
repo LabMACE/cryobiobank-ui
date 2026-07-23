@@ -206,6 +206,11 @@ export default function SideBar({
                         />
                         {selectedArea.name}
                       </div>
+                      {selectedArea.description && (
+                        <div className="area-drilldown-description">
+                          {selectedArea.description}
+                        </div>
+                      )}
                       <div className="area-drilldown-stats">
                         {selectedArea.siteCount} site{selectedArea.siteCount !== 1 ? 's' : ''}
                         {' · '}

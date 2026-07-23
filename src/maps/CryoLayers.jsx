@@ -77,11 +77,14 @@ export default function CryoLayers({
       <FitBounds sites={sites} areas={areas} />
       <MapLegend />
 
+      {/* Some sites sit under a metre apart, so they stay clustered even at max zoom.
+          Without spiderfy, clicking such a cluster can only try to zoom further and
+          the sites underneath become unreachable. */}
       <MarkerClusterGroup
         maxClusterRadius={40}
         chunkedLoading
         iconCreateFunction={clusterIconCreate}
-        spiderfyOnMaxZoom={false}
+        spiderfyOnMaxZoom={true}
         zoomToBoundsOnClick={true}
       >
         {sites.map((site) => (
@@ -99,6 +102,7 @@ export default function CryoLayers({
               <br />
               <span style={{ fontSize: '0.85em', opacity: 0.85 }}>
                 {site.matching_field_record_count ?? site.field_record_count} field record{(site.matching_field_record_count ?? site.field_record_count) === 1 ? '' : 's'}
+                {site.elevation_metres != null && ` · ${Math.round(site.elevation_metres)} m`}
               </span>
             </Tooltip>
           </Marker>
